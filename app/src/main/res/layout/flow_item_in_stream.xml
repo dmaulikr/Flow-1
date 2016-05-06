@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight"
+    android:padding="6dp"
+    android:layout_margin="5dp"
+    android:background="@drawable/custom_border">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/item_flow_icon"
+        android:src="@drawable/new_flow" />
+    <!-- Flow Symbol Icon -->
+
+    <TextView
+        android:id="@+id/item_flow_name"
+        android:textAppearance=
+            "?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="5dp"/>
+
+    <ImageView
+        android:id="@+id/item_element_icon"
+        android:src="@drawable/empty_task"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="30dp"/>
+        <!-- Insert Flow Element Icon -->
+
+    <TextView
+        android:id="@+id/item_element_count"
+        android:textAppearance=
+            "?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="25dp"/>
+
+    <ImageView
+        android:id="@+id/item_time_icon"
+        android:src="@drawable/time"
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="30dp"/>
+    <!-- Insert Flow Element Icon -->
+
+    <TextView
+        android:id="@+id/item_total_time"
+        android:textAppearance=
+            "?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="25dp"/>
+
+</LinearLayout>
+

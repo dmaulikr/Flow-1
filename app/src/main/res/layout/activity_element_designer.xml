@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="nhacks16.flow.Main.ElementDesigner"
+    android:columnCount="14">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/taskElement"
+        android:src="@drawable/empty_task_large"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentLeft="false"
+        android:layout_marginTop="60dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/taskName"
+        android:src="@drawable/label"
+        android:layout_gravity="center_vertical"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentEnd="false"
+        android:layout_alignParentStart="false"
+        android:layout_toStartOf="@id/taskElement"
+        android:layout_alignParentBottom="false"
+        android:layout_below="@+id/taskElement"
+        android:layout_marginTop="30dp"
+        android:layout_marginRight="10dp" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:background="@android:color/transparent"
+        android:hint="@string/new_task_name"
+        android:ems="8"
+        android:id="@+id/nameInput"
+        android:maxLines="1"
+        android:maxLength="50"
+        android:focusableInTouchMode="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_toEndOf="@+id/taskName"
+        android:layout_centerHorizontal="true"
+        android:layout_toLeftOf="@+id/taskName"
+        android:layout_marginLeft="15dp"
+        android:layout_alignBottom="@+id/taskName"
+        android:layout_marginBottom="12dp" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/timeEst"
+        android:src="@drawable/time"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_below="@+id/taskName"
+        android:layout_marginTop="25dp"
+        android:layout_alignStart="@id/taskName" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="3"
+        android:id="@+id/timeInput"
+        android:layout_marginLeft="0dp"
+        android:autoText="false"
+        android:hint="     2"
+        android:layout_alignTop="@+id/timeEst"
+        android:layout_alignStart="@+id/nameInput" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/selectTime"
+        android:spinnerMode="dropdown"
+        android:layout_toEndOf="@id/timeInput"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_marginTop="35dp"
+        android:layout_below="@+id/taskName"
+        android:layout_toRightOf="@+id/timeInput" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/saveElement"
+        android:src="@drawable/done_sml"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="saveElement" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/deleteElement"
+        android:layout_alignTop="@+id/saveElement"
+        android:layout_alignParentStart="true"
+        android:src="@drawable/delete" />
+
+</RelativeLayout>
