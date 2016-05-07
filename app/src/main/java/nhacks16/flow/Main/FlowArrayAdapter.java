@@ -64,7 +64,7 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
 
         // Populate the data into the template view using the data from Flow object
         // getters used because a Flow's instance variables are private
-        holder.name.setText(String.valueOf(flow.getFlowName()));
+        holder.name.setText(String.valueOf(flow.getName()));
             // String.valueOf() otherwise Resources$NotFoundException thrown
         holder.elements.setText(String.valueOf(flow.getElementCount()));
 

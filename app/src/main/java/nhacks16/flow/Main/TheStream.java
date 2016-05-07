@@ -98,13 +98,13 @@ public class TheStream extends AppCompatActivity {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
-        params.setMarginStart(70);
-        params.setMarginEnd(150);
+        params.setMarginStart(45);
+        params.setMarginEnd(50);
 
         //Create edit text field for name entry
         final EditText nameInputET = new EditText(TheStream.this);
         //Sets maximum length of the EditText
-        nameInputET.setFilters(new InputFilter[]{new InputFilter.LengthFilter(30)});
+        nameInputET.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
         nameInputET.setMaxLines(1);
         nameInputET.setLines(1);
         //Adds the ET and params to the layout of the dialog box
