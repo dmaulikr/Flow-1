@@ -68,6 +68,7 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
             // String.valueOf() otherwise Resources$NotFoundException thrown
         holder.elements.setText(String.valueOf(flow.getElementCount()));
 
+
         // Return the completed view to render on screen
         return convertView;
 
@@ -77,6 +78,8 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
 
          */
     }
+
+
 
 
 }

@@ -1,6 +1,7 @@
 package nhacks16.flow.Main;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,8 @@ import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -23,10 +26,10 @@ public class TheStream extends AppCompatActivity {
     private static final String TAG = TheStream.class.getName();
     private Toolbar streamToolbar;
     private Flow newFlow; //Blank flow object declared.
-    private static ArrayList<Flow> flowsInStream = new ArrayList<Flow>();
+    private static ArrayList<Flow> flowsInStream = new ArrayList<>();
 
     private FlowArrayAdapter helperAdapter;
-
+    private ListView lv;
 
     /** UI Actions and Set up */
     @Override
@@ -42,9 +45,29 @@ public class TheStream extends AppCompatActivity {
         helperAdapter = new FlowArrayAdapter(this, flowsInStream);
 
         // Attach the adapter to a ListView
-        ListView lv = (ListView) findViewById(R.id.streamFeed);
+        lv = (ListView) findViewById(R.id.streamFeed);
         lv.setAdapter(helperAdapter);
 
+        setItemOnClicks();
+
+    }
+
+    private void setItemOnClicks() {
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Object o = lv.getItemAtPosition(position);
+                Flow selectedFlow = (Flow)o;
+
+                Intent i = new Intent(TheStream.this, SandBoxMain.class);
+
+                i.putExtra("selectedFlow", selectedFlow);
+
+                startActivity(i);
+
+            }
+        });
     }
 
 
@@ -149,7 +172,7 @@ public class TheStream extends AppCompatActivity {
     private Flow instantiateFlow(String userInput) {
         //Instantiates the newFlow object.
         newFlow = new Flow(userInput);
-
+        newFlow.setTotalTime(0.0);
         return newFlow;
     }
 
@@ -159,6 +182,7 @@ public class TheStream extends AppCompatActivity {
         //... Add update adapter .add()
         //... Intent to go to that Flow object
     }
+
 
 }
 
