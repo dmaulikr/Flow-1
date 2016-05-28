@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class Flow implements Parcelable{
         // Will keep tracks of the current flowElements that belong to the Flow object
 
     private double totalTime;
-    private String gsonId;
+    private String gsonKey;
 
 
     /** Basic Flow Object constructor.
@@ -82,26 +81,32 @@ public class Flow implements Parcelable{
 
     /** sets the Flow's id for Gson identification
      *
-     * @param gsonId
+     * @param gsonKey
      */
-    public void setGsonId(String gsonId) {
-        this.gsonId = gsonId;
+    public void setGsonKey(String gsonKey) {
+        this.gsonKey = gsonKey;
     }
 
     /** gets the Flow's id
      *
-     * @return gsonId
+     * @return gsonKey
      */
-    public String getGsonId() {
-        return gsonId;
+    public String getGsonKey() {
+        return gsonKey;
     }
 
     /* Action Methods */
 
+    // Overloaded findElement Methods
     public int findElement(FlowElement element) {
         Log.d(TAG, "The element was found at index: " + childFlowElements.indexOf(element) + " in the Flow's childFlowElements LinkedList");
         return childFlowElements.indexOf(element);
     }
+
+    public FlowElement findElement(int flowIndex) {
+      return childFlowElements.get(flowIndex);
+    }
+
     public void addElement(FlowElement newElement) {
             childFlowElements.add(newElement);
         // Will receive argument from the elementDesigner for the new flowElement object

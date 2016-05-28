@@ -101,7 +101,7 @@
         android:src="@drawable/done_sml"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:onClick="saveElement" />
+        android:onClick="doneElement" />
 
     <ImageView
         android:layout_width="wrap_content"

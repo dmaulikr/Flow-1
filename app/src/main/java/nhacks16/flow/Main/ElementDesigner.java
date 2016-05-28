@@ -50,7 +50,7 @@ public class ElementDesigner extends AppCompatActivity {
         });
     }
 
-    public void saveElement(View view) {
+    public void doneElement(View view) {
         EditText nameInput = (EditText)findViewById(R.id.nameInput);
         EditText timeInput = (EditText)findViewById(R.id.timeInput);
         String elementName = nameInput.getText().toString();

@@ -1,11 +1,14 @@
 package nhacks16.flow.Main;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+
+import com.google.gson.Gson;
 
 import nhacks16.flow.R;
 
@@ -21,8 +24,6 @@ public class SandBoxMain extends AppCompatActivity {
     private static final String TAG = SandBoxMain.class.getName();
     private Flow workingFlow;
         // Flow currently being worked on
-    private FlowElement f;
-        // Global FlowElement holder
 
 
     @Override
@@ -41,40 +42,82 @@ public class SandBoxMain extends AppCompatActivity {
     }
 
 
-    public void newElement(View view) {
+    public void createElement(View view) {
         // Instantiate a Blank Flow Element
         // Add it in the Flow's LinkedList
         // Get an id (position) and  pass to element designer.
-            f = new FlowElement();
-            workingFlow.addElement(f);
-            Log.d(TAG, "The number of Flow Elements in the current Flow is:  " + workingFlow.getElementCount());
-
-            f.setId(workingFlow.findElement(f));
-            Log.d(TAG, "The newly created blank Flow Id is: " + f.getId());
-
-
         Intent in = new Intent(SandBoxMain.this, ElementDesigner.class);
-
         startActivityForResult(in, 1);
             //Starts new activity waiting for the return data
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         // No need for request codes just yet
 
-        FlowElement helper = data.getParcelableExtra("newElement");
-        Log.d(TAG, "data obj is: " + helper.getElementName() + " " + helper.getTimeUnits());
-        // SAVE A NEW FLOW ELEMENT TO GSON ??
-        // Override f??
-            f.setElementName(String.valueOf(helper.getElementName()));
-            f.setTimeEstimate(Double.valueOf(helper.getTimeEstimate()));
-            f.setTimeUnits(String.valueOf(helper.getTimeUnits()));
-            //Using valueOf because don't want to simply reference the data, actually want to copy it
-            Log.d(TAG, "The new flowElement has been created: "
-                    + f.getElementName() + " " + f.getId() + " "
-                    + f.getTimeUnits() + " " + f.getTimeEstimate());
+        // This is currently just a pointer to element created in the designer
+        // Consider ValueOf in the future?
+        FlowElement newElement = data.getParcelableExtra("newElement");
+        Log.d(TAG, "Received Parcel Object: " + "'" + newElement.getElementName() + "'");
+
+
+        Log.d(TAG, "Adding new element to: " + workingFlow.getName() + " ...");
+        workingFlow.addElement(newElement);
+        newElement.setFlowIndex(workingFlow.getElementCount());
+
+        Log.d(TAG, "Setting Element GSON Key ...");
+            /* If the current flow name was "Website Creation",
+               The key would be Webs-Elem-1
+             */
+        String key = workingFlow.getName().substring(0,4) + "-Elem-" + workingFlow.getElementCount();
+        newElement.setGsonKey(key);
+
+        saveElement(newElement, newElement.getGsonKey());
+
+        /* Maybe consider saving the ArrayList to GSON, rather than individual elements?
+        *  This might avoid, this lengthy task as well as possible memory problems
+        *  But most importantly, unique GSONKeys (would we even need GSONKey for array?
+        *  Considering that the Flow is already GSON saved... */
+        Log.d(TAG, "Testing Shared Preferences....");
+        SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+
+        Gson gson = new Gson();
+        String json = mPrefs.getString(newElement.getGsonKey(),"");
+        FlowElement fE = gson.fromJson(json, FlowElement.class);
+
+        Log.d(TAG, "SharedPrefs Test Result: \n " + newElement.getGsonKey() + "\n " + json);
+
+
+        Log.d(TAG, "Displaying current FlowElements in " + workingFlow.getName() + "...\n");
+        for (int i = 0; i<workingFlow.getElementCount(); i++) {
+            FlowElement elm = workingFlow.findElement(i);
+            Log.d(TAG, " " + elm.getElementName() + " \n "
+                    + mPrefs.getString(elm.getGsonKey(),""));
+
+        }
+
+
+    }
+
+    private void saveElement(FlowElement element, String GSONKey) {
+        /* Need to create ASYNC Task for this */
+        SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+        try {
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+            Gson gson = new Gson();
+            String json = gson.toJson(element);
+            prefsEditor.putString(GSONKey, json);
+            prefsEditor.commit();
+            Log.d(TAG, "Saved " + element.getGsonKey() + " to Shared Preferences");
+
+
+            String j = mPrefs.getString(element.getGsonKey(), "");
+            FlowElement fE = gson.fromJson(j, FlowElement.class);
+            Log.d(TAG, "Here is the JSON Object: " + j);
+
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
     }
 
     @Override

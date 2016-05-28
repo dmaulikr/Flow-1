@@ -30,8 +30,8 @@ public class FlowElement implements Parcelable{
 
     private String timeUnits;
 
-    private int id;
-
+    private int flowIndex;
+    private String gsonKey;
 
     public FlowElement() {
     } //End of Default Constructor
@@ -96,32 +96,36 @@ public class FlowElement implements Parcelable{
     }
 
     /**
-     * @return id
+     * @return flowIndex
      */
-    public int getId() {
-        return id;
+    public int getFlowIndex() {
+        return flowIndex;
     }
 
     /**
-     * @param id
+     * @param flowIndex
      */
-    public void setId(int id) {
-        this.id = id;
+    public void setFlowIndex(int flowIndex) {
+        this.flowIndex = flowIndex;
     }
 
-    public int getX() { return x; }
-    public void setX(int x) { this.x = x; }
-    public int getY() {return y; }
-    public void setY(int y) { this.y=y;}
+    /** sets the GSON Key for Identification
+     *
+     * @param gsonKey
+     */
+    public void setGsonKey(String gsonKey) {
+        this.gsonKey = gsonKey;
+    }
+
+    /** gets the GSON Key for Identification
+     *
+     * @return gsonKey
+     */
+    public String getGsonKey() {
+        return gsonKey;
+    }
 
 
-    public void setTouched(boolean touched) {
-        this.touched=touched;
-    }
-    public boolean isTouched() {
-        //isTouched?
-        return touched;
-    }
 
     //## Action Methods
     public void draw(Canvas canvas) {
@@ -183,3 +187,22 @@ public class FlowElement implements Parcelable{
        Flow myObj = getIntent().getParcelableExtra("userTag");
      */
 }
+
+
+/*
+FOR USE LATER
+ public int getX() { return x; }
+    public void setX(int x) { this.x = x; }
+    public int getY() {return y; }
+    public void setY(int y) { this.y=y;}
+
+
+
+    public void setTouched(boolean touched) {
+        this.touched=touched;
+    }
+    public boolean isTouched() {
+        //isTouched?
+        return touched;
+    }
+ */

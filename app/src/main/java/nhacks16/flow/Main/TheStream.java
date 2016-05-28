@@ -1,6 +1,5 @@
 package nhacks16.flow.Main;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import nhacks16.flow.R;
@@ -66,15 +64,15 @@ public class TheStream extends AppCompatActivity {
 
                 Flow selectedFlow = (Flow) lv.getItemAtPosition(position);
 
-
+                    // Below is only for developer sake of confirmation -- Non-crucial code
                 Log.d(TAG, "Testing Shared Preferences from onClick....");
                 SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
 
                 Gson gson = new Gson();
-                String json = mPrefs.getString(selectedFlow.getGsonId(),"");
+                String json = mPrefs.getString(selectedFlow.getGsonKey(),"");
                 Flow f = gson.fromJson(json, Flow.class);
 
-                Log.d(TAG, "Selected Item is: " + selectedFlow.getGsonId() + "\n " + json);
+                Log.d(TAG, "Selected Item is: " + selectedFlow.getGsonKey() + "\n " + json);
 
                 Intent i = new Intent(TheStream.this, SandBoxMain.class);
 
@@ -195,13 +193,14 @@ public class TheStream extends AppCompatActivity {
 
     private void addToStream(Flow flow) {
         flowsInStream.add(flow);
-        String gsonId = "Flow " + flowsInStream.size();
-        flow.setGsonId(gsonId);
+        String gsonId = "LV-Flow-" + flowsInStream.size();
+        flow.setGsonKey(gsonId);
         saveFlow(flow, gsonId);
         helperAdapter.notifyDataSetChanged();
     }
 
         private void saveFlow(Flow flow, String id) {
+            /* Need to create ASYNC Task for this */
             SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
             try {
                 SharedPreferences.Editor prefsEditor = mPrefs.edit();
@@ -209,10 +208,10 @@ public class TheStream extends AppCompatActivity {
                 String json = gson.toJson(flow);
                 prefsEditor.putString(id, json);
                 prefsEditor.commit();
-                Log.d(TAG, "Saved " + flow.getGsonId() + " to Shared Preferences");
+                Log.d(TAG, "Saved " + flow.getGsonKey() + " to Shared Preferences");
 
 
-                String j = mPrefs.getString(flow.getGsonId(), "");
+                String j = mPrefs.getString(flow.getGsonKey(), "");
                 Flow f = gson.fromJson(j, Flow.class);
                 Log.d(TAG, "Here is the JSON Object: " + j);
 

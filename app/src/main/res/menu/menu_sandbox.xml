@@ -3,7 +3,7 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto">
     <!--
     <item
-        android:id="@+id/action_newElement"
+        android:flowIndex="@+flowIndex/action_newElement"
         android:icon="@drawable/toolbar_flow_element"
         android:title="@string/action_add_flow_element"
         compat:showAsAction="always"/> -->
