@@ -2,8 +2,10 @@ package nhacks16.flow.Main;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /** A Flow (short for workflow) is a framework containing tasks (aka. Flow Elements)
@@ -14,15 +16,15 @@ import java.util.List;
  * @author Robert Simoes
  */
 public class Flow implements Parcelable{
-
+    private static final String TAG = Flow.class.getName();
     private String name;
-    private static List<FlowElement> childFlowElements = new ArrayList<FlowElement>();
-    // Will keep tracks of the current flowElements that belong to the Flow object
+    private List<FlowElement> childFlowElements = new LinkedList<FlowElement>();
 
-    private Integer numberOfElements = childFlowElements.size();
-        //Number of flowElements no need for this.???
+        // Will keep tracks of the current flowElements that belong to the Flow object
 
     private double totalTime;
+    private String gsonId;
+
 
     /** Basic Flow Object constructor.
      * @param name name of the flow object being instantiated
@@ -33,12 +35,10 @@ public class Flow implements Parcelable{
 
     /** Overloaded Flow Object constructor.
      * @param name name of the flow object being instantiated
-     * @param elementCount number of elements in the flow object
-     * @param time total time estiamte of the flow object
+     * @param time total time estimate of the flow object
      */
-    public Flow(String name, Integer elementCount, double time) {
+    public Flow(String name, double time) {
         this.name = name;
-        this.numberOfElements = elementCount;
         this.totalTime = time;
     } // End of overload constructor
 
@@ -60,10 +60,10 @@ public class Flow implements Parcelable{
     }
 
     /** Gets the current Element count for the Flow
-     * @return numberOfElements
+     * @return childFlowElements.size()
      */
     public Integer getElementCount() {
-        return numberOfElements;
+        return childFlowElements.size();
     }
 
     /** Gets the total estimated time for the Flow
@@ -80,11 +80,30 @@ public class Flow implements Parcelable{
         this.totalTime = time;
     }
 
+    /** sets the Flow's id for Gson identification
+     *
+     * @param gsonId
+     */
+    public void setGsonId(String gsonId) {
+        this.gsonId = gsonId;
+    }
+
+    /** gets the Flow's id
+     *
+     * @return gsonId
+     */
+    public String getGsonId() {
+        return gsonId;
+    }
+
     /* Action Methods */
 
-
+    public int findElement(FlowElement element) {
+        Log.d(TAG, "The element was found at index: " + childFlowElements.indexOf(element) + " in the Flow's childFlowElements LinkedList");
+        return childFlowElements.indexOf(element);
+    }
     public void addElement(FlowElement newElement) {
-        childFlowElements.add(newElement);
+            childFlowElements.add(newElement);
         // Will receive argument from the elementDesigner for the new flowElement object
     }
 
@@ -94,13 +113,12 @@ public class Flow implements Parcelable{
     // Still need to make method to calculate the total time for the flow based on elements
     // The order of READING and WRITING is important (Read and write in same order)
     public Flow(Parcel in) {
-        String[] data = new String[3];
+        String[] data = new String[2];
         // To include: name, elementCount and totalTime;
 
         in.readStringArray(data);
         this.name = data[0];
-        this.numberOfElements = Integer.parseInt(data[1]);
-        this.totalTime = Double.parseDouble(data[2]);
+        this.totalTime = Double.parseDouble(data[1]);
     }
 
     @Override
@@ -113,7 +131,6 @@ public class Flow implements Parcelable{
         destination.writeStringArray(
                 new String[] {
                         this.name,
-                        String.valueOf(this.numberOfElements),
                         String.valueOf(this.totalTime)
                 }
         );

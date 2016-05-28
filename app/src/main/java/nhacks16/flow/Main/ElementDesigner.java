@@ -1,7 +1,6 @@
 package nhacks16.flow.Main;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,10 +18,11 @@ public class ElementDesigner extends AppCompatActivity {
     // User can name and time the new task element
     // This class will create the objects and assign them the inputted properties,
     // Then pass them back to the Sandbox man to draw and store in **Either the ArrayList or potentially a database **
+
+    // The Element Designer is the resource provider, SandBoxMain is the blacksmith!
     Spinner selectTime;
     ArrayAdapter<CharSequence> adapter;
     private static final String TAG = ElementDesigner.class.getName();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +34,7 @@ public class ElementDesigner extends AppCompatActivity {
 
         //Specifying each layout for the dropdown items
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         selectTime.setAdapter(adapter);
 
         selectTime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -54,24 +55,35 @@ public class ElementDesigner extends AppCompatActivity {
         EditText timeInput = (EditText)findViewById(R.id.timeInput);
         String elementName = nameInput.getText().toString();
         String elementTime = timeInput.getText().toString();
-        Bundle extras = getIntent().getExtras();
-        try {
-            if (elementName != null && elementTime != null) {
-                if (extras != null) {
-                    // returns the element of the id# of element to be created
-                    String id = extras.getString("FLOW_ELEMENT_ID");
-                    new createNewElementAsync().execute(id,elementName,elementTime);
-                }
+        String timeUnits = selectTime.getSelectedItem().toString();
 
-               // Intent returnToSandbox = new Intent(ElementDesigner.this, SandBoxMain.class);
-                
-                /* Make the addition of the the flow element to the currentElements as well as
-                make the SandBox draw the element.
-                Also is this efficient or will it crash constantly? (ie. is doing the async element creation a bad idea??
-                 */
+        if (timeUnits==null) {
+            timeUnits = FlowElement.DEFAULT_UNITS;
+        }
+
+        try {
+            if (!elementName.equals("") && !elementTime.equals("")) {
+
+                Intent returnData = new Intent();
+                FlowElement newElement = new FlowElement(elementName, Double.parseDouble(elementTime), timeUnits);
+                returnData.putExtra("newElement", newElement);
+                setResult(1, returnData);
+                finish();
 
             } else {
-                Toast.makeText(ElementDesigner.this, "Oops, you've got to name and time your task!", Toast.LENGTH_LONG).show();
+                int rnd = (int)Math.floor(Math.random()*3);
+                switch(rnd) {
+                    case 0:
+                        Toast.makeText(ElementDesigner.this, "Oops, the task needs a name and time!", Toast.LENGTH_LONG).show();
+                        break;
+                    case 1:
+                        Toast.makeText(ElementDesigner.this, "Mind checking that name and time again?", Toast.LENGTH_LONG).show();
+                        break;
+                    case 2:
+                        Toast.makeText(ElementDesigner.this, "Hmm, that name and time can't be blank!", Toast.LENGTH_LONG).show();
+                        break;
+                }
+
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -79,33 +91,5 @@ public class ElementDesigner extends AppCompatActivity {
         }
     }
 
-    //Runs Async task to create a new FlowElement Object using user's inputs
-    private class createNewElementAsync extends AsyncTask<String, Integer, FlowElement> {
-
-
-        @Override
-        protected FlowElement doInBackground(String... params) {
-        // params[0] = id, params[1]=elementName, params[2] = elementTime
-
-            /*int elementId;
-            elementId = Integer.parseInt(params[0]);
-            Integer f = 22;
-            Integer.parseInt(f);
-            //parses and passes generated id from SandboxMain activity and saveElement .execute(id)
-
-            String elementName = params[1];
-            Double elementTime = Double.parseDouble(params[2]);
-
-            // How to pass this object to the array in SandBox Main??
-            FlowElement newElement = new FlowElement(elementId, elementName, elementTime);
-
-            return newElement; */
-            Log.d(TAG, "PARAMS 0 = " + params[0]);
-            Log.d(TAG, "PARAMS 1 = " +  params[1]);
-            Log.d(TAG, "PARAMS 2 = " +  params[2]);
-
-            return null;
-        }
-    }
 
 }

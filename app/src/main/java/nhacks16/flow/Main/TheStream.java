@@ -1,12 +1,16 @@
 package nhacks16.flow.Main;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
+import android.text.InputType;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +20,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import nhacks16.flow.R;
@@ -57,19 +64,28 @@ public class TheStream extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Object o = lv.getItemAtPosition(position);
-                Flow selectedFlow = (Flow)o;
+                Flow selectedFlow = (Flow) lv.getItemAtPosition(position);
+
+
+                Log.d(TAG, "Testing Shared Preferences from onClick....");
+                SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+
+                Gson gson = new Gson();
+                String json = mPrefs.getString(selectedFlow.getGsonId(),"");
+                Flow f = gson.fromJson(json, Flow.class);
+
+                Log.d(TAG, "Selected Item is: " + selectedFlow.getGsonId() + "\n " + json);
 
                 Intent i = new Intent(TheStream.this, SandBoxMain.class);
 
-                i.putExtra("selectedFlow", selectedFlow);
+                i.putExtra("selectedFlow", selectedFlow); // Parcel Object
 
-                startActivity(i);
+                startActivity(i); //add new Flow
 
+                finish();
             }
         });
     }
-
 
     /* Allows the menu items to appear in the toolbar */
    @Override
@@ -94,11 +110,6 @@ public class TheStream extends AppCompatActivity {
             case R.id.action_newFlow:
                     flowDialog();
 
-
-                // Find out a way to send the flow object OR create the object in the Sandbox by recieving the name
-
-                //Intent goToSandBox = new Intent(TheStream.this, SandBoxMain.class);
-                // goToSandBox.putExtra("NEW_FLOW_OBJECT", newFlow);
                 return true;
 
             default:
@@ -116,20 +127,26 @@ public class TheStream extends AppCompatActivity {
         //Creates dialog box asking for name for the new flow
         AlertDialog.Builder newFlowDialog = new AlertDialog.Builder(TheStream.this);
 
+        //Sets up Layout Parameters
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
-        params.setMarginStart(45);
+        params.setMarginStart(42);
         params.setMarginEnd(50);
 
         //Create edit text field for name entry
         final EditText nameInputET = new EditText(TheStream.this);
-        //Sets maximum length of the EditText
-        nameInputET.setFilters(new InputFilter[]{new InputFilter.LengthFilter(20)});
-        nameInputET.setMaxLines(1);
-        nameInputET.setLines(1);
+
+        //Sets up length and 1 line filters
+        nameInputET.setInputType(InputType.TYPE_CLASS_TEXT);
+            //Only allows A-Z, a-z, 0-9, and special characters (%$!@)
+
+        nameInputET.setFilters(new InputFilter[] {
+                new InputFilter.LengthFilter(20)
+        });
+
         //Adds the ET and params to the layout of the dialog box
         layout.addView(nameInputET, params);
 
@@ -178,10 +195,31 @@ public class TheStream extends AppCompatActivity {
 
     private void addToStream(Flow flow) {
         flowsInStream.add(flow);
+        String gsonId = "Flow " + flowsInStream.size();
+        flow.setGsonId(gsonId);
+        saveFlow(flow, gsonId);
         helperAdapter.notifyDataSetChanged();
-        //... Add update adapter .add()
-        //... Intent to go to that Flow object
     }
+
+        private void saveFlow(Flow flow, String id) {
+            SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+            try {
+                SharedPreferences.Editor prefsEditor = mPrefs.edit();
+                Gson gson = new Gson();
+                String json = gson.toJson(flow);
+                prefsEditor.putString(id, json);
+                prefsEditor.commit();
+                Log.d(TAG, "Saved " + flow.getGsonId() + " to Shared Preferences");
+
+
+                String j = mPrefs.getString(flow.getGsonId(), "");
+                Flow f = gson.fromJson(j, Flow.class);
+                Log.d(TAG, "Here is the JSON Object: " + j);
+
+            } catch (Exception e) {
+                Log.e(TAG, e.getMessage());
+            }
+        }
 
 
 }

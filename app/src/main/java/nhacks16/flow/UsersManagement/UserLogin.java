@@ -45,15 +45,11 @@ public class UserLogin extends Activity {
                 }
             }
 
-    public void directToSignup(View view) {
-        Intent userSignup = new Intent(UserLogin.this, UserSignUp.class);
-        startActivity(userSignup);
+    public void GoToSignup(View view) {
+        Intent signup = new Intent(UserLogin.this, UserSignUp.class);
+        startActivity(signup);
     }
 
-    public void goToSandBox(View view) {
-        Intent sandboxmain = new Intent(UserLogin.this, SandBoxMain.class);
-        startActivity(sandboxmain);
-    }
 
     public void GoToStream(View view) {
         Intent thestream = new Intent(UserLogin.this, TheStream.class);

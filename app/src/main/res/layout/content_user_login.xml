@@ -36,19 +36,13 @@
         android:layout_gravity="center_horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="directToSignup"/>
+        android:onClick="GoToSignup"/>
     <Button
         android:id="@+id/butLogIn"
         android:text="@string/Login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="attemptLogin" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="GoToSandBox"
-        android:onClick="goToSandBox"/>
 
     <Button
         style="?android:attr/buttonStyleSmall"
