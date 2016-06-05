@@ -31,7 +31,6 @@ public class FlowElement implements Parcelable{
     private String timeUnits;
 
     private int flowIndex;
-    private String gsonKey;
 
     public FlowElement() {
     } //End of Default Constructor
@@ -108,24 +107,6 @@ public class FlowElement implements Parcelable{
     public void setFlowIndex(int flowIndex) {
         this.flowIndex = flowIndex;
     }
-
-    /** sets the GSON Key for Identification
-     *
-     * @param gsonKey
-     */
-    public void setGsonKey(String gsonKey) {
-        this.gsonKey = gsonKey;
-    }
-
-    /** gets the GSON Key for Identification
-     *
-     * @return gsonKey
-     */
-    public String getGsonKey() {
-        return gsonKey;
-    }
-
-
 
     //## Action Methods
     public void draw(Canvas canvas) {

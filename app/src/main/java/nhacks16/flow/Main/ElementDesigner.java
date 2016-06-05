@@ -71,25 +71,10 @@ public class ElementDesigner extends AppCompatActivity {
                 finish();
 
             } else {
-                int rnd = (int)Math.floor(Math.random()*3);
-                switch(rnd) {
-                    case 0:
-                        Toast.makeText(ElementDesigner.this, "Oops, the task needs a name and time!", Toast.LENGTH_LONG).show();
-                        break;
-                    case 1:
-                        Toast.makeText(ElementDesigner.this, "Mind checking that name and time again?", Toast.LENGTH_LONG).show();
-                        break;
-                    case 2:
-                        Toast.makeText(ElementDesigner.this, "Hmm, that name and time can't be blank!", Toast.LENGTH_LONG).show();
-                        break;
+                Toast.makeText(ElementDesigner.this, "Mind checking that name and time again?", Toast.LENGTH_LONG).show();
                 }
-
-            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
-            //Log.e = ERROR
         }
     }
-
-
 }

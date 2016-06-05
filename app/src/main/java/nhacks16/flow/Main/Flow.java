@@ -18,12 +18,10 @@ public class Flow implements Parcelable{
     private static final String TAG = Flow.class.getName();
     private String name;
     private List<FlowElement> childFlowElements = new LinkedList<FlowElement>();
-
         // Will keep tracks of the current flowElements that belong to the Flow object
 
     private double totalTime;
-    private String gsonKey;
-
+    private int flowManagerIndex;
 
     /** Basic Flow Object constructor.
      * @param name name of the flow object being instantiated
@@ -69,7 +67,12 @@ public class Flow implements Parcelable{
      * @return totalTime
      */
     public double getTime() {
-        return totalTime;
+        if (totalTime != 0.0) {
+            return totalTime;
+        } else {
+            totalTime = 0.0;
+            return totalTime;
+        }
     }
 
     /** Sets the totalTime for the Flow once called from calculateTime()
@@ -79,20 +82,20 @@ public class Flow implements Parcelable{
         this.totalTime = time;
     }
 
-    /** sets the Flow's id for Gson identification
-     *
-     * @param gsonKey
+    /** Get the index which this Flow belongs to in the flowManager
+     *  ArrayList<Flow>
+     * @return flowManagerIndex , the index of the Flow in flowManager
      */
-    public void setGsonKey(String gsonKey) {
-        this.gsonKey = gsonKey;
+    public int getFlowManagerIndex() {
+        return flowManagerIndex;
     }
-
-    /** gets the Flow's id
-     *
-     * @return gsonKey
+    /** Sets the index which this Flow belongs to in the flowManager
+     *  ArrayList<Flow>
+     * @param  flowManagerIndex , the index of the Flow in flowManager
      */
-    public String getGsonKey() {
-        return gsonKey;
+
+    public void setFlowManagerIndex(int flowManagerIndex) {
+        this.flowManagerIndex = flowManagerIndex;
     }
 
     /* Action Methods */
@@ -155,6 +158,8 @@ public class Flow implements Parcelable{
                     return new Flow[size];
                 }
             };
+
+
 
     /* How to use:
         ~ SENDING ACTIVITY ~

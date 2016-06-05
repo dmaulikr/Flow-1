@@ -8,8 +8,17 @@
         android:title="@string/action_newFlow"
         compat:showAsAction="always"/>
 
+    <item android:id="@+id/action_delete_flow"
+        android:icon="@drawable/delete_flows_24"
+        android:title="@string/action_delete_flow"
+        compat:showAsAction="always"/>
+
+
     <!-- Settings, should always be in the overflow -->
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         compat:showAsAction="never"/>
+
+
+
  </menu>

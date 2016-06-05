@@ -22,4 +22,7 @@
     <string name="dialog_flow_name">Create Flow</string>
     <string name="dialog_create">CREATE</string>
     <string name="action_add_flow_element">Add flow element</string>
+    <string name="empty_list">Look\'s like there\'s nothing here...</string>
+    <string name="action_delete_flow">Delete Flows</string>
+    <string name="describe_element_count">Elements in this flow</string>
 </resources>

@@ -21,7 +21,10 @@
             android:layout_height="wrap_content"
             android:id="@+id/streamFeed"
             android:layout_column="0"
-            android:clipToPadding="false"/>
+            android:clipToPadding="false">
+        </ListView>
+
+
     </TableRow>
 
 </TableLayout>

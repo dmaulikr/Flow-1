@@ -20,6 +20,7 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
     private static class ViewHolder {
         TextView name;
         TextView elements;
+        TextView timeEstimate;
 
         /* Incase you want to set images in future:
          ImageView flowIcon;
@@ -68,6 +69,7 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
             // String.valueOf() otherwise Resources$NotFoundException thrown
         holder.elements.setText(String.valueOf(flow.getElementCount()));
 
+        /* CAUSING ERROR // holder.timeEstimate.setText(String.valueOf(flow.getTime())); */
 
         // Return the completed view to render on screen
         return convertView;
@@ -75,7 +77,6 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
         /* In case you want to set custom images in future:
         holder.flowIcon.setImageResource(R.drawable.new_flow);
         holder.flowElementIcon.setImageResource(R.drawable.empty_task);
-
          */
     }
 

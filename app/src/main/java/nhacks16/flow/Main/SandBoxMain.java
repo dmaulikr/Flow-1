@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 
@@ -24,7 +25,7 @@ public class SandBoxMain extends AppCompatActivity {
     private static final String TAG = SandBoxMain.class.getName();
     private Flow workingFlow;
         // Flow currently being worked on
-
+    TextView tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +40,15 @@ public class SandBoxMain extends AppCompatActivity {
         sbToolbar = (Toolbar) findViewById(R.id.sbToolbar);
         setSupportActionBar(sbToolbar);
 
+        tv = (TextView)findViewById(R.id.number_flow_elements);
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateSandboxCount();
+    }
 
     public void createElement(View view) {
         // Instantiate a Blank Flow Element
@@ -60,65 +68,17 @@ public class SandBoxMain extends AppCompatActivity {
         FlowElement newElement = data.getParcelableExtra("newElement");
         Log.d(TAG, "Received Parcel Object: " + "'" + newElement.getElementName() + "'");
 
+        saveElementToFlow(newElement);
 
+    }
+
+    private void saveElementToFlow(FlowElement newElement) {
         Log.d(TAG, "Adding new element to: " + workingFlow.getName() + " ...");
         workingFlow.addElement(newElement);
         newElement.setFlowIndex(workingFlow.getElementCount());
-
-        Log.d(TAG, "Setting Element GSON Key ...");
-            /* If the current flow name was "Website Creation",
-               The key would be Webs-Elem-1
-             */
-        String key = workingFlow.getName().substring(0,4) + "-Elem-" + workingFlow.getElementCount();
-        newElement.setGsonKey(key);
-
-        saveElement(newElement, newElement.getGsonKey());
-
-        /* Maybe consider saving the ArrayList to GSON, rather than individual elements?
-        *  This might avoid, this lengthy task as well as possible memory problems
-        *  But most importantly, unique GSONKeys (would we even need GSONKey for array?
-        *  Considering that the Flow is already GSON saved... */
-        Log.d(TAG, "Testing Shared Preferences....");
-        SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
-
-        Gson gson = new Gson();
-        String json = mPrefs.getString(newElement.getGsonKey(),"");
-        FlowElement fE = gson.fromJson(json, FlowElement.class);
-
-        Log.d(TAG, "SharedPrefs Test Result: \n " + newElement.getGsonKey() + "\n " + json);
-
-
-        Log.d(TAG, "Displaying current FlowElements in " + workingFlow.getName() + "...\n");
-        for (int i = 0; i<workingFlow.getElementCount(); i++) {
-            FlowElement elm = workingFlow.findElement(i);
-            Log.d(TAG, " " + elm.getElementName() + " \n "
-                    + mPrefs.getString(elm.getGsonKey(),""));
-
-        }
-
-
+        updateSandboxCount();
     }
 
-    private void saveElement(FlowElement element, String GSONKey) {
-        /* Need to create ASYNC Task for this */
-        SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
-        try {
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-            Gson gson = new Gson();
-            String json = gson.toJson(element);
-            prefsEditor.putString(GSONKey, json);
-            prefsEditor.commit();
-            Log.d(TAG, "Saved " + element.getGsonKey() + " to Shared Preferences");
-
-
-            String j = mPrefs.getString(element.getGsonKey(), "");
-            FlowElement fE = gson.fromJson(j, FlowElement.class);
-            Log.d(TAG, "Here is the JSON Object: " + j);
-
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -126,5 +86,11 @@ public class SandBoxMain extends AppCompatActivity {
         startActivity(i);//starting main activity
         finish();
     }
+
+    private void updateSandboxCount(){
+        int count = workingFlow.getElementCount();
+        tv.setText(String.valueOf(count));
+    }
+
 
 }

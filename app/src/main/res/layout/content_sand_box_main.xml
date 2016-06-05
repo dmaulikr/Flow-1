@@ -12,4 +12,26 @@
     tools:context="nhacks16.flow.Main.SandBoxMain"
     tools:showIn="@layout/activity_sand_box_main">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/describe_element_count"
+        android:id="@+id/display_number_flow_elements"
+        android:layout_marginTop="164dp"
+        android:layout_marginLeft="100dp"
+        android:textSize="16dp"
+        android:layout_marginStart="67dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/number_flow_elements"
+        android:text="--"
+        android:textSize="17dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginStart="30dp"
+        android:layout_alignBottom="@+id/display_number_flow_elements"
+        android:layout_toEndOf="@+id/display_number_flow_elements" />
+
 </RelativeLayout>

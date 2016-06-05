@@ -20,7 +20,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import nhacks16.flow.R;
@@ -28,13 +30,17 @@ import nhacks16.flow.R;
 public class TheStream extends AppCompatActivity {
     // The Stream is basically a feed where a user can select the specific Flow that they wish to work on, view or create
 
+
+    // To Convert Back to proper list
+
     private static final String TAG = TheStream.class.getName();
     private Toolbar streamToolbar;
     private Flow newFlow; //Blank flow object declared.
-    private static ArrayList<Flow> flowsInStream = new ArrayList<>();
+
+    private static ArrayList<Flow> flowManager;
 
     private FlowArrayAdapter helperAdapter;
-    private ListView lv;
+    private ListView listView;
 
     /** UI Actions and Set up */
     @Override
@@ -46,33 +52,21 @@ public class TheStream extends AppCompatActivity {
         streamToolbar = (Toolbar) findViewById(R.id.streamToolbar);
         setSupportActionBar(streamToolbar);
 
-        // Must instantiate in oncreate, but variable is declare global!
-        helperAdapter = new FlowArrayAdapter(this, flowsInStream);
-
         // Attach the adapter to a ListView
-        lv = (ListView) findViewById(R.id.streamFeed);
-        lv.setAdapter(helperAdapter);
-
-        setItemOnClicks();
+        listView = (ListView) findViewById(R.id.streamFeed);
 
     }
 
     private void setItemOnClicks() {
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Flow selectedFlow = (Flow) lv.getItemAtPosition(position);
+                Flow selectedFlow = (Flow) listView.getItemAtPosition(position);
 
                     // Below is only for developer sake of confirmation -- Non-crucial code
-                Log.d(TAG, "Testing Shared Preferences from onClick....");
-                SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
 
-                Gson gson = new Gson();
-                String json = mPrefs.getString(selectedFlow.getGsonKey(),"");
-                Flow f = gson.fromJson(json, Flow.class);
-
-                Log.d(TAG, "Selected Item is: " + selectedFlow.getGsonKey() + "\n " + json);
+                Log.d(TAG, "Selected Item is: " + selectedFlow.getName());
 
                 Intent i = new Intent(TheStream.this, SandBoxMain.class);
 
@@ -101,14 +95,21 @@ public class TheStream extends AppCompatActivity {
         and passes a MenuItem object to indicate which item was clicked */
 
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
+            case R.id.action_delete_flow:
+                deleteFlows();
                 return true;
 
             case R.id.action_newFlow:
-                    flowDialog();
-
+                createNewFlow();
                 return true;
+
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return false;
+
+
+
+
 
             default:
                 // If we got here, the user's action was not recognized.
@@ -119,10 +120,86 @@ public class TheStream extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateList();
+        setItemOnClicks();
+    }
+
+    private void populateList() {
+
+        try {
+            Log.d(TAG, "Retrieving flowManager data...");
+            SharedPreferences mPrefs = getPreferences(MODE_PRIVATE);
+            SharedPreferences.Editor prefsEditor = mPrefs.edit();
+            // Get ArrayListBack
+            Gson gson = new Gson();
+
+            // Convert JSON Object stored as STRING in Shared Prefs, back to
+            // Useable ArrayList Collection
+            String json = mPrefs.getString("flowManager", null);
+            Type type = new TypeToken<ArrayList<Flow>>() {}.getType();
+            flowManager = gson.fromJson(json, type);
+
+            Log.d(TAG, "FLAG");
+        } catch (Exception e) {
+            Log.e(TAG, "Exception throw in populating list: " + e.getMessage());
+        }
+
+        if (flowManager==null) {
+            flowManager = new ArrayList<Flow>();
+        }
+
+        /// Need an adapter.add() statement somewhere
+        helperAdapter = new FlowArrayAdapter(this, flowManager);
+        listView.setAdapter(helperAdapter);
+
+    }
 
     /** Creation of new Flow Object and Dialogs */
-    public void flowDialog() {
+    public void createNewFlow() {
         //Creates dialog box asking for name for the new flow
+
+        //Create edit text field for name entry
+        final EditText nameInputET = new EditText(TheStream.this);
+        AlertDialog.Builder customDialog = customizeDialog(nameInputET);
+
+        customDialog.setPositiveButton("Lets Roll",
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (nameInputET.getText().toString().equals("")) {
+                            // Need to optimize this so that the dialog does NOT disappear and just display toast
+                            Toast.makeText(TheStream.this, "Every Flow deserves a good name :(", Toast.LENGTH_LONG).show();
+
+                            createNewFlow(); //Recall the dialog
+                        } else {
+                            // Sets name of flow object
+                            newFlow = new Flow(nameInputET.getText().toString());
+                            newFlow.setTotalTime(0.0);
+
+                            updateFlowManager(newFlow);
+                            //Just a fancy 1 liner really means:
+                              // instantiateFlow(String input) => returns newFlow, addToStream(newFlow)
+                        }
+                    }
+                });
+
+        customDialog.setNegativeButton("Nevermind",
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+
+        //Display Alert
+        customDialog.show();
+
+    }
+
+    private AlertDialog.Builder customizeDialog(EditText nameInputET) {
         AlertDialog.Builder newFlowDialog = new AlertDialog.Builder(TheStream.this);
 
         //Sets up Layout Parameters
@@ -134,12 +211,10 @@ public class TheStream extends AppCompatActivity {
         params.setMarginStart(42);
         params.setMarginEnd(50);
 
-        //Create edit text field for name entry
-        final EditText nameInputET = new EditText(TheStream.this);
 
         //Sets up length and 1 line filters
         nameInputET.setInputType(InputType.TYPE_CLASS_TEXT);
-            //Only allows A-Z, a-z, 0-9, and special characters (%$!@)
+        //Only allows A-Z, a-z, 0-9, and special characters (%$!@)
 
         nameInputET.setFilters(new InputFilter[] {
                 new InputFilter.LengthFilter(20)
@@ -152,73 +227,36 @@ public class TheStream extends AppCompatActivity {
 
         newFlowDialog.setView(layout);
 
+        return newFlowDialog;
+    }
 
-        newFlowDialog.setPositiveButton("Lets Roll",
-                new DialogInterface.OnClickListener() {
 
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        if (nameInputET.getText().toString().equals("")) {
-                            // Need to optimize this so that the dialog does NOT disappear and just display toast
-                            Toast.makeText(TheStream.this, "Every Flow deserves a good name :(", Toast.LENGTH_LONG).show();
+    private void updateFlowManager(Flow flow) {
+        flowManager.add(flow);
+        flow.setFlowManagerIndex(flowManager.size());
 
-                            flowDialog(); //Recall the dialog
-                        } else {
-                            // Sets name of flow object
-                            addToStream(instantiateFlow(nameInputET.getText().toString()));
-                            //Just a fancy 1 liner really means:
-                              // instantiateFlow(String input) => returns newFlow, addToStream(newFlow)
-                        }
-                    }
-                });
-
-        newFlowDialog.setNegativeButton("Nevermind",
-                new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                });
-
-        //Display Alert
-        newFlowDialog.show();
+        helperAdapter.notifyDataSetChanged();
+        saveFlowManager();
+            // Async?
 
     }
 
-    private Flow instantiateFlow(String userInput) {
-        //Instantiates the newFlow object.
-        newFlow = new Flow(userInput);
-        newFlow.setTotalTime(0.0);
-        return newFlow;
-    }
-
-    private void addToStream(Flow flow) {
-        flowsInStream.add(flow);
-        String gsonId = "LV-Flow-" + flowsInStream.size();
-        flow.setGsonKey(gsonId);
-        saveFlow(flow, gsonId);
+    private void deleteFlows() {
+        flowManager.clear();
+        saveFlowManager();
+            // Saves blank flowManager
         helperAdapter.notifyDataSetChanged();
     }
 
-        private void saveFlow(Flow flow, String id) {
-            /* Need to create ASYNC Task for this */
-            SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
-            try {
-                SharedPreferences.Editor prefsEditor = mPrefs.edit();
-                Gson gson = new Gson();
-                String json = gson.toJson(flow);
-                prefsEditor.putString(id, json);
-                prefsEditor.commit();
-                Log.d(TAG, "Saved " + flow.getGsonKey() + " to Shared Preferences");
+    public void saveFlowManager() {
+        SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
+        SharedPreferences.Editor prefsEditor = mPrefs.edit();
+        Gson gson = new Gson();
 
-
-                String j = mPrefs.getString(flow.getGsonKey(), "");
-                Flow f = gson.fromJson(j, Flow.class);
-                Log.d(TAG, "Here is the JSON Object: " + j);
-
-            } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
-            }
-        }
+        String json = gson.toJson(flowManager);
+        prefsEditor.putString("flowManager", json);
+        prefsEditor.commit();
+    }
 
 
 }
