@@ -50,18 +50,26 @@ public class SandBoxMain extends AppCompatActivity {
         updateSandboxCount();
     }
 
+    /** Launches a new Element Designer Activity waiting to receive a new
+     *  FlowElement Object back as a Parcel
+     *
+     * @param view the FAB clicked to launch the function
+     */
     public void createElement(View view) {
-        // Instantiate a Blank Flow Element
-        // Add it in the Flow's LinkedList
-        // Get an id (position) and  pass to element designer.
         Intent in = new Intent(SandBoxMain.this, ElementDesigner.class);
         startActivityForResult(in, 1);
             //Starts new activity waiting for the return data
     }
 
+    /** Receives Parcel Object from previous Element Designer Activity
+     *  and creates a reference object to point to the Parcel
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data the Parcelled object stored as intent data
+     */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // No need for request codes just yet
 
         // This is currently just a pointer to element created in the designer
         // Consider ValueOf in the future?
@@ -74,6 +82,11 @@ public class SandBoxMain extends AppCompatActivity {
 
     }
 
+    /** Adds the newElement passed via parameter to the workingFlow's ArrayList
+     *  while setting its FlowIndex and UpdatingSandBox Count
+     *
+     * @param newElement the FlowElement being saved
+     */
     private void saveElementToFlow(FlowElement newElement) {
         Log.d(TAG, "Adding new element to: " + workingFlow.getName() + " ...");
         workingFlow.addElement(newElement);
@@ -81,7 +94,9 @@ public class SandBoxMain extends AppCompatActivity {
         updateSandboxCount();
     }
 
-
+    /**
+     * Handles the onBackPressed event by sending user to TheStream
+     */
     @Override
     public void onBackPressed() {
         Intent i= new Intent(SandBoxMain.this, TheStream.class);
@@ -89,6 +104,9 @@ public class SandBoxMain extends AppCompatActivity {
         finish();
     }
 
+    /**
+     *  Updates the Element Count for the current flow being worked on
+     */
     private void updateSandboxCount(){
         int count = workingFlow.getElementCount();
         tv.setText(String.valueOf(count));

@@ -74,10 +74,6 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
         // Return the completed view to render on screen
         return convertView;
 
-        /* In case you want to set custom images in future:
-        holder.flowIcon.setImageResource(R.drawable.new_flow);
-        holder.flowElementIcon.setImageResource(R.drawable.empty_task);
-         */
     }
 
 

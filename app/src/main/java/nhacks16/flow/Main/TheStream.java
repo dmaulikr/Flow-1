@@ -26,18 +26,25 @@ import java.util.Iterator;
 
 import nhacks16.flow.R;
 
+/** The Stream is a Hub Screen which provides a List of the User's current Flows along with some minor details.
+ *  The class allows for the creation and saving of new Flows, destruction of current ones and launching of the
+ *  Flows into a new Activity
+ *
+ * @author Robert
+ */
 public class TheStream extends AppCompatActivity {
-    // The Stream is basically a feed where a user can select the specific Flow that they wish to work on, view or create
-
-
-    // To Convert Back to proper list
 
     private static final String TAG = TheStream.class.getName();
     private Toolbar streamToolbar;
-    private Flow newFlow; //Blank flow object declared.
+    private Flow newFlow;
+        //Blank flow object declared.
 
     private static ArrayList<Flow> lvContent;
+        // Manages the content present within the ListView
+
     private FlowManagerUtil manager;
+        // Manages the saving of data and Flow objects to internal storage
+
     private FlowArrayAdapter helperAdapter;
     private ListView listView;
 
@@ -58,6 +65,10 @@ public class TheStream extends AppCompatActivity {
         manager = new FlowManagerUtil();
     }
 
+    /** Sets up each of the individual list view items to be clicked and launch an
+     *  new activity based on selected Flow Object.
+     *
+     */
     private void setItemOnClicks() {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -65,15 +76,14 @@ public class TheStream extends AppCompatActivity {
 
                 Flow selectedFlow = (Flow) listView.getItemAtPosition(position);
 
-                    // Below is only for developer sake of confirmation -- Non-crucial code
-
                 Log.d(TAG, "Selected Item is: " + selectedFlow.getName());
 
                 Intent i = new Intent(TheStream.this, SandBoxMain.class);
 
-                i.putExtra("selectedFlow", selectedFlow); // Parcel Object
+                i.putExtra("selectedFlow", selectedFlow);
+                    // Parcels the Flow Object to be passed to new activity
 
-                startActivity(i); //add new Flow
+                startActivity(i);
 
                 finish();
             }
@@ -97,7 +107,7 @@ public class TheStream extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_delete_flow:
-                deleteFlows();
+                clearAllFlows();
                 return true;
 
             case R.id.action_newFlow:
@@ -117,6 +127,10 @@ public class TheStream extends AppCompatActivity {
         }
     }
 
+    /** Recreates the original Stream ListView by reading internal storage data
+     *  and repopulating the ListView
+     *
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -124,6 +138,10 @@ public class TheStream extends AppCompatActivity {
         setItemOnClicks();
     }
 
+    /** Populates the ListView by asking for internal storage to be read,
+     *  determining whether the response data is valid, and rebuilding the
+     *  ListView if possible.
+     */
     private void populateList() {
 
         try {
@@ -131,19 +149,18 @@ public class TheStream extends AppCompatActivity {
             Gson gson = new Gson();
 
             String responseData = manager.loadFlowDataInternal(this);
-                // In JSON format
+                // Reads Internal Storage JSON file, receiving return in String Format
 
             if (!responseData.equals("")){
 
-                /* I think its throwing null pointer because the file hasnt had time to be saved yet?
-                    Maybe add an if test to the FlowManagerUtil to see if there is a flows.json file
-                    If not, then make one
-                 */
                 rebuildListView(this);
 
-                iterateFlowArray();
+                iterateLVContent();
 
             } else {
+                /* If no data is avaliable from file, a new Array Adapter will be setup and
+                   feed a blank ListView.
+                 */
                 Log.d(TAG, "~ No data available.");
 
                 Log.d(TAG, "> Creating New Adapater... \n");
@@ -156,26 +173,38 @@ public class TheStream extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, "Exception throw in populating list: " + e.getMessage());
         }
-                    // Check to see if File was blank.
-
     }
 
+    /** Attempts to rebuild the ListView Content by rebuilding the ListView ArrayList
+     *  from file and recreating the Array Adapter.
+     *
+     * @param context
+     */
     private void rebuildListView(Context context) {
-        Log.d(TAG, "~ Rebuilding List View....\n");
+        try {
+            Log.d(TAG, "~ Rebuilding List View....\n");
 
-        Log.d(TAG, "> Rebuilding Flow ArrayList... \n");
-        lvContent = manager.rebuildFlowArray(context);
+            Log.d(TAG, "> Rebuilding Flow ArrayList... \n");
+            lvContent = manager.rebuildFlowArray(context);
 
-        Log.d(TAG, ">> Recreating Adapater... \n");
-        helperAdapter = new FlowArrayAdapter(this, lvContent);
+            Log.d(TAG, ">> Recreating Adapater... \n");
+            helperAdapter = new FlowArrayAdapter(this, lvContent);
 
-        Log.d(TAG, ">>> Setting Adapter... \n");
-        listView.setAdapter(helperAdapter);
+            Log.d(TAG, ">>> Setting Adapter... \n");
+            listView.setAdapter(helperAdapter);
 
-        Log.d(TAG, ">>>> SUCCESS!... \n");
+            Log.d(TAG, ">>>> SUCCESS!... \n");
+        } catch (Exception e) {
+            Log.e(TAG, "## Failed to Rebuild ListView " + e.getMessage());
+        }
+
     }
 
-    private void iterateFlowArray() {
+    /** Iterates through the ListView Content displaying
+     *  attributes of all the Flow Objects currently being
+     *  contained.
+     */
+    private void iterateLVContent() {
 
         Iterator<Flow> iter = lvContent.iterator();
 
@@ -188,14 +217,16 @@ public class TheStream extends AppCompatActivity {
                     + "\n>> Time:  " + temp.getTime()
                     + "\n>> Children:  " + temp.getChildElements());
         }
-
     }
 
-    /** Creation of new Flow Object and Dialogs */
+    /** Launches the process of creating a new Flow Object by
+     *  developing a Custom Dialog Box and determining valid
+     *  user input.
+     *
+     */
     public void createNewFlow() {
-        //Creates dialog box asking for name for the new flow
 
-        //Create edit text field for name entry
+            //Create edit text field for name entry
         final EditText nameInputET = new EditText(TheStream.this);
         AlertDialog.Builder customDialog = customizeDialog(nameInputET);
 
@@ -227,13 +258,6 @@ public class TheStream extends AppCompatActivity {
                 });
 
         customDialog.show();
-
-    }
-            // Saves the newly created Flow to file using the FlowManagerUtil
-    private void saveFlowToManager(ArrayList<Flow> updatedList) {
-        manager.saveFlowDataInternal(this, updatedList);
-            // Sends the updated ArrayList to the Util to
-            // save to file.
 
     }
 
@@ -269,26 +293,13 @@ public class TheStream extends AppCompatActivity {
     }
 
 
-            // Updates the UI ListView content to display the newly created Flow Object
+    /** Updates the ListViewContent with a received Flow Object, and
+     *  updates the UI to display the relevant changes.
+     *
+      * @param flow the Flow being added to the ListView Content
+     */
+// Updates the UI ListView content to display the newly created Flow Object
     private void updateLVContent(Flow flow) {
-        /* At the moment it seems as though the Array's are being appended,
-        in the File. This is no good because we want just a single ArrayList
-        containing all the relevent Flow data.
-
-        [ "ArrayList":
-            { "Flow": {
-                "name": "foo"
-                "obj": "bar" }
-            "Flow": {
-                "name": "foo2"
-                "obj": "bar2" }
-            }
-         ]
-
-         Load from file, insantiate the ArrayList!
-         */
-
-
         if (helperAdapter!=null) {
             Log.d(TAG, "Adding New Flow to ListView Content...");
             lvContent.add(flow);
@@ -298,14 +309,29 @@ public class TheStream extends AppCompatActivity {
             flow.setFlowArrayIndex(lvContent.size());
             helperAdapter.notifyDataSetChanged();
         } else {
-            Log.d(TAG, "Update to LVContent Failed: helper adapter is null" );
+            Log.d(TAG, "Update to ListViewContent Failed: helper adapter is null" );
         }
     }
 
-    private void deleteFlows() {
+    /** Requests to save the current state of the ListViewContent
+     *  to Internal Storage via the dataManager utility
+     *
+     * @param currentLVContent
+     */
+    private void saveFlowToManager(ArrayList<Flow> currentLVContent) {
+        manager.saveFlowDataInternal(this, currentLVContent);
+    }
+
+    /** Deletes All Flows visible in the ListView as well as
+     *  requests for all Flow data to be deleted from Internal Storage.
+     *
+     * @return boolean, confirmation of
+     */
+    private boolean clearAllFlows() {
         lvContent.removeAll(lvContent);
         manager.deleteFileData(this);
         helperAdapter.notifyDataSetChanged();
+        return true;
     }
 
 }

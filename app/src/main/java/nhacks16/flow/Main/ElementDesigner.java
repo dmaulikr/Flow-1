@@ -50,6 +50,11 @@ public class ElementDesigner extends AppCompatActivity {
         });
     }
 
+    /** Confirms completion of a Flow Element by validating input,
+     *  instantiating a new FlowElement object, and passing the
+     *  data back to the previous activity.
+     * @param view
+     */
     public void doneElement(View view) {
         EditText nameInput = (EditText)findViewById(R.id.nameInput);
         EditText timeInput = (EditText)findViewById(R.id.timeInput);

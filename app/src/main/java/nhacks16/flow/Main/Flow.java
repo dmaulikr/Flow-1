@@ -24,7 +24,7 @@ public class Flow implements Parcelable{
 
 
     private List<FlowElement> childFlowElements = new LinkedList<FlowElement>();
-        // Will keep tracks of the current flowElements that belong to the Flow object
+        // Keeps track of the current FlowElements which belong to this Flow
 
     private double totalTime;
     private int flowManagerIndex;
@@ -88,32 +88,53 @@ public class Flow implements Parcelable{
     public int getFlowArrayIndex() {
         return flowManagerIndex;
     }
+
     /** Sets the index which this Flow belongs to in the flowManager
      *  ArrayList<Flow>
      * @param  flowManagerIndex , the index of the Flow in flowManager
      */
-
     public void setFlowArrayIndex(int flowManagerIndex) {
         this.flowManagerIndex = flowManagerIndex;
     }
 
     /* Action Methods */
 
-    // Overloaded findElement Methods
-    public int findElement(FlowElement element) {
+    /** Searches for the parameter specified FlowElement and returns the Element's
+     *  index in the Flow's children ArrayList if found
+     *
+     * @param element the element being searched for in the Flow
+     * @return index the index position of the element in the Flow
+     */
+    public int searchElement(FlowElement element) {
         Log.d(TAG, "The element was found at index: " + childFlowElements.indexOf(element) + " in the Flow's childFlowElements LinkedList");
         return childFlowElements.indexOf(element);
     }
 
+    /** Retrieves the FlowElement at the specified index position within
+     *  the Flow's children ArrayList
+     *
+     * @param flowIndex the index position which the FlowElement is at
+     * @return FlowElement the element which has been found
+     */
     public FlowElement findElement(int flowIndex) {
       return childFlowElements.get(flowIndex);
     }
 
+    /** Adds the FlowElement received via Parameters to the Flow's
+     *  children ArrayList
+     *
+     * @param newElement the Element being added to the Flow's ArrayList
+     */
     public void addElement(FlowElement newElement) {
             childFlowElements.add(newElement);
         // Will receive argument from the elementDesigner for the new flowElement object
     }
 
+    /** Overriding of original toString() because its natural
+     *  implementation is no bueno!
+     *
+     * @return Flow
+     */
     @Override
     public String toString() {
         return "Flow{" +

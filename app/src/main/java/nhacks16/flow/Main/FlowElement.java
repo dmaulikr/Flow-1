@@ -108,14 +108,11 @@ public class FlowElement implements Parcelable{
         this.flowIndex = flowIndex;
     }
 
-    //## Action Methods
     public void draw(Canvas canvas) {
-
-        //Draw
     }
 
 
-    // Parcel Implementation to Objects between Activities
+    /* Parcel Implementation for Object Passing Between Activities! */
     public FlowElement(Parcel in) {
         String[] data = new String[3];
         // To include: Id, Estimated Time, Task Name, E

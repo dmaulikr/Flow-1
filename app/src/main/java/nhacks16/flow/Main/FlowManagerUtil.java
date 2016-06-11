@@ -26,24 +26,37 @@ public class FlowManagerUtil {
     private static final String fileName = "flows.json";
              // File name that data will be saved to.
 
-    private static ArrayList<Flow> JSONArrayListFlowWrapper;
-        // ArrayList is an outer object class to wrap the
-        // Flow objects in the JSON
+    private static ArrayList<Flow> JSONFlowWrapper;
+        /* Acts as an outer encasing List Object which wraps all the
+           Flow objects inside. This allows the whole ArrayList to be
+           instantiated rather than individual objects :)
+         */
 
+    /** Basic Constructor
+     *
+      */
     public FlowManagerUtil(){
-        this.JSONArrayListFlowWrapper = new ArrayList<Flow>();
-    }
+        this.JSONFlowWrapper = new ArrayList<Flow>();
+    } // End of Constructor
 
+    /** Updates the JSONFlowWrapper with the updated list containing the
+     *  most recently saved flow objects. Converts this Wrapper object containing
+     *  the list of Flows to a JSON string and saves to internal storage by overwritting
+     *  flows.json
+     *
+     * @param context the context in which the method is being called
+     * @param updatedList the most recent ArrayList containing the past Flows and recent Flow to be saved
+     */
     public void saveFlowDataInternal(Context context, ArrayList<Flow> updatedList) {
 
-        JSONArrayListFlowWrapper =null;
-        JSONArrayListFlowWrapper = updatedList;
+        JSONFlowWrapper =null;
+        JSONFlowWrapper = updatedList;
             // Creates reference to the updated LV Content ArrayList
            // Then is used as an outer JSON Object Wrapper
 
         Gson gson = new Gson();
 
-        String jsonData = gson.toJson(JSONArrayListFlowWrapper);
+        String jsonData = gson.toJson(JSONFlowWrapper);
             // Converts the inputted ArrayList Objection (Containing new Flow)
             // to JSON format in String form
 
@@ -61,6 +74,12 @@ public class FlowManagerUtil {
         }
     }
 
+    /** Reads the flows.json file and converts the JSON to a String object
+     *  which is passed as a return value.
+     *
+     * @param context the context in which the method is being called
+     * @return jsonData the json String data read from file
+     */
     public static String loadFlowDataInternal(Context context) {
         try {
             FileInputStream fis = context.openFileInput(fileName);
@@ -81,6 +100,11 @@ public class FlowManagerUtil {
         }
     }
 
+    /** Deletes all the current Flows in the flows.json file by overwriting with a blank string
+     *
+     * @param context the context which the method is being called
+     * @return boolean determines whether method was successful
+     */
     public static boolean deleteFileData(Context context) {
         try {
             Log.d(TAG, "Delete all file data....");
@@ -88,7 +112,7 @@ public class FlowManagerUtil {
             PrintWriter writer = new PrintWriter(os);
             writer.print("");
             writer.close();
-            JSONArrayListFlowWrapper =null;
+            JSONFlowWrapper =null;
             return true;
         } catch (Exception e) {
             Log.e(TAG, "Could not delete data.. \n ~ "+e.getMessage());
@@ -96,6 +120,13 @@ public class FlowManagerUtil {
         }
     }
 
+    /** Using the json String data obtained from the loadFlowDataInternal() method,
+     *  instantiates a new ArrayList containing all the Flows via GSON to pass back
+     *  to the context in which it is being called.
+     *
+     * @param context the context in which the method is being called
+     * @return flowsFromFile returns the ArrayList which contains the flows saved in file
+     */
     public static ArrayList<Flow> rebuildFlowArray(Context context) {
         Type FLOW_TYPE = new TypeToken<ArrayList<Flow>>() {}.getType();
         try {
@@ -109,11 +140,11 @@ public class FlowManagerUtil {
                 //GSON throws that particular error when there's extra characters after the end of the object
                 // that aren't whitespace, and it defines whitespace very narrowly
 
-            ArrayList<Flow> flows = gson.fromJson(reader, FLOW_TYPE);
+            ArrayList<Flow> flowsFromFile = gson.fromJson(reader, FLOW_TYPE);
                 //Expected BEGIN_OBJECT but was BEGIN_ARRAY
 
-            Log.d(TAG, "SUCCESS! \n~ " + flows);
-            return flows;
+            Log.d(TAG, "SUCCESS! \n~ " + flowsFromFile);
+            return flowsFromFile;
                 // Returns flows to use for lvContent
         } catch (Exception e) {
             Log.e(TAG, "Could not regenerate Flows... \n" +e.getMessage());
