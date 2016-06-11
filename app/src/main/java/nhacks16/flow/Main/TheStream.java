@@ -1,8 +1,8 @@
 package nhacks16.flow.Main;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,10 +20,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import nhacks16.flow.R;
 
@@ -37,8 +36,8 @@ public class TheStream extends AppCompatActivity {
     private Toolbar streamToolbar;
     private Flow newFlow; //Blank flow object declared.
 
-    private static ArrayList<Flow> flowManager;
-
+    private static ArrayList<Flow> lvContent;
+    private FlowManagerUtil manager;
     private FlowArrayAdapter helperAdapter;
     private ListView listView;
 
@@ -55,6 +54,8 @@ public class TheStream extends AppCompatActivity {
         // Attach the adapter to a ListView
         listView = (ListView) findViewById(R.id.streamFeed);
 
+        lvContent = new ArrayList<Flow>();
+        manager = new FlowManagerUtil();
     }
 
     private void setItemOnClicks() {
@@ -107,10 +108,6 @@ public class TheStream extends AppCompatActivity {
                 // User chose the "Settings" item, show the app settings UI...
                 return false;
 
-
-
-
-
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -130,30 +127,67 @@ public class TheStream extends AppCompatActivity {
     private void populateList() {
 
         try {
-            Log.d(TAG, "Retrieving flowManager data...");
-            SharedPreferences mPrefs = getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor prefsEditor = mPrefs.edit();
-            // Get ArrayListBack
+            Log.d(TAG, "Retrieving FlowManager data... ");
             Gson gson = new Gson();
 
-            // Convert JSON Object stored as STRING in Shared Prefs, back to
-            // Useable ArrayList Collection
-            String json = mPrefs.getString("flowManager", null);
-            Type type = new TypeToken<ArrayList<Flow>>() {}.getType();
-            flowManager = gson.fromJson(json, type);
+            String responseData = manager.loadFlowDataInternal(this);
+                // In JSON format
 
-            Log.d(TAG, "FLAG");
+            if (!responseData.equals("")){
+
+                /* I think its throwing null pointer because the file hasnt had time to be saved yet?
+                    Maybe add an if test to the FlowManagerUtil to see if there is a flows.json file
+                    If not, then make one
+                 */
+                rebuildListView(this);
+
+                iterateFlowArray();
+
+            } else {
+                Log.d(TAG, "~ No data available.");
+
+                Log.d(TAG, "> Creating New Adapater... \n");
+                helperAdapter = new FlowArrayAdapter(this, lvContent);
+
+                Log.d(TAG, ">> Setting New Adapter... \n");
+                listView.setAdapter(helperAdapter);
+            }
+
         } catch (Exception e) {
             Log.e(TAG, "Exception throw in populating list: " + e.getMessage());
         }
+                    // Check to see if File was blank.
 
-        if (flowManager==null) {
-            flowManager = new ArrayList<Flow>();
-        }
+    }
 
-        /// Need an adapter.add() statement somewhere
-        helperAdapter = new FlowArrayAdapter(this, flowManager);
+    private void rebuildListView(Context context) {
+        Log.d(TAG, "~ Rebuilding List View....\n");
+
+        Log.d(TAG, "> Rebuilding Flow ArrayList... \n");
+        lvContent = manager.rebuildFlowArray(context);
+
+        Log.d(TAG, ">> Recreating Adapater... \n");
+        helperAdapter = new FlowArrayAdapter(this, lvContent);
+
+        Log.d(TAG, ">>> Setting Adapter... \n");
         listView.setAdapter(helperAdapter);
+
+        Log.d(TAG, ">>>> SUCCESS!... \n");
+    }
+
+    private void iterateFlowArray() {
+
+        Iterator<Flow> iter = lvContent.iterator();
+
+        Log.d(TAG, "~ Retrieved Flow Data: ");
+        while(iter.hasNext()) {
+            Flow temp = iter.next();
+            Log.d(TAG, "\n>> Name: " + temp.getName()
+                    + "\n>> Index:  " + temp.getFlowArrayIndex()
+                    + "\n>> Element Count:  " + temp.getElementCount()
+                    + "\n>> Time:  " + temp.getTime()
+                    + "\n>> Children:  " + temp.getChildElements());
+        }
 
     }
 
@@ -175,13 +209,11 @@ public class TheStream extends AppCompatActivity {
 
                             createNewFlow(); //Recall the dialog
                         } else {
-                            // Sets name of flow object
-                            newFlow = new Flow(nameInputET.getText().toString());
-                            newFlow.setTotalTime(0.0);
+                            newFlow = new Flow(nameInputET.getText().toString(), 0.0);
 
-                            updateFlowManager(newFlow);
-                            //Just a fancy 1 liner really means:
-                              // instantiateFlow(String input) => returns newFlow, addToStream(newFlow)
+                            updateLVContent(newFlow);
+                            saveFlowToManager(lvContent);
+
                         }
                     }
                 });
@@ -194,8 +226,14 @@ public class TheStream extends AppCompatActivity {
                     }
                 });
 
-        //Display Alert
         customDialog.show();
+
+    }
+            // Saves the newly created Flow to file using the FlowManagerUtil
+    private void saveFlowToManager(ArrayList<Flow> updatedList) {
+        manager.saveFlowDataInternal(this, updatedList);
+            // Sends the updated ArrayList to the Util to
+            // save to file.
 
     }
 
@@ -231,33 +269,44 @@ public class TheStream extends AppCompatActivity {
     }
 
 
-    private void updateFlowManager(Flow flow) {
-        flowManager.add(flow);
-        flow.setFlowManagerIndex(flowManager.size());
+            // Updates the UI ListView content to display the newly created Flow Object
+    private void updateLVContent(Flow flow) {
+        /* At the moment it seems as though the Array's are being appended,
+        in the File. This is no good because we want just a single ArrayList
+        containing all the relevent Flow data.
 
-        helperAdapter.notifyDataSetChanged();
-        saveFlowManager();
-            // Async?
+        [ "ArrayList":
+            { "Flow": {
+                "name": "foo"
+                "obj": "bar" }
+            "Flow": {
+                "name": "foo2"
+                "obj": "bar2" }
+            }
+         ]
 
+         Load from file, insantiate the ArrayList!
+         */
+
+
+        if (helperAdapter!=null) {
+            Log.d(TAG, "Adding New Flow to ListView Content...");
+            lvContent.add(flow);
+
+            Log.d(TAG, "Current ListViewContent Size is: " + lvContent.size());
+
+            flow.setFlowArrayIndex(lvContent.size());
+            helperAdapter.notifyDataSetChanged();
+        } else {
+            Log.d(TAG, "Update to LVContent Failed: helper adapter is null" );
+        }
     }
 
     private void deleteFlows() {
-        flowManager.clear();
-        saveFlowManager();
-            // Saves blank flowManager
+        lvContent.removeAll(lvContent);
+        manager.deleteFileData(this);
         helperAdapter.notifyDataSetChanged();
     }
-
-    public void saveFlowManager() {
-        SharedPreferences  mPrefs = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor prefsEditor = mPrefs.edit();
-        Gson gson = new Gson();
-
-        String json = gson.toJson(flowManager);
-        prefsEditor.putString("flowManager", json);
-        prefsEditor.commit();
-    }
-
 
 }
 

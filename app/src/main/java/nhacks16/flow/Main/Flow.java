@@ -17,18 +17,17 @@ import java.util.List;
 public class Flow implements Parcelable{
     private static final String TAG = Flow.class.getName();
     private String name;
+
+    public List<FlowElement> getChildElements() {
+        return childFlowElements;
+    }
+
+
     private List<FlowElement> childFlowElements = new LinkedList<FlowElement>();
         // Will keep tracks of the current flowElements that belong to the Flow object
 
     private double totalTime;
     private int flowManagerIndex;
-
-    /** Basic Flow Object constructor.
-     * @param name name of the flow object being instantiated
-     */
-    public Flow(String name) {
-        this.name = name;
-    } // End of constructor
 
     /** Overloaded Flow Object constructor.
      * @param name name of the flow object being instantiated
@@ -86,7 +85,7 @@ public class Flow implements Parcelable{
      *  ArrayList<Flow>
      * @return flowManagerIndex , the index of the Flow in flowManager
      */
-    public int getFlowManagerIndex() {
+    public int getFlowArrayIndex() {
         return flowManagerIndex;
     }
     /** Sets the index which this Flow belongs to in the flowManager
@@ -94,7 +93,7 @@ public class Flow implements Parcelable{
      * @param  flowManagerIndex , the index of the Flow in flowManager
      */
 
-    public void setFlowManagerIndex(int flowManagerIndex) {
+    public void setFlowArrayIndex(int flowManagerIndex) {
         this.flowManagerIndex = flowManagerIndex;
     }
 
@@ -115,6 +114,15 @@ public class Flow implements Parcelable{
         // Will receive argument from the elementDesigner for the new flowElement object
     }
 
+    @Override
+    public String toString() {
+        return "Flow{" +
+                "childFlowElements=" + childFlowElements +
+                ", name='" + name + '\'' +
+                ", totalTime=" + totalTime +
+                ", flowManagerIndex=" + flowManagerIndex +
+                '}';
+    }
 
     // Parcel Implementation to pass data from the Stream to the Sandbox about
     // the current flow object.
@@ -158,7 +166,6 @@ public class Flow implements Parcelable{
                     return new Flow[size];
                 }
             };
-
 
 
     /* How to use:

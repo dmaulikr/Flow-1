@@ -25,7 +25,7 @@ public class SandBoxMain extends AppCompatActivity {
     private static final String TAG = SandBoxMain.class.getName();
     private Flow workingFlow;
         // Flow currently being worked on
-    TextView tv;
+    private TextView tv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +69,8 @@ public class SandBoxMain extends AppCompatActivity {
         Log.d(TAG, "Received Parcel Object: " + "'" + newElement.getElementName() + "'");
 
         saveElementToFlow(newElement);
+
+        newElement = null;
 
     }
 
