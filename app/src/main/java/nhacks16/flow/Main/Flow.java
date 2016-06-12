@@ -150,12 +150,24 @@ public class Flow implements Parcelable{
     // Still need to make method to calculate the total time for the flow based on elements
     // The order of READING and WRITING is important (Read and write in same order)
     public Flow(Parcel in) {
-        String[] data = new String[2];
-        // To include: name, elementCount and totalTime;
+        String[] data = new String[3];
+        // data[0] = name
+        // data[1] = totalTime
+        // data[2] = flowManagerIndex
 
         in.readStringArray(data);
         this.name = data[0];
         this.totalTime = Double.parseDouble(data[1]);
+        this.flowManagerIndex = Integer.parseInt(data[2]);
+        this.childFlowElements = in.readArrayList(getClass().getClassLoader());
+
+          /* Similar implementation:
+              this.name = parcel.readString();
+              this.totalTime= parcel.readString();
+              this.flowManagerIndex = parcel.readString();
+              this.childFlowElements = parcel.readArrayList(null);
+         */
+
     }
 
     @Override
@@ -165,12 +177,21 @@ public class Flow implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel destination, int flags) {
+        /* Similar implementation:
+             dest.writeString(this.name);
+            dest.writeString(this.totalTime);
+            dest.writeString(this.flowManagerIndex);
+            dest.writeList(childFlowElements);
+         */
         destination.writeStringArray(
                 new String[] {
                         this.name,
-                        String.valueOf(this.totalTime)
+                        String.valueOf(this.totalTime),
+                        String.valueOf(this.flowManagerIndex)
                 }
         );
+        destination.writeList(this.childFlowElements);
+            // Writes the childFlowElements to the parcel
     }
 
     public static final Parcelable.Creator<Flow> CREATOR =

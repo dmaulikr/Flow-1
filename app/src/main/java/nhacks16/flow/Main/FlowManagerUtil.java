@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -25,8 +26,9 @@ public class FlowManagerUtil {
     private static final String TAG = FlowManagerUtil.class.getName();
     private static final String fileName = "flows.json";
              // File name that data will be saved to.
+    private static File file = new File(fileName);
 
-    private static ArrayList<Flow> JSONFlowWrapper;
+    private static ArrayList<Flow> JSONFlowWrapper = new ArrayList<Flow>();
         /* Acts as an outer encasing List Object which wraps all the
            Flow objects inside. This allows the whole ArrayList to be
            instantiated rather than individual objects :)
@@ -36,7 +38,6 @@ public class FlowManagerUtil {
      *
       */
     public FlowManagerUtil(){
-        this.JSONFlowWrapper = new ArrayList<Flow>();
     } // End of Constructor
 
     /** Updates the JSONFlowWrapper with the updated list containing the
@@ -47,7 +48,9 @@ public class FlowManagerUtil {
      * @param context the context in which the method is being called
      * @param updatedList the most recent ArrayList containing the past Flows and recent Flow to be saved
      */
-    public void saveFlowDataInternal(Context context, ArrayList<Flow> updatedList) {
+    public static void saveFlowDataInternal(Context context, ArrayList<Flow> updatedList) {
+            // Save an Array inside an ArrayList to string:
+
 
         JSONFlowWrapper =null;
         JSONFlowWrapper = updatedList;
@@ -65,6 +68,7 @@ public class FlowManagerUtil {
         try {
             Log.d(TAG, "Writing Data to file....");
             outputStream= context.openFileOutput(fileName, Context.MODE_PRIVATE);
+                    // Overwrites the data present in the File, MODE_PRIVATE
             outputStream.write(jsonData.getBytes());
             outputStream.close();
             Log.d(TAG, "SUCCESS! \n ~ " + loadFlowDataInternal(context));
@@ -96,7 +100,7 @@ public class FlowManagerUtil {
             return json;
         } catch (IOException e) {
             Log.e("TAG", "Error while reading: " + fileName + "\n" + e.getLocalizedMessage());
-            return null;
+            return "";
         }
     }
 
@@ -128,7 +132,8 @@ public class FlowManagerUtil {
      * @return flowsFromFile returns the ArrayList which contains the flows saved in file
      */
     public static ArrayList<Flow> rebuildFlowArray(Context context) {
-        Type FLOW_TYPE = new TypeToken<ArrayList<Flow>>() {}.getType();
+        Type FLOW_TYPE = new TypeToken<ArrayList<Flow>>() {
+        }.getType();
         try {
             Log.d(TAG, "Attempting to regenerate Flows...");
             Gson gson = new Gson();
@@ -137,19 +142,39 @@ public class FlowManagerUtil {
 
             JsonReader reader = new JsonReader(new StringReader(json));
             reader.setLenient(true);
-                //GSON throws that particular error when there's extra characters after the end of the object
-                // that aren't whitespace, and it defines whitespace very narrowly
+            //GSON throws that particular error when there's extra characters after the end of the object
+            // that aren't whitespace, and it defines whitespace very narrowly
 
             ArrayList<Flow> flowsFromFile = gson.fromJson(reader, FLOW_TYPE);
-                //Expected BEGIN_OBJECT but was BEGIN_ARRAY
+            //Expected BEGIN_OBJECT but was BEGIN_ARRAY
 
             Log.d(TAG, "SUCCESS! \n~ " + flowsFromFile);
             return flowsFromFile;
-                // Returns flows to use for lvContent
+            // Returns flows to use for lvContent
         } catch (Exception e) {
-            Log.e(TAG, "Could not regenerate Flows... \n" +e.getMessage());
+            Log.e(TAG, "Could not regenerate Flows... \n" + e.getMessage());
             return null;
         }
 
+    }
+
+    /** Receives the index value of the Flow to be updated in the
+     *  master wrapper object. Overwrites this object in the FlowWrapper
+     *  and saves the FlowWrapper as the object... acting as the "updatedList"
+     *
+     *
+     * @param indexToUpdate index value of the Flow being overwrote
+     * @param updatedFlow the Flow object that has been updated with New Elements
+     * @param ctx context being called from
+     */
+    public static void overwriteFlow(int indexToUpdate, Flow updatedFlow, Context ctx) {
+        try{
+            Log.d(TAG, "Overwriting Flow...");
+            JSONFlowWrapper.set(indexToUpdate, updatedFlow);
+        } catch (Exception e) {
+            Log.e(TAG, "Error in overwriting Flow: " + e.getMessage());
+        }
+
+        saveFlowDataInternal(ctx, JSONFlowWrapper);
     }
 }

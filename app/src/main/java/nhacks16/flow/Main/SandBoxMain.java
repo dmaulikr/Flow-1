@@ -1,15 +1,12 @@
 package nhacks16.flow.Main;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
-import com.google.gson.Gson;
 
 import nhacks16.flow.R;
 
@@ -26,6 +23,7 @@ public class SandBoxMain extends AppCompatActivity {
     private Flow workingFlow;
         // Flow currently being worked on
     private TextView tv;
+    private FlowManagerUtil util;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +45,8 @@ public class SandBoxMain extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateSandboxCount();
+        util = new FlowManagerUtil();
+        rebuildSandbox();
     }
 
     /** Launches a new Element Designer Activity waiting to receive a new
@@ -89,9 +88,16 @@ public class SandBoxMain extends AppCompatActivity {
      */
     private void saveElementToFlow(FlowElement newElement) {
         Log.d(TAG, "Adding new element to: " + workingFlow.getName() + " ...");
-        workingFlow.addElement(newElement);
         newElement.setFlowIndex(workingFlow.getElementCount());
-        updateSandboxCount();
+        workingFlow.addElement(newElement);
+
+
+        Log.d(TAG, "Updating Sandbox...");
+        rebuildSandbox();
+
+        util.overwriteFlow(workingFlow.getFlowArrayIndex(),workingFlow, this);
+            // Saves the updated JSONFlowWrapper ArrayList as
+            // the updated list (acts as the updated list
     }
 
     /**
@@ -107,7 +113,7 @@ public class SandBoxMain extends AppCompatActivity {
     /**
      *  Updates the Element Count for the current flow being worked on
      */
-    private void updateSandboxCount(){
+    private void rebuildSandbox(){
         int count = workingFlow.getElementCount();
         tv.setText(String.valueOf(count));
     }

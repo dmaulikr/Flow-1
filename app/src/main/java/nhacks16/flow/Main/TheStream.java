@@ -74,6 +74,9 @@ public class TheStream extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                    /* Passes Flow but passes the memory address of the childFlowElements
+                     instead of the actual object containing the
+                      */
                 Flow selectedFlow = (Flow) listView.getItemAtPosition(position);
 
                 Log.d(TAG, "Selected Item is: " + selectedFlow.getName());
@@ -81,7 +84,7 @@ public class TheStream extends AppCompatActivity {
                 Intent i = new Intent(TheStream.this, SandBoxMain.class);
 
                 i.putExtra("selectedFlow", selectedFlow);
-                    // Parcels the Flow Object to be passed to new activity
+                    // Parcels the Flow Object to@ be passed to new activity
 
                 startActivity(i);
 
@@ -121,8 +124,7 @@ public class TheStream extends AppCompatActivity {
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
-                return false;
-                //return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
 
         }
     }
@@ -215,7 +217,7 @@ public class TheStream extends AppCompatActivity {
                     + "\n>> Index:  " + temp.getFlowArrayIndex()
                     + "\n>> Element Count:  " + temp.getElementCount()
                     + "\n>> Time:  " + temp.getTime()
-                    + "\n>> Children:  " + temp.getChildElements());
+                    + "\n>> Children:  " + temp.getChildElements().toString());
         }
     }
 
@@ -302,11 +304,11 @@ public class TheStream extends AppCompatActivity {
     private void updateLVContent(Flow flow) {
         if (helperAdapter!=null) {
             Log.d(TAG, "Adding New Flow to ListView Content...");
+            flow.setFlowArrayIndex(lvContent.size());
             lvContent.add(flow);
 
             Log.d(TAG, "Current ListViewContent Size is: " + lvContent.size());
 
-            flow.setFlowArrayIndex(lvContent.size());
             helperAdapter.notifyDataSetChanged();
         } else {
             Log.d(TAG, "Update to ListViewContent Failed: helper adapter is null" );
