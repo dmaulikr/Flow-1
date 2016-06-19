@@ -17,8 +17,6 @@ import nhacks16.flow.R;
 public class ImageAdapter extends BaseAdapter {
     // references to our images
     private ArrayList<Integer> elementList;
-
-    private int thumbCount;
     private Context mContext;
 
     public ImageAdapter(Context c, ArrayList<Integer> res) {
@@ -60,22 +58,16 @@ public class ImageAdapter extends BaseAdapter {
                 initialized with the recycled View object
                 */
         }
-
-        //TODO imageView throwing NPE, :(
         imageView.setImageResource(elementList.get(position));
 
         return imageView;
     }
 
+    /**
+     * Implementation of the .add() method normally found in an ArrayAdapter
+     * Adds a new drawable resource to the imageView elementList
+     */
     public void addOne() {
         elementList.add(R.drawable.empty_task_large);
     }
-
-        /* TODO Determine a method by which an expandable Integer[] can be created to accommodate newly created elements
-            Unfortunately, the initial implementation is with an Integer[], which has to be preset to a size,
-            but... our list expands depending on the created elements
-            have to decide whether we want to allocate and cap a specific number of element per flow
-            or if there is a way we can dynamically change the array size, and then use this
-            attach element method to notify that a new element needs to be added.
-         */
 }
