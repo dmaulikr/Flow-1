@@ -72,7 +72,7 @@ public class ElementDesigner extends AppCompatActivity {
                 Intent returnData = new Intent();
                 FlowElement newElement = new FlowElement(elementName, Double.parseDouble(elementTime), timeUnits);
                 returnData.putExtra("newElement", newElement);
-                setResult(1, returnData);
+                setResult(RESULT_OK, returnData);
                 finish();
 
             } else {
@@ -81,5 +81,21 @@ public class ElementDesigner extends AppCompatActivity {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
+    }
+
+    /**
+     * On "X" pressed, delete the element being created and return to the previous screen
+     */
+    public void forgetElement() {
+        setResult(RESULT_CANCELED,null);
+        finish();
+    }
+
+    /**
+     * On Back Pressed, delete the current element being made and return to previous screen
+     */
+    @Override
+    public void onBackPressed() {
+        forgetElement();
     }
 }

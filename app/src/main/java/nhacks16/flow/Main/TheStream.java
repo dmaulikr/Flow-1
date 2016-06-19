@@ -96,8 +96,8 @@ public class TheStream extends AppCompatActivity {
     /* Allows the menu items to appear in the toolbar */
    @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
+        menu.clear();
         getMenuInflater().inflate(R.menu.menu_thestream, menu);
-
         return super.onCreateOptionsMenu(menu);
     }
 

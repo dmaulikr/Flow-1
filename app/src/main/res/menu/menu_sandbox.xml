@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:compat="http://schemas.android.com/apk/res-auto">
-    <!--
-    <item
-        android:flowIndex="@+flowIndex/action_newElement"
-        android:icon="@drawable/toolbar_flow_element"
-        android:title="@string/action_add_flow_element"
-        compat:showAsAction="always"/> -->
 
     <!-- Should always be in the overflow -->
     <!-- NO NEED FOR SETTINGS -->

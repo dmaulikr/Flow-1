@@ -1,24 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="nhacks16.flow.Main.SandBoxMain">
+    android:layout_height="match_parent">
 
-    <include layout="@layout/content_sand_box_main" />
+    <android.support.design.widget.CoordinatorLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        tools:context="nhacks16.flow.Main.SandBoxMain">
 
-    <include layout="@layout/sandbox_toolbar"/>
+        <include layout="@layout/content_sand_box_main" />
 
-    <!-- Floating button for new flows! -->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/action_new_flow_element"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/add_button"
-        android:onClick="createElement"/>
+        <include layout="@layout/sandbox_toolbar"/>
+
+        <!-- Floating button for new flows! -->
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/action_new_flow_element"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            android:src="@drawable/add_button"
+            android:onClick="createElement"/>
 
     </android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>
+

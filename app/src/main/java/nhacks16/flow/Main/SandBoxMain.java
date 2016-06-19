@@ -6,7 +6,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import nhacks16.flow.R;
 
@@ -24,6 +29,8 @@ public class SandBoxMain extends AppCompatActivity {
         // Flow currently being worked on
     private TextView tv;
     private FlowManagerUtil util;
+    private GridView elementGridView;
+    private ImageAdapter imgAdapater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,12 +47,24 @@ public class SandBoxMain extends AppCompatActivity {
 
         tv = (TextView)findViewById(R.id.number_flow_elements);
 
+        final ArrayList<Integer> elementGrid = new ArrayList<>();
+        for (int i=0; i<workingFlow.getElementCount(); i++){
+            elementGrid.add(R.drawable.empty_task_large);
+        }
+
+        elementGridView = (GridView) findViewById(R.id.element_visual_grid);
+        imgAdapater = new ImageAdapter(this, elementGrid);
+            // Passes the number of elements in the Flow's child elements to set the
+            // Adapter's initial size
+        elementGridView.setAdapter(imgAdapater);
+        util = new FlowManagerUtil();
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        util = new FlowManagerUtil();
+
         rebuildSandbox();
     }
 
@@ -69,15 +88,14 @@ public class SandBoxMain extends AppCompatActivity {
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        FlowElement newElement;
 
-        // This is currently just a pointer to element created in the designer
-        // Consider ValueOf in the future?
-        FlowElement newElement = data.getParcelableExtra("newElement");
-        Log.d(TAG, "Received Parcel Object: " + "'" + newElement.getElementName() + "'");
+        if(resultCode==RESULT_OK) {
+            newElement = data.getParcelableExtra("newElement");
+            Log.d(TAG, "Received Parcel Object: " + "'" + newElement.getElementName() + "'");
 
-        saveElementToFlow(newElement);
-
-        newElement = null;
+            saveElementToFlow(newElement);
+        }
 
     }
 
@@ -93,11 +111,48 @@ public class SandBoxMain extends AppCompatActivity {
 
 
         Log.d(TAG, "Updating Sandbox...");
-        rebuildSandbox();
+        updateSandBox();
 
         util.overwriteFlow(workingFlow.getFlowArrayIndex(),workingFlow, this);
             // Saves the updated JSONFlowWrapper ArrayList as
             // the updated list (acts as the updated list
+    }
+
+
+    private void setClickListeners() {
+        elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Toast.makeText(SandBoxMain.this, "" + position,
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+
+    /**
+     *  Rebuilds the SandBox's Gridview based on the Flow's ChildElements
+     *  and sets them as clickable.
+     */
+    private void rebuildSandbox() {
+        int count = workingFlow.getElementCount();
+        tv.setText(String.valueOf(count));
+
+        setClickListeners();
+    }
+
+    /**
+     *  Updates the SandBox's GridView after a single element has been created
+     */
+    private void updateSandBox() {
+        int count = workingFlow.getElementCount();
+        tv.setText(String.valueOf(count));
+
+        imgAdapater.addOne();
+        imgAdapater.notifyDataSetChanged();
+
+        setClickListeners();
     }
 
     /**
@@ -109,14 +164,4 @@ public class SandBoxMain extends AppCompatActivity {
         startActivity(i);//starting main activity
         finish();
     }
-
-    /**
-     *  Updates the Element Count for the current flow being worked on
-     */
-    private void rebuildSandbox(){
-        int count = workingFlow.getElementCount();
-        tv.setText(String.valueOf(count));
-    }
-
-
 }

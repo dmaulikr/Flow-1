@@ -27,10 +27,9 @@
         android:src="@drawable/empty_task"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="100dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginTop="35dp" />
+        android:layout_marginEnd="122dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
         <!-- Insert Flow Element Icon -->
 
     <TextView
@@ -53,7 +52,7 @@
         android:layout_alignTop="@+id/item_element_icon"
         android:layout_alignStart="@+id/item_element_icon"
         android:layout_toRightOf="@+id/item_element_icon"
-        android:layout_marginLeft="45dp" />
+        android:layout_marginLeft="55dp" />
     <!-- Insert Flow Element Icon -->
 
     <TextView
@@ -64,6 +63,16 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/item_time_icon"
         android:layout_marginLeft="30dp"
+        android:layout_alignLeft="@+id/item_time_icon"
+        android:layout_marginTop="2dp" />
+
+    <TextView
+        android:id="@+id/item_time_units"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/item_time_icon"
+        android:layout_marginLeft="50dp"
         android:layout_alignLeft="@+id/item_time_icon"
         android:layout_marginTop="2dp" />
 
