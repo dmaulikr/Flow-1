@@ -27,7 +27,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/taskTimer"
+        android:id="@+id/timeDisplay"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="10dp"
         android:textAppearance=
@@ -36,15 +36,18 @@
         android:layout_centerHorizontal="true" />
 
     <ProgressBar
-        style="@style/CustomProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:id="@+id/progressBar"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="50dp"
         android:indeterminate="false"
-        android:layout_above="@id/taskElement"
-        android:progressDrawable="@drawable/progress_bar"/>
+        android:layout_above="@id/taskElement"/>
+
+       <!-- android:progressDrawable="@drawable/progress_bar"
+        android:indeterminateDrawable="@drawable/progress_bar"-->
+
 
     <ImageView
         android:layout_width="wrap_content"

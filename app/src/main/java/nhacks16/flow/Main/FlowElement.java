@@ -120,6 +120,16 @@ public class FlowElement implements Parcelable{
 
     }
 
+    public long parseTimeToSecs() {
+        if (timeUnits.equals("minutes")){
+            return this.timeEstimate*60;
+        } else {
+            // Else == "hours"
+            return this.timeEstimate*3600;
+        }
+
+    }
+
     /* Parcel Implementation for Object Passing Between Activities! */
     public FlowElement(Parcel in) {
         String[] data = new String[3];

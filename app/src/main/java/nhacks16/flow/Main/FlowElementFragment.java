@@ -8,9 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-
-import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
 import nhacks16.flow.R;
@@ -24,6 +23,17 @@ import nhacks16.flow.R;
 public class FlowElementFragment extends Fragment {
     private static final String FLOW_ELEMENT = "FLOW_ELEMENT";
     private static final String TAG = TheStream.class.getName();
+    private CountDownTimer elementTimer;
+    private ProgressBar progressBar;
+    private FlowElement element;
+    private int progress;
+    private TextView timeDisplay;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     @Nullable
     @Override
@@ -32,27 +42,50 @@ public class FlowElementFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_flow_state, container, false);
 
         TextView name = (TextView) view.findViewById(R.id.taskName);
-        final TextView timer = (TextView) view.findViewById(R.id.taskTimer);
+        timeDisplay = (TextView) view.findViewById(R.id.timeDisplay);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+
+        element = (FlowElement)getArguments().get(FLOW_ELEMENT);
+        progress = (int) element.parseTimeToSecs();
+            /* onTick occurs every 1000ms (1s), therefore need progress to tick at that rate
+               but because using progress--, need to convert the milis to seconds to subtract
+             */
+        progressBar.setMax(progress);
 
         name.setText(
-                (
-                (FlowElement)
-                        getArguments()
-                        .get(FLOW_ELEMENT)
-                )
-                .getElementName()
+                element.getElementName()
         );
 
-        new CountDownTimer(
-                (
-                        (FlowElement)
-                                getArguments()
-                                        .get(FLOW_ELEMENT)
-                )
-                .parseTimeToMiliSecs(), 1000) {
+        progress = progressBar.getMax();
+        progressBar.setProgress(progress);
+
+        startTimer();
+
+        // TODO determine how to make the process bar fall proportionally to the time decrease
+
+        return view;
+
+    }
+
+
+
+    public static FlowElementFragment newInstance(FlowElement e) {
+        Bundle args = new Bundle();
+        args.putParcelable(FLOW_ELEMENT, e);
+        FlowElementFragment fragment = new FlowElementFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    private void startTimer() {
+        elementTimer = new CountDownTimer(
+                element.parseTimeToMiliSecs(),
+                1000) {
 
             public void onTick(long millisUntilFinished) {
-                timer.setText(
+                progressBar.setProgress(progress--);
+
+                timeDisplay.setText(
                         String.format("%02d:%02d:%02d",
                                 TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
                                 TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
@@ -69,27 +102,20 @@ public class FlowElementFragment extends Fragment {
             }
 
             public void onFinish() {
-                timer.setText("Finished!");
+                // Stuff
+                timeDisplay.setText("Finished!");
             }
-        }.start();
-
-        // TODO determine how to make the process bar fall proportionally to the time decrease
-
-        return view;
-
+        };
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                elementTimer.start();
+            }
+        });
+        // TODO STOP runOnUiThread ON BACK PRESSED
     }
 
     public FlowElementFragment() {
 
     }
-
-    public static FlowElementFragment newInstance(FlowElement e) {
-        Bundle args = new Bundle();
-        args.putParcelable(FLOW_ELEMENT, e);
-        FlowElementFragment fragment = new FlowElementFragment();
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-
 }
