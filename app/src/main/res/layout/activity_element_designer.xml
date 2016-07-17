@@ -45,7 +45,7 @@
         android:ems="8"
         android:id="@+id/nameInput"
         android:maxLines="1"
-        android:maxLength="50"
+        android:maxLength="25"
         android:focusableInTouchMode="true"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"
@@ -73,19 +73,19 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
+        android:inputType="number"
         android:ems="3"
         android:id="@+id/timeInput"
         android:layout_marginLeft="0dp"
-        android:autoText="false"
-        android:hint="     2"
+        android:hint="2"
+        android:maxLength="2"
         android:layout_alignTop="@+id/timeEst"
         android:layout_alignStart="@+id/nameInput" />
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/selectTime"
+        android:id="@+id/select_time"
         android:spinnerMode="dropdown"
         android:layout_toEndOf="@id/timeInput"
         android:layout_alignParentLeft="false"

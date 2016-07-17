@@ -109,7 +109,7 @@ public class TheStream extends AppCompatActivity {
         and passes a MenuItem object to indicate which item was clicked */
 
         switch (item.getItemId()) {
-            case R.id.action_delete_flow:
+            case R.id.action_delete_flows:
                 clearAllFlows();
                 return true;
 
@@ -242,7 +242,7 @@ public class TheStream extends AppCompatActivity {
 
                             createNewFlow(); //Recall the dialog
                         } else {
-                            newFlow = new Flow(nameInputET.getText().toString(), 0.0);
+                            newFlow = new Flow(nameInputET.getText().toString(), 0);
 
                             updateLVContent(newFlow);
                             saveFlowToManager(lvContent);

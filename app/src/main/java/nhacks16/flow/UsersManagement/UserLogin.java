@@ -18,7 +18,7 @@ public class UserLogin extends Activity {
         setContentView(R.layout.content_user_login);
     }
 
-
+/*
     public void attemptLogin(View view) {
                 final EditText ETUserName = (EditText) findViewById(R.id.ETUserName);
                 final EditText ETPassword = (EditText) findViewById(R.id.ETPassword);
@@ -54,4 +54,5 @@ public class UserLogin extends Activity {
         Intent thestream = new Intent(UserLogin.this, TheStream.class);
         startActivity(thestream);
     }
+    */
 }

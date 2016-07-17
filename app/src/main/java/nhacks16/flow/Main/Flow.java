@@ -6,6 +6,7 @@ import android.util.Log;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /** A Flow (short for workflow) is a framework containing tasks (aka. Flow Elements)
  * arranged according to the order in which they must be performed to complete the end goal.
@@ -15,18 +16,14 @@ import java.util.List;
  * @author Robert Simoes
  */
 public class Flow implements Parcelable{
+
     private static final String TAG = Flow.class.getName();
     private String name;
-
-    public List<FlowElement> getChildElements() {
-        return childFlowElements;
-    }
-
 
     private List<FlowElement> childFlowElements = new LinkedList<FlowElement>();
         // Keeps track of the current FlowElements which belong to this Flow
 
-    private double totalTime;
+    private double totalTime=0;
     private int flowManagerIndex;
 
     /** Overloaded Flow Object constructor.
@@ -40,6 +37,10 @@ public class Flow implements Parcelable{
 
 
     /*~~~~~~~~~ Getters & Setters ~~~~~~~~~*/
+
+    public List<FlowElement> getChildElements() {
+        return childFlowElements;
+    }
 
     /** Sets the name for the Flow
      * @param name desired name of the flow object
@@ -66,12 +67,18 @@ public class Flow implements Parcelable{
      * @return totalTime
      */
     public double getTime() {
-        if (totalTime != 0.0) {
-            return totalTime;
-        } else {
-            totalTime = 0.0;
-            return totalTime;
-        }
+        return totalTime;
+    }
+
+    public String getFormattedTime() {
+            // Total time includes hrs and minutes, int truncates the double
+        int hrs = (int)totalTime;
+        Log.d(TAG, "Hours are: " + hrs);
+
+        int mins = (int)((totalTime-hrs)*60);
+        Log.d(TAG, "Minutes are: " + mins);
+
+        return hrs +"H "+mins+"M";
     }
 
     /** Sets the totalTime for the Flow once called from calculateTime()
@@ -105,7 +112,7 @@ public class Flow implements Parcelable{
      * @param element the element being searched for in the Flow
      * @return index the index position of the element in the Flow
      */
-    public int searchElement(FlowElement element) {
+    public int findElement(FlowElement element) {
         Log.d(TAG, "The element was found at index: " + childFlowElements.indexOf(element) + " in the Flow's childFlowElements LinkedList");
         return childFlowElements.indexOf(element);
     }
@@ -116,7 +123,7 @@ public class Flow implements Parcelable{
      * @param flowIndex the index position which the FlowElement is at
      * @return FlowElement the element which has been found
      */
-    public FlowElement findElement(int flowIndex) {
+    public FlowElement returnElement(int flowIndex) {
       return childFlowElements.get(flowIndex);
     }
 
@@ -127,9 +134,24 @@ public class Flow implements Parcelable{
      */
     public void addElement(FlowElement newElement) {
             childFlowElements.add(newElement);
+            addToTotalTime(newElement);
         // Will receive argument from the elementDesigner for the new flowElement object
     }
-
+    public void addToTotalTime(FlowElement e) {
+        switch (e.getTimeUnits()){
+            /* Must cast getTimeEst to double in order to calculate the minutes from hrs*/
+            case "minutes":
+                totalTime = totalTime +
+                        (((double)e.getTimeEstimate()/(60)));
+                break;
+            case "hours":
+                totalTime = totalTime +
+                        (double) e.getTimeEstimate();
+                break;
+            default:
+                break;
+        }
+    }
     /** Overriding of original toString() because its natural
      *  implementation is no bueno!
      *
@@ -208,6 +230,8 @@ public class Flow implements Parcelable{
                     return new Flow[size];
                 }
             };
+
+
 
 
     /* How to use:

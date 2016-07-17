@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Main.FlowElementFragment">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/upThumb"
+        android:src="@drawable/thumb_up_36"
+        android:layout_gravity="right|top"
+        android:layout_toRightOf="@+id/progressBar"
+        android:layout_marginLeft="25dp"
+        android:layout_alignBottom="@+id/progressBar" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/downThumb"
+        android:src="@drawable/thumb_down_36"
+        android:layout_alignParentStart="false"
+        android:layout_toLeftOf="@+id/progressBar"
+        android:layout_marginRight="25dp"
+        android:layout_alignTop="@+id/progressBar" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/taskTimer"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dp"
+        android:textAppearance=
+            "?android:attr/textAppearanceMedium"
+        android:layout_above="@+id/progressBar"
+        android:layout_centerHorizontal="true" />
+
+    <ProgressBar
+        style="@style/CustomProgressBar"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:indeterminate="false"
+        android:layout_above="@id/taskElement"
+        android:progressDrawable="@drawable/progress_bar"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/taskElement"
+        android:src="@drawable/empty_task_large"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/taskName"
+        android:layout_gravity="center_horizontal|bottom"
+        android:layout_below="@+id/taskElement"
+        android:layout_marginTop="15dp"
+        android:layout_centerHorizontal="true"
+        android:textAppearance=
+            "?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>

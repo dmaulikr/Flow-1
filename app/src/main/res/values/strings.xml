@@ -6,17 +6,16 @@
     <string name="dialog_message"> Passwords do not match </string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
-    <string name="title_activity_sand_box_main">TITLE TO VARY WITH FLOW</string>
+    <string name="title_activity_sand_box_main"></string>
     <string name="title_activity_the_stream">The Stream</string>
-    <string name="Login">Login</string>
-    <string name="Email">E-mail</string>
-    <string name="Password">Password</string>
-    <string name="Notregistered">Not registered?</string>
+    <string name="login">Login</string>
+    <string name="email">E-mail</string>
+    <string name="password">Password</string>
+    <string name="not_registered">Not registered?</string>
     <string name="new_task_name">Task name</string>
-    <string-array name="selectTime">
+    <string-array name="select_time">
         <item> minutes </item>
         <item> hours </item>
-        <item> days </item>
     </string-array>
     <string name="action_newFlow"> Create Flow </string>
     <string name="dialog_flow_name">Create Flow</string>
@@ -25,4 +24,8 @@
     <string name="empty_list">Look\'s like there\'s nothing here...</string>
     <string name="action_delete_flow">Delete Flows</string>
     <string name="describe_element_count">Elements in this flow</string>
+    <string name="title_activity_explore_elements">ExploreElementsActivity</string>
+    <string name="title_activity_show_element">ShowElementActivity</string>
+    <string name="title_activity_flow_state">FlowStateActivity</string>
+
 </resources>

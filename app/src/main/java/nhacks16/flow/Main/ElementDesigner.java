@@ -29,8 +29,8 @@ public class ElementDesigner extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element_designer);
 
-        selectTime = (Spinner)findViewById(R.id.selectTime);
-        adapter = ArrayAdapter.createFromResource(this,R.array.selectTime,android.R.layout.simple_spinner_item);
+        selectTime = (Spinner)findViewById(R.id.select_time);
+        adapter = ArrayAdapter.createFromResource(this,R.array.select_time,android.R.layout.simple_spinner_item);
 
         //Specifying each layout for the dropdown items
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -70,7 +70,7 @@ public class ElementDesigner extends AppCompatActivity {
             if (!elementName.equals("") && !elementTime.equals("")) {
 
                 Intent returnData = new Intent();
-                FlowElement newElement = new FlowElement(elementName, Double.parseDouble(elementTime), timeUnits);
+                FlowElement newElement = new FlowElement(elementName, Integer.parseInt(elementTime), timeUnits);
                 returnData.putExtra("newElement", newElement);
                 setResult(RESULT_OK, returnData);
                 finish();
@@ -86,9 +86,8 @@ public class ElementDesigner extends AppCompatActivity {
     /**
      * On "X" pressed, delete the element being created and return to the previous screen
      */
-    public void forgetElement() {
-        setResult(RESULT_CANCELED,null);
-        finish();
+    public void forgetElement(View view) {
+        onBackPressed();
     }
 
     /**
@@ -96,6 +95,7 @@ public class ElementDesigner extends AppCompatActivity {
      */
     @Override
     public void onBackPressed() {
-        forgetElement();
+        setResult(RESULT_CANCELED,null);
+        finish();
     }
 }

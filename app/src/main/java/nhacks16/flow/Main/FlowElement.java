@@ -4,12 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Owner on 2016-04-17.
  */
 public class FlowElement implements Parcelable{
-
+    private static final String TAG = TheStream.class.getName();
     public static final String DEFAULT_UNITS = "minutes";
     // A flowElement is the basic TASK in the flow app.
     // At the moment, the flowElement can receive a name and time estimate from the user.
@@ -18,15 +21,10 @@ public class FlowElement implements Parcelable{
     // COMPLETE is indicated by the filled in flag bitmap, while INCOMPLETE is indicated by the unfilled flag bitmap
 
     private Bitmap bitmap; //The actual bitmap
-    private int x; //X Coordinate
-    private int y; //Y coordinate
-    private boolean touched; //Determines whether object has been touched
-    private boolean completed;
-
 
     private String elementName;
 
-    private Double timeEstimate;
+    private int timeEstimate;
 
     private String timeUnits;
 
@@ -35,7 +33,7 @@ public class FlowElement implements Parcelable{
     public FlowElement() {
     } //End of Default Constructor
 
-    public FlowElement(String name, Double timeEst, String units) {
+    public FlowElement(String name, int timeEst, String units) {
         // Must make sure FlowElement values cannot be null!
         this.elementName = name;
         this.timeEstimate = timeEst;
@@ -43,14 +41,6 @@ public class FlowElement implements Parcelable{
     } //End of constructor
 
     /** Getter and Setter Methods: **/
-    public Bitmap getBitmap(){
-        return bitmap;
-    }
-    public void setBitmap(Bitmap bitmap){
-        this.bitmap=bitmap;
-        //Accepts bitmap argument & sets the Object's
-        //Bitmap to the parameter
-    }
 
     /** Gets the name for flowElement
      * @return elementName
@@ -69,14 +59,14 @@ public class FlowElement implements Parcelable{
     /** returns user's estimated completion time
      * @return timeEstimate
      */
-    public Double getTimeEstimate() {
+    public int getTimeEstimate() {
         return timeEstimate;
     }
 
     /** sets the user's estimated time
      * @param timeEstimate
      */
-    public void setTimeEstimate(Double timeEstimate) {
+    public void setTimeEstimate(int timeEstimate) {
         this.timeEstimate = timeEstimate;
     }
 
@@ -108,9 +98,27 @@ public class FlowElement implements Parcelable{
         this.flowIndex = flowIndex;
     }
 
-    public void draw(Canvas canvas) {
+    public String parseTimeToString() {
+
+        int hours = timeEstimate / 60; //since both are ints, you get an int
+        int minutes = timeEstimate % 60;
+        Log.d(TAG, "parsedTimeToString was: " + hours + " : " + minutes);
+        return String.format(
+                "%d:%02d",
+                hours,
+                minutes
+        );
     }
 
+    public long parseTimeToMiliSecs() {
+        if (timeUnits.equals("minutes")){
+            return this.timeEstimate*60*1000;
+        } else {
+            // Else == "hours"
+            return this.timeEstimate*3600*1000;
+        }
+
+    }
 
     /* Parcel Implementation for Object Passing Between Activities! */
     public FlowElement(Parcel in) {
@@ -119,7 +127,7 @@ public class FlowElement implements Parcelable{
 
         in.readStringArray(data);
         this.elementName = data[0];
-        this.timeEstimate = Double.parseDouble(data[1]);
+        this.timeEstimate = Integer.parseInt(data[1]);
         this.timeUnits = data[2];
     }
 

@@ -1,6 +1,7 @@
 package nhacks16.flow.Main;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,6 +50,8 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
 
             holder.name = (TextView) convertView.findViewById(R.id.item_flow_name);
             holder.elements = (TextView) convertView.findViewById(R.id.item_element_count);
+            holder.timeEstimate = (TextView) convertView.findViewById(R.id.item_total_time);
+
             convertView.setTag(holder);
 
             /* In case you want to set images in future:
@@ -68,14 +71,14 @@ public class FlowArrayAdapter extends ArrayAdapter<Flow> {
         holder.name.setText(String.valueOf(flow.getName()));
             // String.valueOf() otherwise Resources$NotFoundException thrown
         holder.elements.setText(String.valueOf(flow.getElementCount()));
+        Log.d("Test", "Total time " + flow.getTime());
 
-        /* CAUSING ERROR // holder.timeEstimate.setText(String.valueOf(flow.getTime())); */
+        holder.timeEstimate.setText(String.valueOf(flow.getFormattedTime()));
 
         // Return the completed view to render on screen
         return convertView;
 
     }
-
 
 
 

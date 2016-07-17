@@ -8,12 +8,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.TextView;
 import android.widget.Toast;
+import nhacks16.flow.R;
 
 import java.util.ArrayList;
-
-import nhacks16.flow.R;
 
 public class SandBoxMain extends AppCompatActivity {
     // The SandBox serves as a hub for the flows, with several functions:
@@ -25,12 +23,13 @@ public class SandBoxMain extends AppCompatActivity {
 
 
     private static final String TAG = SandBoxMain.class.getName();
+
     private Flow workingFlow;
         // Flow currently being worked on
-    private TextView tv;
     private FlowManagerUtil util;
     private GridView elementGridView;
     private ImageAdapter imgAdapater;
+    private Toast currentToast = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,14 +44,13 @@ public class SandBoxMain extends AppCompatActivity {
         sbToolbar = (Toolbar) findViewById(R.id.sbToolbar);
         setSupportActionBar(sbToolbar);
 
-        tv = (TextView)findViewById(R.id.number_flow_elements);
-
         final ArrayList<Integer> elementGrid = new ArrayList<>();
         for (int i=0; i<workingFlow.getElementCount(); i++){
             elementGrid.add(R.drawable.empty_task_large);
         }
 
-        elementGridView = (GridView) findViewById(R.id.element_visual_grid);
+        elementGridView = (GridView) findViewById(R.id.e_visual_grid);
+
         imgAdapater = new ImageAdapter(this, elementGrid);
             // Passes the number of elements in the Flow's child elements to set the
             // Adapter's initial size
@@ -118,17 +116,31 @@ public class SandBoxMain extends AppCompatActivity {
             // the updated list (acts as the updated list
     }
 
-
+    /**
+     * Sets the onClick action when an element in the grid is clicked.
+     */
     private void setClickListeners() {
         elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                Toast.makeText(SandBoxMain.this, "" + position,
-                        Toast.LENGTH_SHORT).show();
+                String eName = workingFlow.returnElement(position).getElementName();
+                int eTime = workingFlow.returnElement(position).getTimeEstimate();
+                String eUnits = workingFlow.returnElement(position).getTimeUnits();
+
+                showToast("" + eName + "\n" + eTime + " " + eUnits);
             }
         });
     }
 
+    private void showToast(String text)
+    {
+        if(currentToast != null)
+        {
+            currentToast.cancel();
+        }
+        currentToast = Toast.makeText(this, text, Toast.LENGTH_LONG);
+        currentToast.show();
+    }
 
 
     /**
@@ -136,9 +148,6 @@ public class SandBoxMain extends AppCompatActivity {
      *  and sets them as clickable.
      */
     private void rebuildSandbox() {
-        int count = workingFlow.getElementCount();
-        tv.setText(String.valueOf(count));
-
         setClickListeners();
     }
 
@@ -146,9 +155,6 @@ public class SandBoxMain extends AppCompatActivity {
      *  Updates the SandBox's GridView after a single element has been created
      */
     private void updateSandBox() {
-        int count = workingFlow.getElementCount();
-        tv.setText(String.valueOf(count));
-
         imgAdapater.addOne();
         imgAdapater.notifyDataSetChanged();
 
@@ -163,5 +169,11 @@ public class SandBoxMain extends AppCompatActivity {
         Intent i= new Intent(SandBoxMain.this, TheStream.class);
         startActivity(i);//starting main activity
         finish();
+    }
+
+    public void goFlowState(View v) {
+        Intent in = new Intent(this, FlowStateActivity.class);
+        in.putExtra("parent", workingFlow);
+        startActivity(in);
     }
 }
