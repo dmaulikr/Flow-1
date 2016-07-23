@@ -1,19 +1,29 @@
 package nhacks16.flow.Main;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.HashMap;
+import java.util.Random;
 
 import nhacks16.flow.R;
 
-public class FlowStateActivity extends AppCompatActivity {
+public class FlowStateActivity extends AppCompatActivity
+        implements FlowElementFragment.OnFragmentSelectedListener {
     private TextView tv;
     private Flow parentFlow;
     private FlowElement fElement;
-    private Fragment fragment;
     private FragmentManager frManager;
     private FragmentTransaction frTransaction;
 
@@ -26,7 +36,7 @@ public class FlowStateActivity extends AppCompatActivity {
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        if (findViewById(R.id.fragment_container) != null) {
+        if (findViewById(R.id.flowstate_fragment_container) != null) {
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
@@ -34,7 +44,7 @@ public class FlowStateActivity extends AppCompatActivity {
             if (savedInstanceState != null) {
                 return;
             }
-            fragment = FlowElementFragment.newInstance(
+            FlowElementFragment fragment = FlowElementFragment.newInstance(
                     parentFlow.getChildElements().get(0)
             );
 
@@ -43,7 +53,7 @@ public class FlowStateActivity extends AppCompatActivity {
             frManager = getFragmentManager();
             frTransaction = frManager.beginTransaction();
 
-            frTransaction.add(R.id.fragment_container, fragment)
+            frTransaction.add(R.id.flowstate_fragment_container, fragment)
                     .commit();
 
         }
@@ -57,4 +67,44 @@ public class FlowStateActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onBackPressed() {
+        FlowElementFragment fragment =
+                (FlowElementFragment)
+                        frManager.findFragmentById(R.id.flowstate_fragment_container);
+
+        fragment.cancelFlowState();
+        showCustomQuitingToast(this);
+        finish();
+    }
+
+    private void showCustomQuitingToast(Context context) {
+        String[] array = context.getResources().getStringArray(R.array.quit_quotes);
+        String randomStr = array[new Random().nextInt(array.length)];
+
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.quit_toast,
+                (ViewGroup) findViewById(R.id.toast_layout_root));
+
+        TextView text = (TextView) layout.findViewById(R.id.quote);
+        text.setText(randomStr);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+    }
+
+    @Override
+    public void onOptionSelected(int position) {
+        // User selected a thumbs up, down or start option
+
+    }
+
+    public void next(View view) {
+        //TODO implement a next fragment feature which communicates with activity and callback to render new fragment
+    }
+
 }

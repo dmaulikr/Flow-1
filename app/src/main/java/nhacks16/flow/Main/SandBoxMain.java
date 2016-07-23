@@ -172,8 +172,14 @@ public class SandBoxMain extends AppCompatActivity {
     }
 
     public void goFlowState(View v) {
-        Intent in = new Intent(this, FlowStateActivity.class);
-        in.putExtra("parent", workingFlow);
-        startActivity(in);
+        if (workingFlow.getChildElements().isEmpty()) {
+            this.showToast(
+                    "Look's like there is no elements yet!"
+            );
+        } else {
+            Intent in = new Intent(this, FlowStateActivity.class);
+            in.putExtra("parent", workingFlow);
+            startActivity(in);
+        }
     }
 }

@@ -1,13 +1,14 @@
 package nhacks16.flow.Main;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.concurrent.TimeUnit;
@@ -28,22 +29,31 @@ public class FlowElementFragment extends Fragment {
     private FlowElement element;
     private int progress;
     private TextView timeDisplay;
-
+    private OnFragmentSelectedListener mCallback;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
+    public void cancelFlowState() {
+        elementTimer.cancel();
+    }
+
+    // Container Activiy must implement this interface
+    public interface OnFragmentSelectedListener {
+            public void onOptionSelected(int position);
+        }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_flow_state, container, false);
+        View view = inflater.inflate(R.layout.running_element_fragment, container, false);
 
-        TextView name = (TextView) view.findViewById(R.id.taskName);
-        timeDisplay = (TextView) view.findViewById(R.id.timeDisplay);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
+        TextView name = (TextView) view.findViewById(R.id.task_name);
+        timeDisplay = (TextView) view.findViewById(R.id.time_display);
+        progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
 
         element = (FlowElement)getArguments().get(FLOW_ELEMENT);
         progress = (int) element.parseTimeToSecs();
@@ -102,7 +112,9 @@ public class FlowElementFragment extends Fragment {
             }
 
             public void onFinish() {
-                // Stuff
+                TextView notFinished = (TextView) getView().findViewById(R.id.not_finished);
+                notFinished.setVisibility(View.VISIBLE);
+                notFinished.animate().alpha(1.0f).setDuration(300);
                 timeDisplay.setText("Finished!");
             }
         };
@@ -112,10 +124,26 @@ public class FlowElementFragment extends Fragment {
                 elementTimer.start();
             }
         });
-        // TODO STOP runOnUiThread ON BACK PRESSED
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        // Ensures container activity implements callback interface!
+
+        try {
+            mCallback = (OnFragmentSelectedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                + " must implement the appropriate interface");
+        }
     }
 
     public FlowElementFragment() {
 
     }
+
+
 }

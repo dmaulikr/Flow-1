@@ -106,6 +106,10 @@ public class Flow implements Parcelable{
 
     /* Action Methods */
 
+    public List<FlowElement> getChildFlowElements() {
+        return childFlowElements;
+    }
+
     /** Searches for the parameter specified FlowElement and returns the Element's
      *  index in the Flow's children ArrayList if found
      *

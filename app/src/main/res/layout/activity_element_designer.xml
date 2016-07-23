@@ -13,7 +13,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/taskElement"
+        android:id="@+id/task_element"
         android:src="@drawable/empty_task_large"
         android:layout_alignParentTop="false"
         android:layout_centerHorizontal="true"
@@ -23,16 +23,16 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/taskName"
+        android:id="@+id/task_name"
         android:src="@drawable/label"
         android:layout_gravity="center_vertical"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"
         android:layout_alignParentEnd="false"
         android:layout_alignParentStart="false"
-        android:layout_toStartOf="@id/taskElement"
+        android:layout_toStartOf="@id/task_element"
         android:layout_alignParentBottom="false"
-        android:layout_below="@+id/taskElement"
+        android:layout_below="@+id/task_element"
         android:layout_marginTop="30dp"
         android:layout_marginRight="10dp" />
 
@@ -51,11 +51,11 @@
         android:layout_alignParentTop="false"
         android:layout_alignParentStart="false"
         android:layout_alignParentEnd="false"
-        android:layout_toEndOf="@+id/taskName"
+        android:layout_toEndOf="@+id/task_name"
         android:layout_centerHorizontal="true"
-        android:layout_toLeftOf="@+id/taskName"
+        android:layout_toLeftOf="@+id/task_name"
         android:layout_marginLeft="15dp"
-        android:layout_alignBottom="@+id/taskName"
+        android:layout_alignBottom="@+id/task_name"
         android:layout_marginBottom="12dp" />
 
     <ImageView
@@ -66,9 +66,10 @@
         android:layout_alignParentStart="false"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"
-        android:layout_below="@+id/taskName"
+        android:layout_below="@+id/task_name"
         android:layout_marginTop="25dp"
-        android:layout_alignStart="@id/taskName" />
+        android:layout_alignStart="@id/task_name" />
+    <!--TODO implement drawableLeft to this view and make things great again -->
 
     <EditText
         android:layout_width="wrap_content"
@@ -91,7 +92,7 @@
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"
         android:layout_marginTop="35dp"
-        android:layout_below="@+id/taskName"
+        android:layout_below="@+id/task_name"
         android:layout_toRightOf="@+id/timeInput" />
 
     <ImageView
