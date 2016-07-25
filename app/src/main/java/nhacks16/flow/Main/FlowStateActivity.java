@@ -1,31 +1,34 @@
 package nhacks16.flow.Main;
 
-import android.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.HashMap;
 import java.util.Random;
 
 import nhacks16.flow.R;
 
 public class FlowStateActivity extends AppCompatActivity
         implements FlowElementFragment.OnFragmentSelectedListener {
-    private TextView tv;
+
+    private static final String TAG = FlowStateActivity.class.getName();
     private Flow parentFlow;
-    private FlowElement fElement;
-    private FragmentManager frManager;
-    private FragmentTransaction frTransaction;
+    private int element=0;
+    private FlowElementFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +47,16 @@ public class FlowStateActivity extends AppCompatActivity
             if (savedInstanceState != null) {
                 return;
             }
-            FlowElementFragment fragment = FlowElementFragment.newInstance(
-                    parentFlow.getChildElements().get(0)
+
+            fragment = FlowElementFragment.newInstance(
+                   parentFlow.getChildElements().get(element)
             );
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack
-            frManager = getFragmentManager();
-            frTransaction = frManager.beginTransaction();
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-            frTransaction.add(R.id.flowstate_fragment_container, fragment)
+            transaction.add(R.id.flowstate_fragment_container, fragment)
                     .commit();
 
         }
@@ -70,13 +73,22 @@ public class FlowStateActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        FlowElementFragment fragment =
+        final FlowElementFragment fragment =
                 (FlowElementFragment)
-                        frManager.findFragmentById(R.id.flowstate_fragment_container);
+                        getFragmentManager().findFragmentById(R.id.flowstate_fragment_container);
 
-        fragment.cancelFlowState();
-        showCustomQuitingToast(this);
-        finish();
+        new AlertDialog.Builder(this)
+                .setMessage("Your current Flow will be cancelled.")
+                .setCancelable(false)
+                .setPositiveButton("Understood", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        fragment.cancelTimer();
+                        showCustomQuitingToast(FlowStateActivity.this);
+                        FlowStateActivity.this.finish();
+                    }
+                })
+                .setNegativeButton("No Don't!", null)
+                .show();
     }
 
     private void showCustomQuitingToast(Context context) {
@@ -98,13 +110,98 @@ public class FlowStateActivity extends AppCompatActivity
     }
 
     @Override
-    public void onOptionSelected(int position) {
-        // User selected a thumbs up, down or start option
+    public void onNextSelected(View v) {
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        try {
+            fragment = FlowElementFragment.newInstance(
+                    parentFlow
+                            .getChildElements().get(
+                            ++element
+                    )
+            );
+
+            transaction.replace(R.id.flowstate_fragment_container, fragment)
+                    .commit();
+            } catch (IndexOutOfBoundsException e) {
+                if (fragment!=null) {
+                    transaction.remove(fragment);
+                    transaction.commit();
+                    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                    fragment = null;
+
+
+                    Intent i = new Intent(this, FinishedFlowActivity.class);
+                    i.putExtra("finishedFlow", parentFlow);
+                    startActivity(i);
+                }
+
+            }
+
+
 
     }
 
-    public void next(View view) {
-        //TODO implement a next fragment feature which communicates with activity and callback to render new fragment
+    @Override
+    public void onMoreTimeSelected(View v) {
+        final EditText inMinutes = new EditText(this);
+        final AlertDialog.Builder customDialog = customDialog(inMinutes);
+
+        customDialog.setPositiveButton("Lets Roll",
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        if (inMinutes.getText().toString().equals("")) {
+                            // Need to optimize this so that the dialog does NOT disappear and just display toast
+                            Toast.makeText(FlowStateActivity.this, "Zero minutes... you're messing with me!", Toast.LENGTH_LONG).show();
+
+                        } else {
+                            Toast.makeText(FlowStateActivity.this, "Time to update", Toast.LENGTH_LONG).show();
+                            //TODO Update the time based on input
+                        }
+                    }
+                });
+
+        customDialog.setNegativeButton("Nevermind",
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.dismiss();
+                    }
+                });
+
+        customDialog.show();
     }
 
+
+
+
+    private AlertDialog.Builder customDialog(EditText inTime) {
+        AlertDialog.Builder newFlowDialog = new AlertDialog.Builder(FlowStateActivity.this);
+
+        //Sets up Layout Parameters
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.MATCH_PARENT);
+        params.setMarginStart(42);
+        params.setMarginEnd(50);
+
+
+        //Sets up length and 1 line filters
+        inTime.setInputType(InputType.TYPE_CLASS_NUMBER);
+
+        inTime.setFilters(new InputFilter[] {
+                new InputFilter.LengthFilter(3)
+        });
+
+        //Adds the ET and params to the layout of the dialog box
+        layout.addView(inTime, params);
+
+        newFlowDialog.setTitle("How many more minutes?");
+
+        newFlowDialog.setView(layout);
+
+        return newFlowDialog;
+    }
 }

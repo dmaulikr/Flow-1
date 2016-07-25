@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -20,7 +21,7 @@ public class Flow implements Parcelable{
     private static final String TAG = Flow.class.getName();
     private String name;
 
-    private List<FlowElement> childFlowElements = new LinkedList<FlowElement>();
+    private List<FlowElement> childFlowElements = new ArrayList<>();
         // Keeps track of the current FlowElements which belong to this Flow
 
     private double totalTime=0;
@@ -106,10 +107,6 @@ public class Flow implements Parcelable{
 
     /* Action Methods */
 
-    public List<FlowElement> getChildFlowElements() {
-        return childFlowElements;
-    }
-
     /** Searches for the parameter specified FlowElement and returns the Element's
      *  index in the Flow's children ArrayList if found
      *
@@ -156,6 +153,7 @@ public class Flow implements Parcelable{
                 break;
         }
     }
+
     /** Overriding of original toString() because its natural
      *  implementation is no bueno!
      *

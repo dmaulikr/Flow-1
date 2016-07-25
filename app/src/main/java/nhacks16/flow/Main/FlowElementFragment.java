@@ -5,10 +5,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.concurrent.TimeUnit;
@@ -30,20 +30,33 @@ public class FlowElementFragment extends Fragment {
     private int progress;
     private TextView timeDisplay;
     private OnFragmentSelectedListener mCallback;
+
+    // Container Activiy must implement this interface
+    public interface OnFragmentSelectedListener {
+        void onNextSelected(View view);
+        void onMoreTimeSelected(View view);
+    }
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
-    public void cancelFlowState() {
+    @Override
+    public void onDestroy() {
+        cancelTimer();
+        // TODO Record Time?
+        super.onDestroy();
+    }
+
+    public void cancelTimer() {
         elementTimer.cancel();
     }
 
-    // Container Activiy must implement this interface
-    public interface OnFragmentSelectedListener {
-            public void onOptionSelected(int position);
-        }
+
 
     @Nullable
     @Override
@@ -71,8 +84,6 @@ public class FlowElementFragment extends Fragment {
 
         startTimer();
 
-        // TODO determine how to make the process bar fall proportionally to the time decrease
-
         return view;
 
     }
@@ -87,6 +98,7 @@ public class FlowElementFragment extends Fragment {
         return fragment;
     }
 
+
     private void startTimer() {
         elementTimer = new CountDownTimer(
                 element.parseTimeToMiliSecs(),
@@ -94,7 +106,7 @@ public class FlowElementFragment extends Fragment {
 
             public void onTick(long millisUntilFinished) {
                 progressBar.setProgress(progress--);
-
+                Log.d(TAG, "Time to finish: " + millisUntilFinished);
                 timeDisplay.setText(
                         String.format("%02d:%02d:%02d",
                                 TimeUnit.MILLISECONDS.toHours(millisUntilFinished),

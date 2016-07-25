@@ -1,12 +1,9 @@
 package nhacks16.flow.Main;
 
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Owner on 2016-04-17.
@@ -28,7 +25,7 @@ public class FlowElement implements Parcelable{
 
     private String timeUnits;
 
-    private int flowIndex;
+    private int location;
 
     public FlowElement() {
     } //End of Default Constructor
@@ -50,14 +47,14 @@ public class FlowElement implements Parcelable{
     }
 
     /** sets name for the FlowElement
-     * @param elementName
+     * @param elementName , name of element
      */
     public void setElementName(String elementName) {
         this.elementName = elementName;
     }
 
     /** returns user's estimated completion time
-     * @return timeEstimate
+     * @return timeEstimate time estimate
      */
     public int getTimeEstimate() {
         return timeEstimate;
@@ -71,7 +68,7 @@ public class FlowElement implements Parcelable{
     }
 
     /** returns the units the user entered
-     * @return timeUnits
+     * @return timeUnits units for the time
      */
     public String getTimeUnits() {
         return timeUnits;
@@ -85,29 +82,21 @@ public class FlowElement implements Parcelable{
     }
 
     /**
-     * @return flowIndex
+     * @return location
      */
-    public int getFlowIndex() {
-        return flowIndex;
+    public int getLocation() {
+        return location;
+    }
+
+    public int getNext() {
+        return location +1;
     }
 
     /**
-     * @param flowIndex
+     * @param location the location to add
      */
-    public void setFlowIndex(int flowIndex) {
-        this.flowIndex = flowIndex;
-    }
-
-    public String parseTimeToString() {
-
-        int hours = timeEstimate / 60; //since both are ints, you get an int
-        int minutes = timeEstimate % 60;
-        Log.d(TAG, "parsedTimeToString was: " + hours + " : " + minutes);
-        return String.format(
-                "%d:%02d",
-                hours,
-                minutes
-        );
+    public void setLocation(int location) {
+        this.location = location;
     }
 
     public long parseTimeToMiliSecs() {

@@ -33,7 +33,8 @@
         <activity
             android:name=".Main.FlowStateActivity"
             android:label="@string/title_activity_flow_state"
-            android:theme="@style/FlowTheme"></activity>
+            android:theme="@style/FlowTheme" />
+        <activity android:name=".Main.FinishedFlowActivity"></activity>
     </application>
 
 </manifest>

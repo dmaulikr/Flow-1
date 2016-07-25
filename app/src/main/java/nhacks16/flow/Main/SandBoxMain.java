@@ -24,7 +24,7 @@ public class SandBoxMain extends AppCompatActivity {
 
     private static final String TAG = SandBoxMain.class.getName();
 
-    private Flow workingFlow;
+    private Flow currentFlow;
         // Flow currently being worked on
     private FlowManagerUtil util;
     private GridView elementGridView;
@@ -36,8 +36,8 @@ public class SandBoxMain extends AppCompatActivity {
         Toolbar sbToolbar;
         super.onCreate(savedInstanceState);
             // Not keeping Flow Object's in their own capsules
-        workingFlow = getIntent().getParcelableExtra("selectedFlow");
-        setTitle(workingFlow.getName());
+        currentFlow = getIntent().getParcelableExtra("selectedFlow");
+        setTitle(currentFlow.getName());
         // Careful! If this is NULL then the title will be NULL! (if != null) { exec? }
         setContentView(R.layout.activity_sand_box_main);
 
@@ -45,7 +45,7 @@ public class SandBoxMain extends AppCompatActivity {
         setSupportActionBar(sbToolbar);
 
         final ArrayList<Integer> elementGrid = new ArrayList<>();
-        for (int i=0; i<workingFlow.getElementCount(); i++){
+        for (int i = 0; i< currentFlow.getElementCount(); i++){
             elementGrid.add(R.drawable.empty_task_large);
         }
 
@@ -97,21 +97,21 @@ public class SandBoxMain extends AppCompatActivity {
 
     }
 
-    /** Adds the newElement passed via parameter to the workingFlow's ArrayList
+    /** Adds the newElement passed via parameter to the currentFlow's ArrayList
      *  while setting its FlowIndex and UpdatingSandBox Count
      *
      * @param newElement the FlowElement being saved
      */
     private void saveElementToFlow(FlowElement newElement) {
-        Log.d(TAG, "Adding new element to: " + workingFlow.getName() + " ...");
-        newElement.setFlowIndex(workingFlow.getElementCount());
-        workingFlow.addElement(newElement);
+        Log.d(TAG, "Adding new element to: " + currentFlow.getName() + " ...");
+        newElement.setLocation(currentFlow.getElementCount());
+        currentFlow.addElement(newElement);
 
 
         Log.d(TAG, "Updating Sandbox...");
         updateSandBox();
 
-        util.overwriteFlow(workingFlow.getFlowArrayIndex(),workingFlow, this);
+        util.overwriteFlow(currentFlow.getFlowArrayIndex(), currentFlow, this);
             // Saves the updated JSONFlowWrapper ArrayList as
             // the updated list (acts as the updated list
     }
@@ -123,9 +123,9 @@ public class SandBoxMain extends AppCompatActivity {
         elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                String eName = workingFlow.returnElement(position).getElementName();
-                int eTime = workingFlow.returnElement(position).getTimeEstimate();
-                String eUnits = workingFlow.returnElement(position).getTimeUnits();
+                String eName = currentFlow.returnElement(position).getElementName();
+                int eTime = currentFlow.returnElement(position).getTimeEstimate();
+                String eUnits = currentFlow.returnElement(position).getTimeUnits();
 
                 showToast("" + eName + "\n" + eTime + " " + eUnits);
             }
@@ -172,13 +172,13 @@ public class SandBoxMain extends AppCompatActivity {
     }
 
     public void goFlowState(View v) {
-        if (workingFlow.getChildElements().isEmpty()) {
+        if (currentFlow.getChildElements().isEmpty()) {
             this.showToast(
                     "Look's like there is no elements yet!"
             );
         } else {
             Intent in = new Intent(this, FlowStateActivity.class);
-            in.putExtra("parent", workingFlow);
+            in.putExtra("parent", currentFlow);
             startActivity(in);
         }
     }

@@ -11,6 +11,7 @@
     android:columnCount="14">
 
     <ImageView
+        android:contentDescription="Image of blank flag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/task_element"
@@ -21,6 +22,7 @@
         android:layout_marginTop="60dp" />
 
     <ImageView
+        android:contentDescription="Image of label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/task_name"
@@ -59,6 +61,7 @@
         android:layout_marginBottom="12dp" />
 
     <ImageView
+        android:contentDescription="Image of timer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/timeEst"
@@ -96,20 +99,22 @@
         android:layout_toRightOf="@+id/timeInput" />
 
     <ImageView
+        android:contentDescription="Image of check mark"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/saveElement"
-        android:src="@drawable/done_sml"
+        android:src="@drawable/done_black_48dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:onClick="doneElement" />
 
     <ImageView
+        android:contentDescription="Image of X"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/saveElement"
         android:layout_alignParentStart="true"
-        android:src="@drawable/close"
+        android:src="@drawable/close_black_48dp"
         android:layout_alignBottom="@+id/saveElement"
         android:id="@+id/forgetElement"
         android:onClick="forgetElement" />

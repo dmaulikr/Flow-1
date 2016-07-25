@@ -7,7 +7,7 @@
     >
 
         <TextView
-            android:onClick="next"
+            android:onClick="onNextSelected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/next"
@@ -15,14 +15,14 @@
             android:gravity="center"
             android:textAppearance=
                 "?android:attr/textAppearanceMedium"
-            android:layout_centerHorizontal="true"
+            android:layout_alignStart="@+id/task_element"
             android:text="@string/next_element"
             android:layout_below="@+id/task_element"
             android:layout_marginTop="25dp"
-            android:layout_marginEnd="20dp"
             />
 
         <TextView
+            android:onClick="onMoreTimeSelected"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawablePadding="15dp"
@@ -66,6 +66,7 @@
 
 
     <ImageView
+        android:contentDescription="Image of blank flag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/task_element"

@@ -21,7 +21,7 @@
     <string name="dialog_flow_name">Create Flow</string>
     <string name="dialog_create">CREATE</string>
     <string name="action_add_flow_element">Add flow element</string>
-    <string name="empty_list">Look\'s like there\'s nothing here...</string>
+    <string name="empty_list">Look\'s like there\'s nothing here&#8230;</string>
     <string name="action_delete_flow">Delete Flows</string>
     <string name="describe_element_count">Elements in this flow</string>
     <string name="title_activity_explore_elements">ExploreElementsActivity</string>
@@ -29,6 +29,11 @@
     <string name="title_activity_flow_state">FlowStateActivity</string>
     <string name="next_element">Next</string>
     <string name="more_time">More time!</string>
+    <string-array name="praise_msg">
+        <item> Nice work ! </item>
+        <item> Congrats ! </item>
+        <item> Sweet !</item>
+    </string-array>
     <string-array name="quit_quotes">
         <item> <i> "Sit, walk, or run, but don't wobble." </i> </item>
         <item> <i> "Sitting quietly, doing nothing,\n Spring comes, and the grass grows by itself." </i> </item>
