@@ -1,5 +1,6 @@
 package nhacks16.flow.Main;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,17 +19,24 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import nhacks16.flow.R;
 
 public class FlowStateActivity extends AppCompatActivity
-        implements FlowElementFragment.OnFragmentSelectedListener {
+        implements FlowElementFragment.OnFragmentSelectedListener, FlowElementFragment.OnDataPass {
 
     private static final String TAG = FlowStateActivity.class.getName();
     private Flow parentFlow;
-    private int element=0;
+    private int currentElement =0;
+    private Integer[] millisInFlow;
+        // Holds each currentElement's completetion time matching to it's Flow Location
     private FlowElementFragment fragment;
+    private int endFlag;
+    private static final int FINISHED = 1;
+    private static final int NOT_FINISHED = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +44,8 @@ public class FlowStateActivity extends AppCompatActivity
         setContentView(R.layout.activity_flow_state);
 
         parentFlow = getIntent().getParcelableExtra("parent");
-
+        millisInFlow = new Integer[parentFlow.getChildElements().size()];
+        endFlag=NOT_FINISHED;
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.flowstate_fragment_container) != null) {
@@ -45,28 +54,22 @@ public class FlowStateActivity extends AppCompatActivity
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
             if (savedInstanceState != null) {
+
                 return;
             }
 
             fragment = FlowElementFragment.newInstance(
-                   parentFlow.getChildElements().get(element)
+                    parentFlow.getChildElements().get(currentElement)
             );
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-            transaction.add(R.id.flowstate_fragment_container, fragment)
+            transaction
+                    .add(R.id.flowstate_fragment_container, fragment)
                     .commit();
 
         }
-
-        // Get element from Sandbox
-        // get time of element set count down to element.getTime
-        // Set name of the element textview using element.getName
-        // Start timer and use Progress Bar Class Android https://developer.android.com/reference/android/widget/ProgressBar.html
-        // If timer runs out, show thumbs down need more time
-        // If finished early parcel and send a .next() of the element to the new fragment?
 
 
     }
@@ -112,33 +115,77 @@ public class FlowStateActivity extends AppCompatActivity
     @Override
     public void onNextSelected(View v) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
         try {
             fragment = FlowElementFragment.newInstance(
                     parentFlow
                             .getChildElements().get(
-                            ++element
+                            ++currentElement
                     )
             );
 
-            transaction.replace(R.id.flowstate_fragment_container, fragment)
+            transaction.setCustomAnimations(
+                    R.animator.card_flip_right_in,
+                    R.animator.card_flip_right_out,
+                    R.animator.card_flip_left_in,
+                    R.animator.card_flip_left_out)
+                    .replace(R.id.flowstate_fragment_container, fragment)
                     .commit();
             } catch (IndexOutOfBoundsException e) {
                 if (fragment!=null) {
+                    endFlag=FINISHED;
                     transaction.remove(fragment);
                     transaction.commit();
                     transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                    fragment = null;
-
-
-                    Intent i = new Intent(this, FinishedFlowActivity.class);
-                    i.putExtra("finishedFlow", parentFlow);
-                    startActivity(i);
+                    // TODO Data pass not being called
                 }
 
             }
+    }
 
 
 
+    @Override
+    public void onDataPass(Bundle recievedData) {
+        /* onDataPass is called after onNextSelected is called,
+           therefore currentElement is updated to the next element location
+           while passData is sending bundle related to previous element
+           therefore currentElement-1 (basically a count)
+         */
+        millisInFlow[currentElement-1]= recievedData.getInt(
+                String.valueOf(currentElement-1));
+
+        if (endFlag==FINISHED) {
+           goToFinishScreen();
+        }
+    }
+
+    private void goToFinishScreen() {
+        Intent i = new Intent(this, FinishedFlowActivity.class);
+        i.putExtra("finishedFlow", parentFlow);
+        i.putExtra("completionTime", this.calculateTimeInFlow());
+        startActivity(i);
+    }
+
+    private String calculateTimeInFlow() {
+        int time=0;
+
+        for (int i = 0; i< millisInFlow.length; i++) {
+            time = time + millisInFlow[i];
+        }
+
+        return String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(time),
+                TimeUnit.MILLISECONDS.toMinutes(time)
+                        - TimeUnit.HOURS.toMinutes(
+                        TimeUnit.MILLISECONDS.toHours(time)
+                ),
+                TimeUnit.MILLISECONDS.toSeconds(time)
+                        - TimeUnit.MINUTES.toSeconds(
+                        TimeUnit.MILLISECONDS.toMinutes(time)
+                )
+
+        );
     }
 
     @Override
@@ -172,9 +219,6 @@ public class FlowStateActivity extends AppCompatActivity
         customDialog.show();
     }
 
-
-
-
     private AlertDialog.Builder customDialog(EditText inTime) {
         AlertDialog.Builder newFlowDialog = new AlertDialog.Builder(FlowStateActivity.this);
 
@@ -204,4 +248,6 @@ public class FlowStateActivity extends AppCompatActivity
 
         return newFlowDialog;
     }
+
+
 }

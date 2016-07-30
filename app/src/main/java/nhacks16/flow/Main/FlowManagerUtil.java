@@ -1,6 +1,8 @@
 package nhacks16.flow.Main;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -8,7 +10,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -21,26 +22,33 @@ import java.util.ArrayList;
 /**
  * Created by Robert on 2016-06-05.
  */
-public class FlowManagerUtil {
+public class FlowManagerUtil implements Parcelable{
+
+    static final String COMPLEX_PREFS = "COMPLEX_PREFS";
+    static final String USER_FLOWS = "USER_FLOWS";
 
     private static final String TAG = FlowManagerUtil.class.getName();
     private static final String fileName = "flows.json";
              // File name that data will be saved to.
-    private static File file = new File(fileName);
 
-    private static ArrayList<Flow> JSONFlowWrapper = new ArrayList<Flow>();
+    public static ArrayList<Flow> getFlowList() {
+        return flowList;
+    }
+
+    private static ArrayList<Flow> flowList = new ArrayList<Flow>();
         /* Acts as an outer encasing List Object which wraps all the
            Flow objects inside. This allows the whole ArrayList to be
            instantiated rather than individual objects :)
          */
 
-    /** Basic Constructor
-     *
+    /** Reads JSON data from file and builds it's flowList
+     *  with the return data
       */
-    public FlowManagerUtil(){
+    public FlowManagerUtil(Context context){
+        this.flowList = rebuildFlowArrayList(context);
     } // End of Constructor
 
-    /** Updates the JSONFlowWrapper with the updated list containing the
+    /** Updates the flowList with the updated list containing the
      *  most recently saved flow objects. Converts this Wrapper object containing
      *  the list of Flows to a JSON string and saves to internal storage by overwritting
      *  flows.json
@@ -48,18 +56,18 @@ public class FlowManagerUtil {
      * @param context the context in which the method is being called
      * @param updatedList the most recent ArrayList containing the past Flows and recent Flow to be saved
      */
-    public static void saveFlowDataInternal(Context context, ArrayList<Flow> updatedList) {
+    public static void saveFlowToFile(Context context, ArrayList<Flow> updatedList) {
             // Save an Array inside an ArrayList to string:
 
 
-        JSONFlowWrapper =null;
-        JSONFlowWrapper = updatedList;
+        flowList =null;
+        flowList = updatedList;
             // Creates reference to the updated LV Content ArrayList
            // Then is used as an outer JSON Object Wrapper
 
         Gson gson = new Gson();
 
-        String jsonData = gson.toJson(JSONFlowWrapper);
+        String jsonData = gson.toJson(flowList);
             // Converts the inputted ArrayList Objection (Containing new Flow)
             // to JSON format in String form
 
@@ -71,7 +79,10 @@ public class FlowManagerUtil {
                     // Overwrites the data present in the File, MODE_PRIVATE
             outputStream.write(jsonData.getBytes());
             outputStream.close();
-            Log.d(TAG, "SUCCESS! \n ~ " + loadFlowDataInternal(context));
+            Log.d(TAG, "SUCCESS! \n ~ " + loadJSONFlowListFromFile(context));
+
+            ComplexPreferences cPreferences = ComplexPreferences.getComplexPreferences(context, COMPLEX_PREFS, context.MODE_PRIVATE);
+            cPreferences.putObject(USER_FLOWS, flowList);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,7 +95,7 @@ public class FlowManagerUtil {
      * @param context the context in which the method is being called
      * @return jsonData the json String data read from file
      */
-    public static String loadFlowDataInternal(Context context) {
+    public static String loadJSONFlowListFromFile(Context context) {
         try {
             FileInputStream fis = context.openFileInput(fileName);
             InputStreamReader isr = new InputStreamReader(fis);
@@ -116,7 +127,7 @@ public class FlowManagerUtil {
             PrintWriter writer = new PrintWriter(os);
             writer.print("");
             writer.close();
-            JSONFlowWrapper =null;
+            flowList =null;
             return true;
         } catch (Exception e) {
             Log.e(TAG, "Could not delete data.. \n ~ "+e.getMessage());
@@ -124,21 +135,21 @@ public class FlowManagerUtil {
         }
     }
 
-    /** Using the json String data obtained from the loadFlowDataInternal() method,
+    /** Using the json String data obtained from the loadJSONFlowListFromFile() method,
      *  instantiates a new ArrayList containing all the Flows via GSON to pass back
      *  to the context in which it is being called.
      *
      * @param context the context in which the method is being called
      * @return flowsFromFile returns the ArrayList which contains the flows saved in file
      */
-    public static ArrayList<Flow> rebuildFlowArray(Context context) {
+    public static ArrayList<Flow> rebuildFlowArrayList(Context context) {
         Type FLOW_TYPE = new TypeToken<ArrayList<Flow>>() {
         }.getType();
         try {
             Log.d(TAG, "Attempting to regenerate Flows...");
             Gson gson = new Gson();
 
-            String json = loadFlowDataInternal(context);
+            String json = loadJSONFlowListFromFile(context);
 
             JsonReader reader = new JsonReader(new StringReader(json));
             reader.setLenient(true);
@@ -170,11 +181,48 @@ public class FlowManagerUtil {
     public static void overwriteFlow(int indexToUpdate, Flow updatedFlow, Context ctx) {
         try{
             Log.d(TAG, "Overwriting Flow...");
-            JSONFlowWrapper.set(indexToUpdate, updatedFlow);
+            flowList.set(indexToUpdate, updatedFlow);
         } catch (Exception e) {
             Log.e(TAG, "Error in overwriting Flow: " + e.getMessage());
         }
 
-        saveFlowDataInternal(ctx, JSONFlowWrapper);
+        saveFlowToFile(ctx, flowList);
     }
+
+    // Parcel Implementation to pass data from the Stream to the Sandbox about
+    // the current flow object.
+    // Still need to make method to calculate the total time for the flow based on elements
+    // The order of READING and WRITING is important (Read and write in same order)
+    public FlowManagerUtil(Parcel in) {
+
+        this.flowList = in.readArrayList(getClass().getClassLoader());
+
+    }
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeList(this.flowList);
+    }
+
+
+    public static final Parcelable.Creator<FlowManagerUtil> CREATOR =
+            new Parcelable.Creator<FlowManagerUtil>() {
+
+                @Override
+                public FlowManagerUtil createFromParcel(Parcel source) {
+                    return new FlowManagerUtil(source);
+                    //Using Parcelable constructor
+                }
+
+                @Override
+                public FlowManagerUtil[] newArray(int size) {
+                    return new FlowManagerUtil[size];
+                }
+            };
+
+
 }

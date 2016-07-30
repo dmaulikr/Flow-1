@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 import nhacks16.flow.R;
 
@@ -37,11 +38,18 @@ public class SandBoxMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
             // Not keeping Flow Object's in their own capsules
         currentFlow = getIntent().getParcelableExtra("selectedFlow");
+
         setTitle(currentFlow.getName());
         // Careful! If this is NULL then the title will be NULL! (if != null) { exec? }
         setContentView(R.layout.activity_sand_box_main);
 
         sbToolbar = (Toolbar) findViewById(R.id.sbToolbar);
+
+        TextView timesComplete = (TextView) findViewById(R.id.time_complete);
+
+        Log.d(TAG, "Current flow tokens " + currentFlow.getCompletionTokens());
+        timesComplete.setText(String.valueOf(currentFlow.getCompletionTokens()));
+
         setSupportActionBar(sbToolbar);
 
         final ArrayList<Integer> elementGrid = new ArrayList<>();
@@ -55,14 +63,13 @@ public class SandBoxMain extends AppCompatActivity {
             // Passes the number of elements in the Flow's child elements to set the
             // Adapter's initial size
         elementGridView.setAdapter(imgAdapater);
-        util = new FlowManagerUtil();
+        util = new FlowManagerUtil(this);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
         rebuildSandbox();
     }
 
@@ -111,7 +118,7 @@ public class SandBoxMain extends AppCompatActivity {
         Log.d(TAG, "Updating Sandbox...");
         updateSandBox();
 
-        util.overwriteFlow(currentFlow.getFlowArrayIndex(), currentFlow, this);
+        util.overwriteFlow(currentFlow.getFlowManagerIndex(), currentFlow, this);
             // Saves the updated JSONFlowWrapper ArrayList as
             // the updated list (acts as the updated list
     }

@@ -24,12 +24,13 @@ import nhacks16.flow.R;
 public class FlowElementFragment extends Fragment {
     private static final String FLOW_ELEMENT = "FLOW_ELEMENT";
     private static final String TAG = TheStream.class.getName();
-    private CountDownTimer elementTimer;
+    private ElementTimer elementTimer;
     private ProgressBar progressBar;
     private FlowElement element;
     private int progress;
     private TextView timeDisplay;
     private OnFragmentSelectedListener mCallback;
+    private OnDataPass dataPasser;
 
     // Container Activiy must implement this interface
     public interface OnFragmentSelectedListener {
@@ -37,7 +38,14 @@ public class FlowElementFragment extends Fragment {
         void onMoreTimeSelected(View view);
     }
 
+    public interface OnDataPass {
+        void onDataPass(Bundle b);
+    }
 
+
+    public void passData(Bundle b) {
+        dataPasser.onDataPass(b);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,14 +53,22 @@ public class FlowElementFragment extends Fragment {
 
     }
 
+
     @Override
-    public void onDestroy() {
+    public void onStop() {
         cancelTimer();
-        // TODO Record Time?
-        super.onDestroy();
+
+        super.onStop();
     }
 
     public void cancelTimer() {
+        // Pass data
+        Bundle b = new Bundle();
+        b.putInt(
+                String.valueOf(element.getLocation()),
+                elementTimer.getTimeFinishedInSecs()
+                );
+        passData(b);
         elementTimer.cancel();
     }
 
@@ -100,41 +116,13 @@ public class FlowElementFragment extends Fragment {
 
 
     private void startTimer() {
-        elementTimer = new CountDownTimer(
-                element.parseTimeToMiliSecs(),
-                1000) {
+        elementTimer= new ElementTimer(element.parseTimeToMiliSecs(), 1000);
 
-            public void onTick(long millisUntilFinished) {
-                progressBar.setProgress(progress--);
-                Log.d(TAG, "Time to finish: " + millisUntilFinished);
-                timeDisplay.setText(
-                        String.format("%02d:%02d:%02d",
-                                TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
-                                TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                                        - TimeUnit.HOURS.toMinutes(
-                                        TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
-                                ),
-                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)
-                                        - TimeUnit.MINUTES.toSeconds(
-                                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                                )
-
-                        )
-                );
-            }
-
-            public void onFinish() {
-                TextView notFinished = (TextView) getView().findViewById(R.id.not_finished);
-                notFinished.setVisibility(View.VISIBLE);
-                notFinished.animate().alpha(1.0f).setDuration(300);
-                timeDisplay.setText("Finished!");
-            }
-        };
         getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void run() {
+            public void run () {
                 elementTimer.start();
-            }
+                }
         });
 
     }
@@ -144,9 +132,10 @@ public class FlowElementFragment extends Fragment {
         super.onAttach(context);
 
         // Ensures container activity implements callback interface!
-
         try {
             mCallback = (OnFragmentSelectedListener) context;
+            dataPasser = (OnDataPass) context;
+
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                 + " must implement the appropriate interface");
@@ -154,6 +143,53 @@ public class FlowElementFragment extends Fragment {
     }
 
     public FlowElementFragment() {
+
+    }
+
+    class ElementTimer extends CountDownTimer {
+        public int getTimeFinishedInSecs() {
+            return (int) (timeStart-timeRemaining);
+        }
+
+        long timeStart;
+        long timeRemaining;
+
+
+        @Override
+        public void onTick(long millisUntilFinished) {
+            timeRemaining=millisUntilFinished;
+
+            progressBar.setProgress(progress--);
+            Log.d(TAG, "Time to finish: " + millisUntilFinished);
+            timeDisplay.setText(
+                    String.format("%02d:%02d:%02d",
+                            TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
+                                    - TimeUnit.HOURS.toMinutes(
+                                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
+                            ),
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)
+                                    - TimeUnit.MINUTES.toSeconds(
+                                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
+                            )
+
+                    )
+            );
+
+        }
+
+        @Override
+        public void onFinish() {
+            TextView notFinished = (TextView) getView().findViewById(R.id.not_finished);
+            notFinished.setVisibility(View.VISIBLE);
+            notFinished.animate().alpha(1.0f).setDuration(300);
+            timeDisplay.setText("Finished!");
+        }
+
+        public ElementTimer (long millisInFuture, long countDownInterval) {
+            super(millisInFuture, countDownInterval);
+            this.timeStart=millisInFuture;
+        }
 
     }
 

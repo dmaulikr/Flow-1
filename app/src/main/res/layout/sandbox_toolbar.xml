@@ -9,5 +9,32 @@
     android:background="?attr/colorPrimary"
     android:theme="@style/FlowTheme.AppBarOverlay"
     android:popupTheme="@style/FlowTheme.PopupOverlay">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:gravity="center"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/time_complete"
+            android:paddingLeft="5dp"
+            android:layout_marginEnd="30dp"
+            android:textColor="@color/colorWhite"
+            android:visibility="visible" />
+        <ImageView
+            android:scaleType="fitCenter"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/times_completed_white_48dp"
+            android:layout_toLeftOf="@+id/time_complete"
+            android:id="@+id/complete_tokens"
+            android:contentDescription="Completion Tokens"
+            android:adjustViewBounds="false"
+            android:visibility="visible" />
+
+    </RelativeLayout>
+
 
 </android.support.v7.widget.Toolbar>

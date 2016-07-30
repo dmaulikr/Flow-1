@@ -19,8 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -33,8 +31,11 @@ import nhacks16.flow.R;
  * @author Robert
  */
 public class TheStream extends AppCompatActivity {
+    public static final String RESTORED_USER_FLOWS = "RESTORED_USER_FLOWS";
+    public static final String RESTORED_MANAGER_UTIL = "RESTORED_MANAGER_UTIL";
 
     private static final String TAG = TheStream.class.getName();
+
     private Toolbar streamToolbar;
     private Flow newFlow;
         //Blank flow object declared.
@@ -61,9 +62,18 @@ public class TheStream extends AppCompatActivity {
         // Attach the adapter to a ListView
         listView = (ListView) findViewById(R.id.streamFeed);
 
-        lvContent = new ArrayList<Flow>();
-        manager = new FlowManagerUtil();
+        if (savedInstanceState!=null && !savedInstanceState.isEmpty())
+        {
+            lvContent = savedInstanceState.getParcelableArrayList(RESTORED_USER_FLOWS);
+            manager = savedInstanceState.getParcelable(RESTORED_MANAGER_UTIL);
+        } else {
+            lvContent = new ArrayList<Flow>();
+            manager = new FlowManagerUtil(this);
+        }
+
+
     }
+
 
     /** Sets up each of the individual list view items to be clicked and launch an
      *  new activity based on selected Flow Object.
@@ -148,12 +158,11 @@ public class TheStream extends AppCompatActivity {
 
         try {
             Log.d(TAG, "Retrieving FlowManager data... ");
-            Gson gson = new Gson();
 
-            String responseData = manager.loadFlowDataInternal(this);
+            boolean flowListAvailable = !manager.getFlowList().isEmpty();
                 // Reads Internal Storage JSON file, receiving return in String Format
 
-            if (!responseData.equals("")){
+            if (flowListAvailable){
 
                 rebuildListView(this);
 
@@ -187,7 +196,7 @@ public class TheStream extends AppCompatActivity {
             Log.d(TAG, "~ Rebuilding List View....\n");
 
             Log.d(TAG, "> Rebuilding Flow ArrayList... \n");
-            lvContent = manager.rebuildFlowArray(context);
+            lvContent = manager.rebuildFlowArrayList(context);
 
             Log.d(TAG, ">> Recreating Adapater... \n");
             helperAdapter = new FlowArrayAdapter(this, lvContent);
@@ -214,7 +223,7 @@ public class TheStream extends AppCompatActivity {
         while(iter.hasNext()) {
             Flow temp = iter.next();
             Log.d(TAG, "\n>> Name: " + temp.getName()
-                    + "\n>> Index:  " + temp.getFlowArrayIndex()
+                    + "\n>> Index:  " + temp.getFlowManagerIndex()
                     + "\n>> Element Count:  " + temp.getElementCount()
                     + "\n>> Time:  " + temp.getTime()
                     + "\n>> Children:  " + temp.getChildElements().toString());
@@ -304,7 +313,7 @@ public class TheStream extends AppCompatActivity {
     private void updateLVContent(Flow flow) {
         if (helperAdapter!=null) {
             Log.d(TAG, "Adding New Flow to ListView Content...");
-            flow.setFlowArrayIndex(lvContent.size());
+            flow.setFlowManagerIndex(lvContent.size());
             lvContent.add(flow);
 
             Log.d(TAG, "Current ListViewContent Size is: " + lvContent.size());
@@ -321,7 +330,8 @@ public class TheStream extends AppCompatActivity {
      * @param currentLVContent
      */
     private void saveFlowToManager(ArrayList<Flow> currentLVContent) {
-        manager.saveFlowDataInternal(this, currentLVContent);
+        manager.saveFlowToFile(this, currentLVContent);
+
     }
 
     /** Deletes All Flows visible in the ListView as well as
@@ -336,6 +346,23 @@ public class TheStream extends AppCompatActivity {
         return true;
     }
 
+
+    @Override
+    public void onBackPressed() {
+        // Do nothing for now
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(RESTORED_USER_FLOWS, lvContent);
+        outState.putParcelable(RESTORED_MANAGER_UTIL, manager);
+        super.onSaveInstanceState(outState);
+    }
 }
 
 

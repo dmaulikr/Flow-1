@@ -5,9 +5,7 @@ import android.os.Parcelable;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /** A Flow (short for workflow) is a framework containing tasks (aka. Flow Elements)
  * arranged according to the order in which they must be performed to complete the end goal.
@@ -20,6 +18,8 @@ public class Flow implements Parcelable{
 
     private static final String TAG = Flow.class.getName();
     private String name;
+
+    private int completionTokens;
 
     private List<FlowElement> childFlowElements = new ArrayList<>();
         // Keeps track of the current FlowElements which belong to this Flow
@@ -34,6 +34,7 @@ public class Flow implements Parcelable{
     public Flow(String name, double time) {
         this.name = name;
         this.totalTime = time;
+        this.completionTokens=0;
     } // End of overload constructor
 
 
@@ -93,7 +94,7 @@ public class Flow implements Parcelable{
      *  ArrayList<Flow>
      * @return flowManagerIndex , the index of the Flow in flowManager
      */
-    public int getFlowArrayIndex() {
+    public int getFlowManagerIndex() {
         return flowManagerIndex;
     }
 
@@ -101,8 +102,21 @@ public class Flow implements Parcelable{
      *  ArrayList<Flow>
      * @param  flowManagerIndex , the index of the Flow in flowManager
      */
-    public void setFlowArrayIndex(int flowManagerIndex) {
+    public void setFlowManagerIndex(int flowManagerIndex) {
         this.flowManagerIndex = flowManagerIndex;
+    }
+
+
+    public int getCompletionTokens() {
+        return completionTokens;
+    }
+
+    public void setCompletionTokens(int completionTokens) {
+        this.completionTokens = completionTokens;
+    }
+
+    public void addCompletionToken(){
+        completionTokens++;
     }
 
     /* Action Methods */
@@ -163,9 +177,10 @@ public class Flow implements Parcelable{
     public String toString() {
         return "Flow{" +
                 "childFlowElements=" + childFlowElements +
-                ", name='" + name + '\'' +
-                ", totalTime=" + totalTime +
+                ", completionTokens='" + completionTokens+
                 ", flowManagerIndex=" + flowManagerIndex +
+                ", name='" + name  +
+                ", totalTime=" + totalTime +
                 '}';
     }
 
@@ -174,15 +189,17 @@ public class Flow implements Parcelable{
     // Still need to make method to calculate the total time for the flow based on elements
     // The order of READING and WRITING is important (Read and write in same order)
     public Flow(Parcel in) {
-        String[] data = new String[3];
+        String[] data = new String[4];
         // data[0] = name
         // data[1] = totalTime
         // data[2] = flowManagerIndex
+        // data[3] = completionTokens
 
         in.readStringArray(data);
         this.name = data[0];
         this.totalTime = Double.parseDouble(data[1]);
         this.flowManagerIndex = Integer.parseInt(data[2]);
+        this.completionTokens = Integer.parseInt(data[3]);
         this.childFlowElements = in.readArrayList(getClass().getClassLoader());
 
           /* Similar implementation:
@@ -211,7 +228,8 @@ public class Flow implements Parcelable{
                 new String[] {
                         this.name,
                         String.valueOf(this.totalTime),
-                        String.valueOf(this.flowManagerIndex)
+                        String.valueOf(this.flowManagerIndex),
+                        String.valueOf(this.completionTokens)
                 }
         );
         destination.writeList(this.childFlowElements);

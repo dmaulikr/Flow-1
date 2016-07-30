@@ -33,17 +33,29 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="?android:attr/actionBarSize"
-        android:paddingTop="?android:attr/actionBarSize"/>
+        android:paddingTop="10dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance=
             "?android:attr/textAppearanceMedium"
-        android:id="@+id/flow_complete"
+        android:id="@+id/flow_name"
         android:layout_below="@+id/praise_msg"
         android:layout_centerHorizontal="true"
         android:paddingTop="@dimen/tasteful_text_spacing"
+        android:text=""/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance=
+            "?android:attr/textAppearanceLarge"
+        android:id="@+id/complete_time"
+        android:layout_below="@+id/flow_name"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="@dimen/tasteful_text_spacing"
+        android:paddingBottom="@dimen/tasteful_text_spacing"
         android:text=""/>
 
 <!--<ImageButton
@@ -64,6 +76,7 @@
         android:layout_below="@+id/happy_face"
         android:src="@drawable/done_black_48dp"
         android:layout_marginTop="?android:attr/actionBarSize"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:onClick="completeFlow"/>
 
 </RelativeLayout>
