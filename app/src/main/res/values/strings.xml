@@ -6,7 +6,7 @@
     <string name="dialog_message"> Passwords do not match </string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
-    <string name="title_activity_sand_box_main"></string>
+    <string name="title_activity_sand_box_main">Sandbox</string>
     <string name="title_activity_the_stream">The Stream</string>
     <string name="login">Login</string>
     <string name="email">E-mail</string>
@@ -24,8 +24,6 @@
     <string name="empty_list">Look\'s like there\'s nothing here&#8230;</string>
     <string name="action_delete_flow">Delete Flows</string>
     <string name="describe_element_count">Elements in this flow</string>
-    <string name="title_activity_explore_elements">ExploreElementsActivity</string>
-    <string name="title_activity_show_element">ShowElementActivity</string>
     <string name="title_activity_flow_state">FlowStateActivity</string>
     <string name="next_element">Next</string>
     <string name="more_time">More time!</string>

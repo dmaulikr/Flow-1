@@ -15,5 +15,5 @@
     <include layout="@layout/element_visual_grid"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
-        android:layout_below="@+id/sbToolbar" />
+        android:layout_below="@+id/sb_toolbar" />
 </RelativeLayout>

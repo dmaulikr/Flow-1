@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import java.util.concurrent.TimeUnit;
@@ -56,29 +58,33 @@ public class FlowElementFragment extends Fragment {
 
     @Override
     public void onStop() {
-        cancelTimer();
+        cancelTimerAndPassData();
 
         super.onStop();
     }
 
-    public void cancelTimer() {
-        // Pass data
-        Bundle b = new Bundle();
-        b.putInt(
-                String.valueOf(element.getLocation()),
-                elementTimer.getTimeFinishedInSecs()
-                );
-        passData(b);
-        elementTimer.cancel();
-    }
+    public void cancelTimerAndPassData() {
+        if (element.getLocation()<0) {
+            // Do not pass Data
+            elementTimer.cancel();
+        } else {
+            Bundle b = new Bundle();
+            b.putInt(
+                    String.valueOf(element.getLocation()),
+                    elementTimer.getTimeFinishedInSecs()
+            );
+            passData(b);
+            elementTimer.cancel();
+        }
 
+    }
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.running_element_fragment, container, false);
+        View view = inflater.inflate(R.layout.fragment_running_element, container, false);
 
         TextView name = (TextView) view.findViewById(R.id.task_name);
         timeDisplay = (TextView) view.findViewById(R.id.time_display);
@@ -180,10 +186,16 @@ public class FlowElementFragment extends Fragment {
 
         @Override
         public void onFinish() {
-            TextView notFinished = (TextView) getView().findViewById(R.id.not_finished);
-            notFinished.setVisibility(View.VISIBLE);
-            notFinished.animate().alpha(1.0f).setDuration(300);
+            Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_animation);
             timeDisplay.setText("Finished!");
+            timeDisplay.setAnimation(fadeInAnimation);
+            /*
+            // Future Version For Now We will have the user self advance to new tasks
+            TextView notFinished = (TextView) getView().findViewById(R.id.not_finished);
+            Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_animation);
+            notFinished.setVisibility(View.VISIBLE);
+            notFinished.startAnimation(fadeInAnimation);
+             */
         }
 
         public ElementTimer (long millisInFuture, long countDownInterval) {

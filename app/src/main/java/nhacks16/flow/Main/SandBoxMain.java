@@ -38,19 +38,14 @@ public class SandBoxMain extends AppCompatActivity {
         super.onCreate(savedInstanceState);
             // Not keeping Flow Object's in their own capsules
         currentFlow = getIntent().getParcelableExtra("selectedFlow");
-
-        setTitle(currentFlow.getName());
-        // Careful! If this is NULL then the title will be NULL! (if != null) { exec? }
         setContentView(R.layout.activity_sand_box_main);
+        setTitle(currentFlow.getName());
 
-        sbToolbar = (Toolbar) findViewById(R.id.sbToolbar);
-
+        sbToolbar = (Toolbar) findViewById(R.id.sb_toolbar);
         TextView timesComplete = (TextView) findViewById(R.id.time_complete);
 
-        Log.d(TAG, "Current flow tokens " + currentFlow.getCompletionTokens());
-        timesComplete.setText(String.valueOf(currentFlow.getCompletionTokens()));
-
         setSupportActionBar(sbToolbar);
+        timesComplete.setText(String.valueOf(currentFlow.getCompletionTokens()));
 
         final ArrayList<Integer> elementGrid = new ArrayList<>();
         for (int i = 0; i< currentFlow.getElementCount(); i++){

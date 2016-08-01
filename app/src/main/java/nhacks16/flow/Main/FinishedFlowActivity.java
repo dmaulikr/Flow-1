@@ -60,10 +60,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
     }
 
     public void completeFlow(View v) {
-        startActivity(
-                new Intent(this, TheStream.class)
-        );
-
+        finish();
     }
 
 }

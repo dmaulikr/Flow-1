@@ -12,17 +12,14 @@
         <activity
             android:name=".UsersManagement.LandingActivity"
             android:label="@string/app_name"
-            android:theme="@style/FlowThemeBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".UsersManagement.UserLogin"
             android:label="@string/title_activity_user_login"
-            android:theme="@style/FlowThemeBar"
             android:screenOrientation="portrait" />
         <activity
             android:name=".Main.SandBoxMain"
             android:label="@string/title_activity_sand_box_main"
-            android:theme="@style/FlowTheme"
             android:screenOrientation="portrait" />
         <activity android:name=".Main.ElementDesigner"
             android:screenOrientation="portrait" />

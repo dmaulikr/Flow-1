@@ -1,6 +1,5 @@
 package nhacks16.flow.Main;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -81,11 +79,10 @@ public class FlowStateActivity extends AppCompatActivity
                         getFragmentManager().findFragmentById(R.id.flowstate_fragment_container);
 
         new AlertDialog.Builder(this)
-                .setMessage("Your current Flow will be cancelled.")
+                .setTitle("Your current Flow will be cancelled.")
                 .setCancelable(false)
                 .setPositiveButton("Understood", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        fragment.cancelTimer();
                         showCustomQuitingToast(FlowStateActivity.this);
                         FlowStateActivity.this.finish();
                     }
@@ -137,7 +134,6 @@ public class FlowStateActivity extends AppCompatActivity
                     transaction.remove(fragment);
                     transaction.commit();
                     transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                    // TODO Data pass not being called
                 }
 
             }
@@ -161,6 +157,7 @@ public class FlowStateActivity extends AppCompatActivity
     }
 
     private void goToFinishScreen() {
+        finish();
         Intent i = new Intent(this, FinishedFlowActivity.class);
         i.putExtra("finishedFlow", parentFlow);
         i.putExtra("completionTime", this.calculateTimeInFlow());
@@ -203,7 +200,6 @@ public class FlowStateActivity extends AppCompatActivity
 
                         } else {
                             Toast.makeText(FlowStateActivity.this, "Time to update", Toast.LENGTH_LONG).show();
-                            //TODO Update the time based on input
                         }
                     }
                 });

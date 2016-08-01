@@ -120,7 +120,7 @@ public class TheStream extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_delete_flows:
-                clearAllFlows();
+                deleteFlowsDialog();
                 return true;
 
             case R.id.action_newFlow:
@@ -239,7 +239,7 @@ public class TheStream extends AppCompatActivity {
 
             //Create edit text field for name entry
         final EditText nameInputET = new EditText(TheStream.this);
-        AlertDialog.Builder customDialog = customizeDialog(nameInputET);
+        AlertDialog.Builder customDialog = createNewFlowDialog(nameInputET);
 
         customDialog.setPositiveButton("Lets Roll",
                 new DialogInterface.OnClickListener() {
@@ -272,7 +272,7 @@ public class TheStream extends AppCompatActivity {
 
     }
 
-    private AlertDialog.Builder customizeDialog(EditText nameInputET) {
+    private AlertDialog.Builder createNewFlowDialog(EditText nameInputET) {
         AlertDialog.Builder newFlowDialog = new AlertDialog.Builder(TheStream.this);
 
         //Sets up Layout Parameters
@@ -334,12 +334,30 @@ public class TheStream extends AppCompatActivity {
 
     }
 
+    private void deleteFlowsDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("ALL Flows will be deleted.")
+                .setMessage("This action is PERMANENT")
+                .setCancelable(false)
+                .setPositiveButton("Understood", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deleteAllFlows();
+                        Toast.makeText(TheStream.this,
+                                "Those poor Flows. \nI hope you're proud of yourself",
+                                Toast.LENGTH_LONG)
+                                .show();
+                    }
+                })
+                .setNegativeButton("No Don't! It's a Trap!", null)
+                .show();
+    }
+
     /** Deletes All Flows visible in the ListView as well as
      *  requests for all Flow data to be deleted from Internal Storage.
      *
      * @return boolean, confirmation of
      */
-    private boolean clearAllFlows() {
+    private boolean deleteAllFlows() {
         lvContent.removeAll(lvContent);
         manager.deleteFileData(this);
         helperAdapter.notifyDataSetChanged();
@@ -349,7 +367,7 @@ public class TheStream extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // Do nothing for now
+        super.onBackPressed();
     }
 
     @Override
@@ -363,6 +381,7 @@ public class TheStream extends AppCompatActivity {
         outState.putParcelable(RESTORED_MANAGER_UTIL, manager);
         super.onSaveInstanceState(outState);
     }
+
 }
 
 
