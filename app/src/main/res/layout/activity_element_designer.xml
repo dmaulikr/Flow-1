@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="nhacks16.flow.Main.ElementDesigner"
+    tools:context=".Main.ElementDesignerActivity"
     android:columnCount="14">
 
     <ImageView
@@ -26,7 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/task_name"
-        android:src="@drawable/label"
+        android:src="@drawable/label_black_48dp"
         android:layout_gravity="center_vertical"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"
@@ -65,7 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/timeEst"
-        android:src="@drawable/time"
+        android:src="@drawable/timer_black_48dp"
         android:layout_alignParentStart="false"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"

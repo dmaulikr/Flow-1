@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="nhacks16.flow.Main.TheStream"
+    tools:context=".Main.TheStreamActivity"
     android:rowCount="2"
     android:columnCount="1">
 

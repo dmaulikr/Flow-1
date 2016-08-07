@@ -1,16 +1,4 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="FlowTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:navigationBarColor">@color/black</item>
-        <item name="android:colorBackground">@color/background_floating_material_light</item>
-    </style>
 
     <style name="FlowTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -27,5 +15,9 @@
         <item name="android:maxHeight">40dip</item>
         <item name="android:minWidth">100dip</item>
         <item name="android:maxWidth">125dip</item>
+    </style>
+
+    <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:statusBarColor">@color/abc_secondary_text_material_light</item>
     </style>
 </resources>

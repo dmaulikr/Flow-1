@@ -20,7 +20,7 @@
         android:layout_height="?android:attr/listPreferredItemHeight"
         android:divider="@android:color/transparent"
         android:dividerHeight="15dp"
-        android:background="@drawable/custom_border">
+       >
 
         <TextView
             android:textAppearance=
@@ -36,7 +36,7 @@
 
         <ImageView
             android:id="@+id/item_element_icon"
-            android:src="@drawable/empty_task"
+            android:src="@drawable/flag_small_black_outline"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_marginEnd="140dp"
@@ -59,7 +59,7 @@
 
         <ImageView
             android:id="@+id/item_time_icon"
-            android:src="@drawable/time"
+            android:src="@drawable/timer_black_48dp"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignTop="@+id/item_element_icon"
