@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Flow</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_the_stream">The Stream</string>
+    <string name="title_activity_flow_sandbox"></string>
+    <string name="new_task_name">Task name</string>
+    <string-array name="select_time">
+        <item> minutes </item>
+        <item> hours </item>
+    </string-array>
+    <string name="action_new_flow"> Create Flow </string>
+    <string name="dialog_flow_name">Create Flow</string>
+    <string name="dialog_create">CREATE</string>
+    <string name="action_add_flow_element">Add flow element</string>
+    <string name="empty_list">Look\'s like there\'s nothing here&#8230;</string>
+    <string name="action_delete_flow">Delete Flows</string>
+    <string name="describe_element_count">Elements in this flow</string>
+    <string name="title_activity_flow_state">FlowStateActivity</string>
+    <string name="next_element">Next</string>
+    <string name="more_time">More time!</string>
+    <string-array name="praise_msg">
+        <item> Nice work ! </item>
+        <item> Congrats ! </item>
+        <item> Sweet !</item>
+    </string-array>
+    <string-array name="quit_quotes">
+        <item> <i> "Sit, walk, or run, but don't wobble." \n- Zen Proverb</i> </item>
+        <item> <i> "Sitting quietly, doing nothing,\n Spring comes, and the grass grows by itself." \n- Zen Proverb </i> </item>
+        <item> <i> "All of the significant battles are waged within the self." \n-Sheldon Kopp </i> </item>
+    </string-array>
+    <string name="title_activity_login">Sign in</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="title_activity_splash">SplashActivity</string>
+</resources>

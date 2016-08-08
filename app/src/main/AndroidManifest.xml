@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pressurelabs.flow">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/BaseTheme">
+        <activity
+            android:name=".FlowSandBoxActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ElementDesignerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TheStreamActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".FlowStateActivity"
+            android:label="@string/title_activity_flow_state"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FinishedFlowActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait" />
+    </application>
+
+</manifest>
