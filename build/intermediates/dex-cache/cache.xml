@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="K:\Projects\Android\Flow_app\app\build\intermediates\incremental-runtime-classes\debug\instant-run.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="d164c70bea95be2adda3749c6ae42a9f29c744c0">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run_13d587d4bd64fa504e05fca835f7cbed08284fb7\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Owner\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.6.2\f1bc476cc167b18e66c297df599b2377131a8947\gson-2.6.2.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="f1bc476cc167b18e66c297df599b2377131a8947">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\gson-2.6.2_07d9e9b790bd9485a75dc3030c9d7549f35f6baf\classes.dex" />
+    </item>
+    <item
+        jar="K:\Projects\Android\Flow_app\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="c31e21b53ff2f74664e498248d01453a32e32d48">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-support-v4-23.0.1_a3388c5089b1a15003923209d26606483b103e32\classes.dex" />
+    </item>
+    <item
+        jar="K:\Projects\Android\Flow_app\app\build\intermediates\exploded-aar\com.android.support\design\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="e5c61a3169221a89654ffcaaed47bba51cf071ad">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-design-23.0.1_c61470f9a2f94d8423f7b15f0f1de5e2ee8e95c3\classes.dex" />
+    </item>
+    <item
+        jar="K:\Projects\Android\Flow_app\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="d86429b0f0b3f3cafbeb78dda1b9d89119ccb05d">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-appcompat-v7-23.0.1_30263e2a483fa2a02ffd9299b2d6b02061b3a1aa\classes.dex" />
+    </item>
+    <item
+        jar="K:\Projects\Android\Flow_app\app\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.1\jars\libs\internal_impl-23.0.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="aa92916125166649d8ad4ba3940c3dd7515596d3">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\internal_impl-23.0.1_712bcb32b46d3724c45d3e1a649ea898f2bc3d52\classes.dex" />
+    </item>
+    <item
+        jar="K:\Projects\Android\Flow_app\app\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.0.1\jars\classes.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="39ae02ce40c3ac828abbf780ce0ff5d7a28b7d6a">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\com.android.support-cardview-v7-23.0.1_7b0e48b63d647692aad4fc42d5dfdcf5623b11bb\classes.dex" />
+    </item>
+    <item
+        jar="K:\Projects\Android\Flow_app\app\build\intermediates\incremental-classes\debug\instant-run-bootstrap.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="9d393c1dc33ae5f18b508fbaaecf668362b9af11">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\instant-run-bootstrap_b91e91bc46b0ff5f165cd769a008c9ab008674e2\classes.dex" />
+    </item>
+    <item
+        jar="C:\Users\Owner\AppData\Local\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.1\support-annotations-23.0.1.jar"
+        jumboMode="true"
+        revision="23.0.1"
+        sha1="1fce89a6428c51467090d7f424e4c9c3dbd55f7e">
+        <dex dex="K:\Projects\Android\Flow_app\app\build\intermediates\transforms\dex\debug\folders\1000\10\support-annotations-23.0.1_a7e20cded68c3597335e426c025a55b97c02e3c5\classes.dex" />
+    </item>
+
+</items>
