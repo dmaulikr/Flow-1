@@ -14,9 +14,6 @@ import java.util.ArrayList;
  * Flow_V2
  *
  * @author Robert Simoes, 2016-07-09
- *         Copyright (c) 2016, Robert Simoes All rights reserved.
- *
- * Basic image adapter for the Sandbox grid view of the flows
  */
 public class ImageAdapter extends BaseAdapter {
     // references to our images
