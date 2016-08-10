@@ -98,10 +98,7 @@ public class TheStreamActivity extends AppCompatActivity {
 
                 i.putExtra("selectedFlow", selectedFlow);
                     // Parcels the Flow Object to@ be passed to new activity
-
                 startActivity(i);
-
-                finish();
             }
         });
     }

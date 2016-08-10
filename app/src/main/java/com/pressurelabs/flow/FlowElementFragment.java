@@ -8,10 +8,15 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import java.util.concurrent.TimeUnit;
 
 
@@ -38,9 +43,14 @@ public class FlowElementFragment extends Fragment {
         void onMoreTimeSelected(View view);
     }
 
+
     public interface OnDataPass {
         void onDataPass(Bundle b, int elementNumber);
     }
+
+//    public interface onFragmentFinished {
+//        void onFragmentFinished();
+//    }
 
 
     public void passData(Bundle b, int elementNumber) {
@@ -55,7 +65,7 @@ public class FlowElementFragment extends Fragment {
 
 
     @Override
-    public void onStop() {
+    public void onDestroy() {
         cancelTimerAndPassData();
 
         super.onStop();
@@ -69,7 +79,7 @@ public class FlowElementFragment extends Fragment {
             Bundle b = new Bundle();
             b.putInt(
                     String.valueOf(element.getLocation()),
-                    elementTimer.getTimeFinishedInSecs()
+                    elementTimer.getTimeFinishedInMilliSecs()
             );
             passData(b, element.getLocation());
             elementTimer.cancel();
@@ -87,11 +97,12 @@ public class FlowElementFragment extends Fragment {
         TextView name = (TextView) view.findViewById(R.id.task_name);
         timeDisplay = (TextView) view.findViewById(R.id.time_display);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
+        final TextView next = (TextView) view.findViewById(R.id.next);
 
         element = (FlowElement)getArguments().get(FLOW_ELEMENT);
         progress = (int) element.parseTimeToSecs();
             /* onTick occurs every 1000ms (1s), therefore need progress to tick at that rate
-               but because using progress--, need to convert the milis to seconds to subtract
+               but because using progress--, need to convert the millis to seconds to subtract
              */
         progressBar.setMax(progress);
 
@@ -102,7 +113,29 @@ public class FlowElementFragment extends Fragment {
         progress = progressBar.getMax();
         progressBar.setProgress(progress);
 
-        startTimer();
+        elementTimer= new ElementTimer(element.parseTimeToMilliSecs(), 1000);
+        startTimerOnUi();
+
+        new Runnable() {
+
+            @Override
+            public void run() {
+                new CountDownTimer(2500,1000) {
+
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        Animation fadeinAnimation = AnimationUtils.loadAnimation(getActivity(),R.anim.fadein_animation);
+                        next.setAnimation(fadeinAnimation);
+                        next.setVisibility(View.VISIBLE);
+                    }
+                }.start();
+            }
+        }.run();
 
         return view;
 
@@ -119,9 +152,7 @@ public class FlowElementFragment extends Fragment {
     }
 
 
-    private void startTimer() {
-        elementTimer= new ElementTimer(element.parseTimeToMilliSecs(), 1000);
-
+    private void startTimerOnUi() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run () {
@@ -151,13 +182,12 @@ public class FlowElementFragment extends Fragment {
     }
 
     class ElementTimer extends CountDownTimer {
-        public int getTimeFinishedInSecs() {
+        public int getTimeFinishedInMilliSecs() {
             return (int) (timeStart-timeRemaining);
         }
 
         long timeStart;
         long timeRemaining;
-
 
         @Override
         public void onTick(long millisUntilFinished) {
@@ -184,7 +214,7 @@ public class FlowElementFragment extends Fragment {
 
         @Override
         public void onFinish() {
-            Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_animation);
+            Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fadein_animation);
             timeDisplay.setText("Finished!");
             timeDisplay.setAnimation(fadeInAnimation);
             /*
@@ -202,6 +232,4 @@ public class FlowElementFragment extends Fragment {
         }
 
     }
-
-
 }

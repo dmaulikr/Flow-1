@@ -116,6 +116,7 @@ public class FlowStateActivity extends AppCompatActivity
         toast.show();
     }
 
+
     @Override
     public void onNextSelected(View v) {
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
@@ -135,6 +136,7 @@ public class FlowStateActivity extends AppCompatActivity
                     R.animator.card_flip_left_out)
                     .replace(R.id.flowstate_fragment_container, fragment)
                     .commit();
+
             } catch (IndexOutOfBoundsException e) {
                 /* Index Out of Bounds Exception Thrown When Flow Ends */
 
@@ -168,11 +170,11 @@ public class FlowStateActivity extends AppCompatActivity
     }
 
     private void goToFinishScreen() {
+        finish();
         Intent i = new Intent(this, FinishedFlowActivity.class);
         i.putExtra("finishedFlow", parentFlow);
         i.putExtra("completionTime", this.calculateTimeInFlow());
         startActivity(i);
-        finish();
     }
 
     private String calculateTimeInFlow() {

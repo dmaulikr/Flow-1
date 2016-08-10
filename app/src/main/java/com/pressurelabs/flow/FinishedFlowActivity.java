@@ -59,10 +59,10 @@ public class FinishedFlowActivity extends AppCompatActivity {
     }
 
     public void completeFlow(View v) {
+        finish();
         startActivity(
                 new Intent(this, TheStreamActivity.class)
         );
-        finish();
     }
 
 }
