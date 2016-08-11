@@ -33,7 +33,6 @@ import java.util.concurrent.TimeUnit;
 public class FlowStateActivity extends AppCompatActivity
         implements FlowElementFragment.OnFragmentSelectedListener, FlowElementFragment.OnDataPass {
 
-    private static final String TAG = FlowStateActivity.class.getName();
     private Flow parentFlow;
     private int currentElement =0;
     private Integer[] millisInFlow;
@@ -81,9 +80,6 @@ public class FlowStateActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        final FlowElementFragment fragment =
-                (FlowElementFragment)
-                        getFragmentManager().findFragmentById(R.id.flowstate_fragment_container);
 
         new AlertDialog.Builder(this)
                 .setTitle("Your current Flow will be cancelled.")

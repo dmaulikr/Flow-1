@@ -28,8 +28,6 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     ///// and the user can specify if they've finished the task move to next activity || need more time (+why) || ask help (slack)
 
 
-    private static final String TAG = FlowSandBoxActivity.class.getName();
-
     private Flow currentFlow;
         // Flow currently being worked on
     private DataManagerUtil util;
@@ -90,8 +88,8 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     /** Receives Parcel Object from previous Element Designer Activity
      *  and creates a reference object to point to the Parcel
      *
-     * @param requestCode
-     * @param resultCode
+     * @param requestCode the code being requested
+     * @param resultCode the code being recieved
      * @param data the Parcelled object stored as intent data
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -167,6 +165,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         Intent i= new Intent(FlowSandBoxActivity.this, TheStreamActivity.class);
         startActivity(i);//starting main activity
         finish();
+        super.onBackPressed();
     }
 
     public void goFlowState(View v) {
@@ -181,4 +180,5 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             //TODO Implement a Start Activity for Result here to avoid double backs (-1 for cancel 0 for OK)
         }
     }
+
 }

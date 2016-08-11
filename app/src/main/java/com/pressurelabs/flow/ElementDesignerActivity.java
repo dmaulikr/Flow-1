@@ -27,8 +27,6 @@ public class ElementDesignerActivity extends AppCompatActivity {
 
     // The Element Designer is the resource provider, FlowSandBoxActivity is the blacksmith!
     private Spinner selectTime;
-    private ArrayAdapter<CharSequence> adapter;
-    private static final String TAG = ElementDesignerActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +34,7 @@ public class ElementDesignerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_element_designer);
 
         selectTime = (Spinner)findViewById(R.id.select_time);
-        adapter = ArrayAdapter.createFromResource(this,R.array.select_time,android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.select_time,android.R.layout.simple_spinner_item);
 
         //Specifying each layout for the dropdown items
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -69,7 +67,7 @@ public class ElementDesignerActivity extends AppCompatActivity {
     /** Confirms completion of a Flow Element by validating input,
      *  instantiating a new FlowElement object, and passing the
      *  data back to the previous activity.
-     * @param view
+     * @param view the checkmark clicked in view
      */
     public void doneElement(View view) {
         EditText nameInput = (EditText)findViewById(R.id.nameInput);
@@ -82,20 +80,16 @@ public class ElementDesignerActivity extends AppCompatActivity {
             timeUnits = FlowElement.DEFAULT_UNITS;
         }
 
-        try {
-            if (!elementName.equals("") && !elementTime.equals("")) {
+        if (!elementName.equals("") && !elementTime.equals("")) {
 
-                Intent returnData = new Intent();
-                FlowElement newElement = new FlowElement(elementName, Integer.parseInt(elementTime), timeUnits);
-                returnData.putExtra("newElement", newElement);
-                setResult(RESULT_OK, returnData);
-                finish();
+            Intent returnData = new Intent();
+            FlowElement newElement = new FlowElement(elementName, Integer.parseInt(elementTime), timeUnits);
+            returnData.putExtra("newElement", newElement);
+            setResult(RESULT_OK, returnData);
+            finish();
 
-            } else {
-                Toast.makeText(ElementDesignerActivity.this, "Mind checking that name and time again?", Toast.LENGTH_LONG).show();
-                }
-        } catch (Exception e) {
-
+        } else {
+            Toast.makeText(ElementDesignerActivity.this, "Mind checking that name and time again?", Toast.LENGTH_LONG).show();
         }
     }
 

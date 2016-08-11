@@ -8,12 +8,8 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -28,7 +24,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class FlowElementFragment extends Fragment {
     private static final String FLOW_ELEMENT = "FLOW_ELEMENT";
-    private static final String TAG = TheStreamActivity.class.getName();
     private ElementTimer elementTimer;
     private ProgressBar progressBar;
     private FlowElement element;
@@ -100,6 +95,7 @@ public class FlowElementFragment extends Fragment {
         final TextView next = (TextView) view.findViewById(R.id.next);
 
         element = (FlowElement)getArguments().get(FLOW_ELEMENT);
+        assert element != null;
         progress = (int) element.parseTimeToSecs();
             /* onTick occurs every 1000ms (1s), therefore need progress to tick at that rate
                but because using progress--, need to convert the millis to seconds to subtract
@@ -129,9 +125,13 @@ public class FlowElementFragment extends Fragment {
 
                     @Override
                     public void onFinish() {
-                        Animation fadeinAnimation = AnimationUtils.loadAnimation(getActivity(),R.anim.fadein_animation);
-                        next.setAnimation(fadeinAnimation);
-                        next.setVisibility(View.VISIBLE);
+                        if (getActivity()!=null){
+                            Animation fadeinAnimation = AnimationUtils.loadAnimation(getActivity(),R.anim.fadein_animation);
+                            next.setAnimation(fadeinAnimation);
+                            next.setVisibility(View.VISIBLE);
+                        } else {
+                            next.setVisibility(View.VISIBLE);
+                        }
                     }
                 }.start();
             }

@@ -1,5 +1,6 @@
 package com.pressurelabs.flow;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,10 +13,8 @@ import java.util.Random;
 
 public class FinishedFlowActivity extends AppCompatActivity {
 
-    public static final String COMPLEX_PREFS = "COMPLEX_PREFS";
-    public static final String USER_FLOWS = "USER_FLOWS";
-
-    private static final String TAG = TheStreamActivity.class.getName();
+    private static final String COMPLEX_PREFS = "COMPLEX_PREFS";
+    private static final String USER_FLOWS = "USER_FLOWS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
                 .getComplexPreferences(
                         this,
                         COMPLEX_PREFS,
-                        this.MODE_PRIVATE)
+                        MODE_PRIVATE)
                 .getObject(USER_FLOWS, DataManagerUtil.class);
         // Gets the Flow Manager Util saved in TheStreamActivity from Complex Preferences
 
@@ -60,9 +59,6 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
     public void completeFlow(View v) {
         finish();
-        startActivity(
-                new Intent(this, TheStreamActivity.class)
-        );
     }
 
 }

@@ -13,7 +13,6 @@ import android.os.Parcelable;
 // At the moment, the flowElement can receive a name and time estimate from the user.
  */
 public class FlowElement implements Parcelable{
-    private static final String TAG = TheStreamActivity.class.getName();
     public static final String DEFAULT_UNITS = "minutes";
 
     private String elementName;
@@ -40,13 +39,6 @@ public class FlowElement implements Parcelable{
         return elementName;
     }
 
-    /** sets name for the FlowElement
-     * @param elementName , name of element
-     */
-    public void setElementName(String elementName) {
-        this.elementName = elementName;
-    }
-
     /** returns user's estimated completion time
      * @return timeEstimate time estimate
      */
@@ -54,25 +46,11 @@ public class FlowElement implements Parcelable{
         return timeEstimate;
     }
 
-    /** sets the user's estimated time
-     * @param timeEstimate
-     */
-    public void setTimeEstimate(int timeEstimate) {
-        this.timeEstimate = timeEstimate;
-    }
-
     /** returns the units the user entered
      * @return timeUnits units for the time
      */
     public String getTimeUnits() {
         return timeUnits;
-    }
-
-    /** sets the time units for a Flow Element
-     * @param timeUnits
-     */
-    public void setTimeUnits(String timeUnits) {
-        this.timeUnits = timeUnits;
     }
 
     /**
@@ -118,7 +96,7 @@ public class FlowElement implements Parcelable{
     }
 
     /* Parcel Implementation for Object Passing Between Activities! */
-    public FlowElement(Parcel in) {
+    private FlowElement(Parcel in) {
         String[] data = new String[3];
         // To include: Id, Estimated Time, Task Name, E
 

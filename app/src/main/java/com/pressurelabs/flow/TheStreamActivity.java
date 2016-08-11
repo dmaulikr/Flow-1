@@ -36,9 +36,7 @@ public class TheStreamActivity extends AppCompatActivity {
     public static final String RESTORED_USER_FLOWS = "RESTORED_USER_FLOWS";
     public static final String RESTORED_MANAGER_UTIL = "RESTORED_MANAGER_UTIL";
 
-    private static final String TAG = TheStreamActivity.class.getName();
 
-    private Toolbar streamToolbar;
     private Flow newFlow;
         //Blank flow object declared.
 
@@ -58,10 +56,11 @@ public class TheStreamActivity extends AppCompatActivity {
         setContentView(R.layout.activity_the_stream);
 
         //Sets up toolbar
-        streamToolbar = (Toolbar) findViewById(R.id.stream_toolbar);
+        Toolbar streamToolbar = (Toolbar) findViewById(R.id.stream_toolbar);
         TextView toolbarTitle = (TextView) findViewById(R.id.stream_toolbar_title);
         toolbarTitle.setText("The Stream");
         setSupportActionBar(streamToolbar);
+        //noinspection ConstantConditions
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Attach the adapter to a ListView
@@ -72,7 +71,7 @@ public class TheStreamActivity extends AppCompatActivity {
             lvContent = savedInstanceState.getParcelableArrayList(RESTORED_USER_FLOWS);
             manager = savedInstanceState.getParcelable(RESTORED_MANAGER_UTIL);
         } else {
-            lvContent = new ArrayList<Flow>();
+            lvContent = new ArrayList<>();
             manager = new DataManagerUtil(this);
         }
 
@@ -159,52 +158,42 @@ public class TheStreamActivity extends AppCompatActivity {
      */
     private void populateList() {
 
-        try {
-            boolean flowListAvailable = !manager.getFlowList().isEmpty();
-                // Reads Internal Storage JSON file, receiving return in String Format
+        boolean flowListAvailable = !manager.getFlowList().isEmpty();
+        // Reads Internal Storage JSON file, receiving return in String Format
 
-            if (flowListAvailable){
+        if (flowListAvailable) {
 
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        rebuildListView(TheStreamActivity.this);
-                    }
-                }.run();
+            new Runnable() {
+                @Override
+                public void run() {
+                    rebuildListView(TheStreamActivity.this);
+                }
+            }.run();
 
 
-            } else {
+        } else {
                 /* If no data is avaliable from file, a new Array Adapter will be setup and
                    feed a blank ListView.
                  */
 
-                helperAdapter = new FlowArrayAdapter(this, lvContent);
-                // Create new adapter with ListViewContent
-                listView.setAdapter(helperAdapter);
-            }
-
-        } catch (Exception e) {
-
+            helperAdapter = new FlowArrayAdapter(this, lvContent);
+            // Create new adapter with ListViewContent
+            listView.setAdapter(helperAdapter);
         }
     }
 
     /** Attempts to rebuild the ListView Content by rebuilding the ListView ArrayList
      *  from file and recreating the Array Adapter.
      *
-     * @param context
+     * @param context current activity context
      */
     private void rebuildListView(Context context) {
-        try {
 
-            lvContent = manager.getFlowList();
+        lvContent = manager.getFlowList();
 
-            helperAdapter = new FlowArrayAdapter(this, lvContent);
-                // Recreate FlowArrayAdapter and set
-            listView.setAdapter(helperAdapter);
-
-        } catch (Exception e) {
-
-        }
+        helperAdapter = new FlowArrayAdapter(this, lvContent);
+        // Recreate FlowArrayAdapter and set
+        listView.setAdapter(helperAdapter);
 
     }
 
@@ -302,13 +291,17 @@ public class TheStreamActivity extends AppCompatActivity {
     /** Requests to save the current state of the ListViewContent
      *  to Internal Storage via the dataManager utility
      *
-     * @param currentLVContent
+     * @param currentLVContent the current content in the list view ArrayList
      */
     private void saveFlowToManager(ArrayList<Flow> currentLVContent) {
         manager.saveToFile(this, currentLVContent);
 
     }
 
+    /**
+     * Creates and prompts user for confirmation of deleting all
+     * Flow's in the list view from file
+     */
     private void deleteFlowsDialog() {
         new AlertDialog.Builder(this)
                 .setTitle("ALL Flows will be deleted.")
@@ -332,22 +325,16 @@ public class TheStreamActivity extends AppCompatActivity {
      *
      * @return boolean, confirmation of
      */
-    private boolean deleteAllFlows() {
+    private void deleteAllFlows() {
         lvContent.removeAll(lvContent);
-        manager.deleteAllFlows(this);
+        manager.eraseFileData(this);
         helperAdapter.notifyDataSetChanged();
-        return true;
     }
 
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.pressurelabs.flow;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -30,10 +31,9 @@ import java.util.ArrayList;
  */
 public class DataManagerUtil implements Parcelable{
 
-    static final String COMPLEX_PREFS = "COMPLEX_PREFS";
-    static final String USER_FLOWS = "USER_FLOWS";
+    private static final String COMPLEX_PREFS = "COMPLEX_PREFS";
+    private static final String USER_FLOWS = "USER_FLOWS";
 
-    private static final String TAG = DataManagerUtil.class.getName();
     private static final String fileName = "userflows.json";
     private static File file = new File(fileName);
     /* MUST BE STATIC & GLOBAL Creates file directory for the data files please don't delete again :))) */
@@ -42,7 +42,7 @@ public class DataManagerUtil implements Parcelable{
         return flowList;
     }
 
-    private static ArrayList<Flow> flowList = new ArrayList<Flow>();
+    private static ArrayList<Flow> flowList = new ArrayList<>();
         /* Acts as an outer encasing List Object which wraps all the
            Flow objects inside. This allows the whole ArrayList to be
            instantiated rather than individual objects :)
@@ -53,7 +53,7 @@ public class DataManagerUtil implements Parcelable{
       */
     public DataManagerUtil(Context context){
 
-        this.flowList = buildFlowArrayList(context);
+        flowList = buildFlowArrayList(context);
     } // End of Constructor
 
     /** Updates the flowList with the updated list containing the
@@ -87,11 +87,11 @@ public class DataManagerUtil implements Parcelable{
             outputStream.write(jsonData.getBytes());
             outputStream.close();
 
-            ComplexPreferences cPreferences = ComplexPreferences.getComplexPreferences(context, COMPLEX_PREFS, context.MODE_PRIVATE);
+            ComplexPreferences cPreferences = ComplexPreferences.getComplexPreferences(context, COMPLEX_PREFS, Context.MODE_PRIVATE);
             cPreferences.putObject(USER_FLOWS, flowList);
 
         } catch (Exception e) {
-
+            Toast.makeText(context, "Could not save Flow to file", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -102,7 +102,7 @@ public class DataManagerUtil implements Parcelable{
      * @param context the context in which the method is being called
      * @return jsonData the json String data read from file
      */
-    public static String loadFlowListFromFile(Context context) {
+    private static String loadFlowListFromFile(Context context) {
         try {
 
             FileInputStream fis = context.openFileInput(fileName);
@@ -133,7 +133,7 @@ public class DataManagerUtil implements Parcelable{
      * @param context the context which the method is being called
      * @return boolean determines whether method was successful
      */
-    public static boolean deleteAllFlows(Context context) {
+    public static void eraseFileData(Context context) {
         try {
             FileOutputStream os = context.openFileOutput(fileName, Context.MODE_PRIVATE);
             PrintWriter writer = new PrintWriter(os);
@@ -141,9 +141,8 @@ public class DataManagerUtil implements Parcelable{
             writer.close();
             flowList =null;
                 // Consider changing to removeAll?
-            return true;
         } catch (Exception e) {
-            return false;
+            Toast.makeText(context, "Flows could not be deleted!", Toast.LENGTH_LONG);
         }
     }
 
@@ -158,7 +157,7 @@ public class DataManagerUtil implements Parcelable{
      * @param context the context in which the method is being called
      * @return flowsFromFile returns the ArrayList which contains the flows saved in file
      */
-    public static ArrayList<Flow> buildFlowArrayList(Context context) {
+    private static ArrayList<Flow> buildFlowArrayList(Context context) {
         Type FLOW_TYPE = new TypeToken<ArrayList<Flow>>() {
         }.getType();
         try {
@@ -168,7 +167,7 @@ public class DataManagerUtil implements Parcelable{
 
             if (json.equals("")) {
                 // if return data is blank, no file was found (exists)
-                return new ArrayList<Flow>();
+                return new ArrayList<>();
             }
 
             JsonReader reader = new JsonReader(new StringReader(json));
@@ -176,10 +175,9 @@ public class DataManagerUtil implements Parcelable{
             //GSON throws that particular error when there's extra characters after the end of the object
             // that aren't whitespace, and it defines whitespace very narrowly
 
-            ArrayList<Flow> flowsFromFile = gson.fromJson(reader, FLOW_TYPE);
             //Expected BEGIN_OBJECT but was BEGIN_ARRAY
 
-            return flowsFromFile;
+            return gson.fromJson(reader, FLOW_TYPE);
             // Returns flows to use for lvContent
         } catch (Exception e) {
             // Flow File not regenerated that sucks..
@@ -209,7 +207,7 @@ public class DataManagerUtil implements Parcelable{
     // The order of READING and WRITING is important (Read and write in same order)
     public DataManagerUtil(Parcel in) {
 
-        this.flowList = in.readArrayList(getClass().getClassLoader());
+        flowList = in.readArrayList(getClass().getClassLoader());
 
     }
     @Override
@@ -219,7 +217,7 @@ public class DataManagerUtil implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeList(this.flowList);
+        dest.writeList(flowList);
     }
 
 

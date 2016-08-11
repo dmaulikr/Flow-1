@@ -22,7 +22,6 @@ import java.util.List;
  */
 public class Flow implements Parcelable{
 
-    private static final String TAG = Flow.class.getName();
     private String name;
 
     private int completionTokens;
@@ -161,7 +160,7 @@ public class Flow implements Parcelable{
             addToTotalTime(newElement);
         // Will receive argument from the elementDesigner for the new flowElement object
     }
-    public void addToTotalTime(FlowElement e) {
+    private void addToTotalTime(FlowElement e) {
         switch (e.getTimeUnits()){
             /* Must cast getTimeEst to double in order to calculate the minutes from hrs*/
             case "minutes":
@@ -197,7 +196,7 @@ public class Flow implements Parcelable{
     // the current flow object.
     // Still need to make method to calculate the total time for the flow based on elements
     // The order of READING and WRITING is important (Read and write in same order)
-    public Flow(Parcel in) {
+    private Flow(Parcel in) {
         String[] data = new String[4];
         // data[0] = name
         // data[1] = totalTime
