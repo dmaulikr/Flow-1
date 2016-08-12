@@ -23,4 +23,5 @@
         android:startOffset="@integer/card_flip_time_half"
         android:duration="1" />
 
+    <!-- This will need to be for Fragment library and above -->
 </set>

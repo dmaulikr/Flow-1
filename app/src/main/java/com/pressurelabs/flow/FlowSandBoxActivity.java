@@ -164,7 +164,6 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent i= new Intent(FlowSandBoxActivity.this, TheStreamActivity.class);
         startActivity(i);//starting main activity
-        finish();
         super.onBackPressed();
     }
 

@@ -1,6 +1,5 @@
 package com.pressurelabs.flow;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -12,6 +11,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.support.v4.app.Fragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -52,19 +52,14 @@ public class FlowElementFragment extends Fragment {
         dataPasser.onDataPass(b, elementNumber);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
-    }
+//    @Override
+//    public void onDestroy() {
+//
+//        cancelTimerAndPassData();
+//        super.onDestroy();
+//    }
 
-
-    @Override
-    public void onDestroy() {
-        cancelTimerAndPassData();
-
-        super.onStop();
-    }
 
     public void cancelTimerAndPassData() {
         if (element.getLocation()<0) {
@@ -126,7 +121,7 @@ public class FlowElementFragment extends Fragment {
                     @Override
                     public void onFinish() {
                         if (getActivity()!=null){
-                            Animation fadeinAnimation = AnimationUtils.loadAnimation(getActivity(),R.anim.fadein_animation);
+                            Animation fadeinAnimation = AnimationUtils.loadAnimation(getActivity(),android.R.anim.fade_in);
                             next.setAnimation(fadeinAnimation);
                             next.setVisibility(View.VISIBLE);
                         } else {
@@ -214,7 +209,7 @@ public class FlowElementFragment extends Fragment {
 
         @Override
         public void onFinish() {
-            Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fadein_animation);
+            Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
             timeDisplay.setText("Finished!");
             timeDisplay.setAnimation(fadeInAnimation);
             /*

@@ -41,12 +41,7 @@ public class ElementDesignerActivity extends AppCompatActivity {
 
         selectTime.setAdapter(adapter);
 
-        new Runnable() {
-            @Override
-            public void run() {
-                setClickListeners();
-            }
-        }.run();
+        setClickListeners();
 
     }
 
@@ -106,6 +101,6 @@ public class ElementDesignerActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         setResult(RESULT_CANCELED,null);
-        finish();
+        super.onBackPressed();
     }
 }

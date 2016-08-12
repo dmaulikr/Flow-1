@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.FragmentTransaction;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
@@ -68,7 +68,7 @@ public class FlowStateActivity extends AppCompatActivity
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack
-            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction
                     .add(R.id.flowstate_fragment_container, fragment)
                     .commit();
@@ -81,17 +81,20 @@ public class FlowStateActivity extends AppCompatActivity
     @Override
     public void onBackPressed() {
 
+
         new AlertDialog.Builder(this)
                 .setTitle("Your current Flow will be cancelled.")
                 .setCancelable(false)
                 .setPositiveButton("Understood", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         showCustomQuitingToast(FlowStateActivity.this);
-                        FlowStateActivity.this.finish();
+                        FlowStateActivity.super.onBackPressed();
                     }
                 })
                 .setNegativeButton("No Don't!", null)
                 .show();
+
+
     }
 
     private void showCustomQuitingToast(Context context) {
@@ -100,14 +103,14 @@ public class FlowStateActivity extends AppCompatActivity
 
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.quit_toast,
-                (ViewGroup) findViewById(R.id.toast_layout_root));
+                (ViewGroup) findViewById(R.id.toast_layout_container));
 
         TextView text = (TextView) layout.findViewById(R.id.quote);
         text.setText(randomStr);
 
         Toast toast = new Toast(getApplicationContext());
         toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
         toast.show();
     }
@@ -115,9 +118,12 @@ public class FlowStateActivity extends AppCompatActivity
 
     @Override
     public void onNextSelected(View v) {
-        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         try {
+            fragment.cancelTimerAndPassData();
+
             fragment = FlowElementFragment.newInstance(
                     parentFlow
                             .getChildElements().get(
@@ -126,10 +132,7 @@ public class FlowStateActivity extends AppCompatActivity
             );
 
             transaction.setCustomAnimations(
-                    R.animator.card_flip_right_in,
-                    R.animator.card_flip_right_out,
-                    R.animator.card_flip_left_in,
-                    R.animator.card_flip_left_out)
+                    android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                     .replace(R.id.flowstate_fragment_container, fragment)
                     .commit();
 
@@ -144,6 +147,9 @@ public class FlowStateActivity extends AppCompatActivity
                 }
 
             }
+        if (endFlag==FINISHED){
+            goToFinishScreen();
+        }
     }
 
 
@@ -158,10 +164,9 @@ public class FlowStateActivity extends AppCompatActivity
         if (currentElement!=0) {
             millisInFlow[currentElement-1]= recievedData.getInt(
                     String.valueOf(elementNumber));
-        }
-
-        if (endFlag==FINISHED) {
-           goToFinishScreen();
+        } else {
+            millisInFlow[currentElement]= recievedData.getInt(
+                    String.valueOf(elementNumber));
         }
     }
 
@@ -176,7 +181,7 @@ public class FlowStateActivity extends AppCompatActivity
     private String calculateTimeInFlow() {
         int time=0;
 
-        for (int i = 0; i< millisInFlow.length; i++) {
+        for (int i = 0; i< millisInFlow.length-1; i++) {
             time = time + millisInFlow[i];
         }
 
@@ -227,34 +232,29 @@ public class FlowStateActivity extends AppCompatActivity
     private AlertDialog.Builder customDialog(EditText inTime) {
         final EditText in = inTime;
         final AlertDialog.Builder newFlowDialog = new AlertDialog.Builder(FlowStateActivity.this);
-        new Runnable() {
-            @Override
-            public void run() {
-                //Sets up Layout Parameters
-                LinearLayout layout = new LinearLayout(FlowStateActivity.this);
-                layout.setOrientation(LinearLayout.VERTICAL);
-                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.MATCH_PARENT);
-                params.setMarginStart(42);
-                params.setMarginEnd(50);
+            //Sets up Layout Parameters
+            LinearLayout layout = new LinearLayout(FlowStateActivity.this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            params.setMarginStart(42);
+            params.setMarginEnd(50);
 
 
-                //Sets up length and 1 line filters
-                in.setInputType(InputType.TYPE_CLASS_NUMBER);
+            //Sets up length and 1 line filters
+            in.setInputType(InputType.TYPE_CLASS_NUMBER);
 
-                in.setFilters(new InputFilter[] {
-                        new InputFilter.LengthFilter(3)
-                });
+            in.setFilters(new InputFilter[]{
+                    new InputFilter.LengthFilter(3)
+            });
 
-                //Adds the ET and params to the layout of the dialog box
-                layout.addView(in, params);
+            //Adds the ET and params to the layout of the dialog box
+            layout.addView(in, params);
 
-                newFlowDialog.setTitle("How many more minutes?");
+            newFlowDialog.setTitle("How many more minutes?");
 
-                newFlowDialog.setView(layout);
-            }
-        }.run();
+            newFlowDialog.setView(layout);
 
         return newFlowDialog;
     }
