@@ -43,22 +43,9 @@ public class FlowElementFragment extends Fragment {
         void onDataPass(Bundle b, int elementNumber);
     }
 
-//    public interface onFragmentFinished {
-//        void onFragmentFinished();
-//    }
-
-
     public void passData(Bundle b, int elementNumber) {
         dataPasser.onDataPass(b, elementNumber);
     }
-
-
-//    @Override
-//    public void onDestroy() {
-//
-//        cancelTimerAndPassData();
-//        super.onDestroy();
-//    }
 
 
     public void cancelTimerAndPassData() {
@@ -180,7 +167,9 @@ public class FlowElementFragment extends Fragment {
         public int getTimeFinishedInMilliSecs() {
             return (int) (timeStart-timeRemaining);
         }
-
+        public long getTimeRemaining() {
+            return timeRemaining;
+        }
         long timeStart;
         long timeRemaining;
 
@@ -226,5 +215,13 @@ public class FlowElementFragment extends Fragment {
             this.timeStart=millisInFuture;
         }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressBar.setProgress(
+                (int) elementTimer.getTimeRemaining()/1000
+        );
     }
 }

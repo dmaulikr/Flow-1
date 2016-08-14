@@ -24,6 +24,14 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         Flow finishedFlow = getIntent().getParcelableExtra("finishedFlow");
         String completionTime = getIntent().getStringExtra("completionTime");
+        DataManagerUtil util =
+                ComplexPreferences
+                        .getComplexPreferences(
+                                this,
+                                COMPLEX_PREFS,
+                                MODE_PRIVATE)
+                        .getObject(USER_FLOWS, DataManagerUtil.class);
+        // Gets the Flow Manager Util saved in TheStreamActivity from Complex Preferences
 
         finishedFlow.addCompletionToken();
 
@@ -38,16 +46,9 @@ public class FinishedFlowActivity extends AppCompatActivity {
         complete.setText(finishedFlow.getName() + " was finished in:");
         time.setText(completionTime);
 
-        DataManagerUtil util =
-                ComplexPreferences
-                .getComplexPreferences(
-                        this,
-                        COMPLEX_PREFS,
-                        MODE_PRIVATE)
-                .getObject(USER_FLOWS, DataManagerUtil.class);
-        // Gets the Flow Manager Util saved in TheStreamActivity from Complex Preferences
 
-        util.overwriteFlow(finishedFlow.getFlowManagerIndex(), finishedFlow, this);
+
+        util.overwriteFlow(finishedFlow.getFlowManagerIndex(),finishedFlow, this);
         // Overwrites current flow in the file
     }
 

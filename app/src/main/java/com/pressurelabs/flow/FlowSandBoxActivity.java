@@ -176,7 +176,6 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             Intent in = new Intent(this, FlowStateActivity.class);
             in.putExtra("parent", currentFlow);
             startActivity(in);
-            //TODO Implement a Start Activity for Result here to avoid double backs (-1 for cancel 0 for OK)
         }
     }
 

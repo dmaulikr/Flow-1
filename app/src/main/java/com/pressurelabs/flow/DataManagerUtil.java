@@ -19,6 +19,8 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Flow_V2
@@ -34,8 +36,12 @@ public class DataManagerUtil implements Parcelable{
     private static final String COMPLEX_PREFS = "COMPLEX_PREFS";
     private static final String USER_FLOWS = "USER_FLOWS";
 
-    private static final String fileName = "userflows.json";
-    private static File file = new File(fileName);
+    private static final String flowListFileName = "userflows.json";
+    private static File file = new File(flowListFileName);
+//
+//    private static final String idMapFileName = "userflowsidmap.txt";
+//    private static File idFile = new File(idMapFileName);
+
     /* MUST BE STATIC & GLOBAL Creates file directory for the data files please don't delete again :))) */
 
     public static ArrayList<Flow> getFlowList() {
@@ -47,6 +53,8 @@ public class DataManagerUtil implements Parcelable{
            Flow objects inside. This allows the whole ArrayList to be
            instantiated rather than individual objects :)
          */
+
+//    private static Map<String,Flow> idMap = new HashMap<>();
 
     /** Reads JSON data from file and builds it's flowList
      *  with the return data
@@ -81,8 +89,9 @@ public class DataManagerUtil implements Parcelable{
 
         FileOutputStream outputStream;
 
+        /* Saving ArrayList to file */
         try {
-            outputStream= context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            outputStream= context.openFileOutput(flowListFileName, Context.MODE_PRIVATE);
                     // Overwrites the data present in the File, MODE_PRIVATE
             outputStream.write(jsonData.getBytes());
             outputStream.close();
@@ -93,6 +102,9 @@ public class DataManagerUtil implements Parcelable{
         } catch (Exception e) {
             Toast.makeText(context, "Could not save Flow to file", Toast.LENGTH_LONG).show();
         }
+
+        /* Saving Id Map to file */
+
     }
 
 
@@ -105,7 +117,7 @@ public class DataManagerUtil implements Parcelable{
     private static String loadFlowListFromFile(Context context) {
         try {
 
-            FileInputStream fis = context.openFileInput(fileName);
+            FileInputStream fis = context.openFileInput(flowListFileName);
             InputStreamReader isr = new InputStreamReader(fis);
             BufferedReader bufferedReader = new BufferedReader(isr);
             StringBuilder sb = new StringBuilder();
@@ -128,6 +140,29 @@ public class DataManagerUtil implements Parcelable{
 
     }
 
+//    private static String loadIdMapFromFile(Context context) {
+//        try {
+//
+//            FileInputStream fis = context.openFileInput(idMapFileName);
+//            InputStreamReader isr = new InputStreamReader(fis);
+//            BufferedReader bufferedReader = new BufferedReader(isr);
+//            StringBuilder sb = new StringBuilder();
+//            String line;
+//
+//            while ((line = bufferedReader.readLine()) != null) {
+//                sb.append(line);
+//            }
+//
+//            String json = sb.toString();
+//            fis.close();
+//            isr.close();
+//            bufferedReader.close();
+//            return json;
+//        } catch (IOException e){
+//            return "";
+//            // Returns blank if no flow file exists
+//        }
+
     /** Deletes all the current Flows in the flows.json file by overwriting with a blank string
      *
      * @param context the context which the method is being called
@@ -135,11 +170,11 @@ public class DataManagerUtil implements Parcelable{
      */
     public static void eraseFileData(Context context) {
         try {
-            FileOutputStream os = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            FileOutputStream os = context.openFileOutput(flowListFileName, Context.MODE_PRIVATE);
             PrintWriter writer = new PrintWriter(os);
             writer.print("");
             writer.close();
-            flowList =null;
+            flowList = new ArrayList<>();
                 // Consider changing to removeAll?
         } catch (Exception e) {
             Toast.makeText(context, "Flows could not be deleted!", Toast.LENGTH_LONG);
@@ -147,7 +182,9 @@ public class DataManagerUtil implements Parcelable{
     }
 
     public static void delete(Flow target, Context ctx) {
-        // Stub method
+        flowList.remove(target);
+        saveToFile(ctx,flowList);
+
     }
 
     /** Using the json String data obtained from the loadFlowListFromFile() method,
@@ -191,13 +228,17 @@ public class DataManagerUtil implements Parcelable{
      *  and saves the FlowWrapper as the object... acting as the "updatedList"
      *
      *
-     * @param indexToUpdate index value of the Flow being overwrote
      * @param updatedFlow the Flow object that has been updated with New Elements
      * @param ctx context being called from
      */
     public static void overwriteFlow(int indexToUpdate, Flow updatedFlow, Context ctx) {
             //Overwrites Flow at index in file
-        flowList.set(indexToUpdate, updatedFlow);
+        flowList.set(
+                indexToUpdate,
+                updatedFlow);
+
+        //TODO Because the flowList locations can now change dynamically, the flowManagerIndex from the Flow's becomes outdated when a single Flow is deleted
+
         saveToFile(ctx, flowList);
     }
 
@@ -235,6 +276,5 @@ public class DataManagerUtil implements Parcelable{
                     return new DataManagerUtil[size];
                 }
             };
-
 
 }

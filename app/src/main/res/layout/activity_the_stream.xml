@@ -14,7 +14,7 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/streamFeed"
+            android:id="@+id/stream_feed"
             android:clipToPadding="false"
             android:layout_columnSpan="1"
             android:layout_gravity="fill_horizontal"

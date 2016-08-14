@@ -9,15 +9,22 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
+
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.kobakei.ratethisapp.RateThisApp;
 
 import java.util.ArrayList;
 
@@ -32,10 +39,9 @@ import java.util.ArrayList;
  *  Flows into a new Activity
  *
  */
-public class TheStreamActivity extends AppCompatActivity {
+public class TheStreamActivity extends AppCompatActivity{
     public static final String RESTORED_USER_FLOWS = "RESTORED_USER_FLOWS";
     public static final String RESTORED_MANAGER_UTIL = "RESTORED_MANAGER_UTIL";
-
 
     private Flow newFlow;
         //Blank flow object declared.
@@ -64,7 +70,7 @@ public class TheStreamActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         // Attach the adapter to a ListView
-        listView = (ListView) findViewById(R.id.streamFeed);
+        listView = (ListView) findViewById(R.id.stream_feed);
 
         if (savedInstanceState!=null && !savedInstanceState.isEmpty())
         {
@@ -91,6 +97,7 @@ public class TheStreamActivity extends AppCompatActivity {
                     /* Passes Flow but passes the memory address of the childFlowElements
                      instead of the actual object containing the
                       */
+
                 Flow selectedFlow = (Flow) listView.getItemAtPosition(position);
 
                 Intent i = new Intent(TheStreamActivity.this, FlowSandBoxActivity.class);
@@ -99,8 +106,57 @@ public class TheStreamActivity extends AppCompatActivity {
                     // Parcels the Flow Object to@ be passed to new activity
                 startActivity(i);
             }
+
+        });
+
+        listView.setLongClickable(true);
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    // View is the child view provided from AdapterView parent
+                showPopUpMenu(TheStreamActivity.this, view, position);
+                return true;
+            }
+        });
+
+
+    }
+
+
+
+    public void showPopUpMenu(Context context, View v, final int position) {
+
+        LinearLayout viewGroup = (LinearLayout) findViewById(R.id.popup);
+        LayoutInflater layoutInflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.popup_window, viewGroup);
+
+        // Creating the PopupWindow
+        final PopupWindow popup = new PopupWindow(context);
+        popup.setContentView(layout);
+        popup.setFocusable(true);
+
+        int dividerMargin = 30; // Top bottom
+        int popupPadding = layout.getPaddingBottom();
+        int popupDisplayHeight = -(v.getHeight()-dividerMargin+popupPadding);
+
+        // Displaying the popup at the specified location, + offsets.
+        popup.showAsDropDown(v,0,popupDisplayHeight, Gravity.RIGHT);
+        // Getting a reference to Close button, and close the popup when clicked.
+        ImageView delete = (ImageView) layout.findViewById(R.id.delete_item);
+
+        delete.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                deleteFlow(position);
+                popup.dismiss();
+            }
         });
     }
+
+
 
     /* Allows the menu items to appear in the toolbar */
    @Override
@@ -122,23 +178,29 @@ public class TheStreamActivity extends AppCompatActivity {
                 deleteFlowsDialog();
                 return true;
 
-            case R.id.action_newFlow:
+            case R.id.action_new_flow:
                 createNewFlow();
                 return true;
 
-            case R.id.action_settings:
+            case R.id.terms_of_use:
                 // User chose the "Settings" item, show the app settings UI...
-                Toast.makeText(this,
-                        "Looks like that feature is not ready yet. \nSorry about that..",Toast.LENGTH_LONG
-                ).show();
+                goToEULA();
                 return false;
 
+            // TODO Implement settings again?
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+
+    private void goToEULA() {
+        startActivity(
+                new Intent(TheStreamActivity.this, EULAActivity.class)
+        );
+
     }
 
     /** Recreates the original Stream ListView by reading internal storage data
@@ -295,7 +357,6 @@ public class TheStreamActivity extends AppCompatActivity {
      */
     private void saveFlowToManager(ArrayList<Flow> currentLVContent) {
         manager.saveToFile(this, currentLVContent);
-
     }
 
     /**
@@ -337,6 +398,17 @@ public class TheStreamActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    private void deleteFlow(int position) {
+        /* Commented out to prevent app breaking (Delete single flows for next commit) */
+
+//          manager.delete(
+//                  (Flow) listView.getItemAtPosition(position),
+//                  TheStreamActivity.this
+//        );
+//
+//        helperAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(RESTORED_USER_FLOWS, lvContent);
@@ -344,6 +416,26 @@ public class TheStreamActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Monitor launch times and interval from installation
+        RateThisApp.onStart(this);
+
+        RateThisApp.Config config = new RateThisApp.Config(3, 10);
+            // Custom title ,message and buttons names
+        config.setTitle(R.string.rate_app_title);
+        config.setMessage(R.string.rate_app_message);
+        config.setYesButtonText(R.string.rate);
+        config.setNoButtonText(R.string.no_rate);
+        config.setCancelButtonText(R.string.rate_cancel);
+        RateThisApp.init(config);
+
+        // If the criteria is satisfied, "Rate this app" dialog will be shown
+        RateThisApp.showRateDialogIfNeeded(this);
+
+
+    }
 }
 
 

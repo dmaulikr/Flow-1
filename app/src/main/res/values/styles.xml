@@ -19,5 +19,6 @@
 
     <style name="BaseTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:statusBarColor">@color/abc_secondary_text_material_light</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>

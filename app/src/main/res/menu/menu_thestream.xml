@@ -3,7 +3,7 @@
     xmlns:compat="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_newFlow"
+        android:id="@+id/action_new_flow"
         android:icon="@drawable/add_white_36dp"
         android:title="@string/action_new_flow"
         compat:showAsAction="always"/>
@@ -15,8 +15,8 @@
 
 
     <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/action_settings"
-        android:title="@string/action_settings"
+    <item android:id="@+id/terms_of_use"
+        android:title="@string/terms_of_use"
         compat:showAsAction="never"/>
 
  </menu>

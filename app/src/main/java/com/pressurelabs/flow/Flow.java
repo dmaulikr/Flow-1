@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  *
@@ -31,6 +32,11 @@ public class Flow implements Parcelable{
 
     private double totalTime=0;
     private int flowManagerIndex;
+    private String uniqueID;
+
+    public String getUniqueID() {
+        return uniqueID;
+    }
 
     /** Overloaded Flow Object constructor.
      * @param name name of the flow object being instantiated
@@ -40,6 +46,7 @@ public class Flow implements Parcelable{
         this.name = name;
         this.totalTime = time;
         this.completionTokens=0;
+        this.uniqueID = UUID.randomUUID().toString();
     } // End of overload constructor
 
 
@@ -88,6 +95,14 @@ public class Flow implements Parcelable{
         int mins = (int)((totalTime-hrs)*60);
 
         return hrs +"H "+mins+"M";
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        Flow other = (Flow) o;
+        String otherUniqueId = other.getUniqueID();
+        return this.uniqueID==otherUniqueId;
     }
 
     /** Sets the totalTime for the Flow once called from calculateTime()
@@ -197,7 +212,7 @@ public class Flow implements Parcelable{
     // Still need to make method to calculate the total time for the flow based on elements
     // The order of READING and WRITING is important (Read and write in same order)
     private Flow(Parcel in) {
-        String[] data = new String[4];
+        String[] data = new String[5];
         // data[0] = name
         // data[1] = totalTime
         // data[2] = flowManagerIndex
@@ -209,6 +224,7 @@ public class Flow implements Parcelable{
         this.flowManagerIndex = Integer.parseInt(data[2]);
         this.completionTokens = Integer.parseInt(data[3]);
         this.childFlowElements = in.readArrayList(getClass().getClassLoader());
+        this.uniqueID = data[4];
 
           /* Similar implementation:
               this.name = parcel.readString();
@@ -237,7 +253,8 @@ public class Flow implements Parcelable{
                         this.name,
                         String.valueOf(this.totalTime),
                         String.valueOf(this.flowManagerIndex),
-                        String.valueOf(this.completionTokens)
+                        String.valueOf(this.completionTokens),
+                        this.uniqueID
                 }
         );
         destination.writeList(this.childFlowElements);
