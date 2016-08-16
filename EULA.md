@@ -1,4 +1,4 @@
-This End-User License Agreement (EULA) constitutes an agreement between you and Pressure Labs/Robert Simoes 
+This End-User License Agreement (EULA) constitutes an agreement between you and Pressure Labs 
 (herein referred to as the Owner) with regard to the flow application for Mobile Phones 
 (herein referred to as Software Product or Software). By installing the Software, you are agreeing 
 to be bound by the terms of this license agreement. Your use of the Software (as specified below) is 
@@ -34,14 +34,7 @@ resulting from possession, access, use or malfunction of the Software, including
 loss of goodwill, computer or mobile device malfunction and, to the extent permitted by law, damages for personal injuries, 
 property damage, lost profits or punitive damages from any causes of action arising out of or related to this EULA or the Software, 
 whether arising in tort (including negligence), contract, strict liability or otherwise and whether or not the Owner has been 
-advised of the possibility of such damages. 
-
-Because some states/countries do not allow certain limitations of liability, this limitation of liability shall apply 
-to the fullest extent permitted by law in the applicable jurisdiction. This limitation of liability shall not be applicable 
-solely to the extent that any specific provision of this limitation of liability is prohibited by any federal, state, or 
-municipal law, which cannot be pre-empted. This EULA gives you specific legal rights, and you may have other rights that vary
-from jurisdiction to jurisdiction. In no event shall the Owner's liability for all damages (except as required by applicable law)
-exceed the actual price paid by you for use of the Software.
+advised of the possibility of such damages. Because some states/countries do not allow certain limitations of liability, this limitation of liability shall apply to the fullest extent permitted by law in the applicable jurisdiction. This limitation of liability shall not be applicable solely to the extent that any specific provision of this limitation of liability is prohibited by any federal, state, or municipal law, which cannot be pre-empted. This EULA gives you specific legal rights, and you may have other rights that vary from jurisdiction to jurisdiction. In no event shall the Owner's liability for all damages (except as required by applicable law) exceed the actual price paid by you for use of the Software.
 
 7. INDEMITY. You agree to indemnify, defend and hold the Owner harmless from and against any and all damages, losses and 
 expenses arising directly or indirectly from (i) your acts and omissions to act in using the Software pursuant to the terms
