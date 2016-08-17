@@ -1,4 +1,4 @@
-This End-User License Agreement (EULA) constitutes an agreement between you and Robert Simoes 
+This End-User License Agreement (EULA) constitutes an agreement between you and Pressure Labs
 (herein referred to as the Owner) with regard to the flow application for Mobile Phones 
 (herein referred to as Software Product or Software). By installing the Software, you are agreeing 
 to be bound by the terms of this license agreement. Your use of the Software (as specified below) is 
