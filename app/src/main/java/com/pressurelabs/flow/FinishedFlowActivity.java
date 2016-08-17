@@ -31,7 +31,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
                                 COMPLEX_PREFS,
                                 MODE_PRIVATE)
                         .getObject(USER_FLOWS, DataManagerUtil.class);
-        // Gets the Flow Manager Util saved in TheStreamActivity from Complex Preferences
+        // Gets the Flow Manager Util saved in TheHubActivity from Complex Preferences
 
         finishedFlow.addCompletionToken();
 
@@ -59,7 +59,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
     }
 
     public void completeFlow(View v) {
-        finish();
+        onBackPressed();
     }
 
 }

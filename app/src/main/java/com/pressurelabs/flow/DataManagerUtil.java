@@ -44,11 +44,7 @@ public class DataManagerUtil implements Parcelable{
 
     /* MUST BE STATIC & GLOBAL Creates file directory for the data files please don't delete again :))) */
 
-    public static ArrayList<Flow> getFlowList() {
-        return flowList;
-    }
-
-    private static ArrayList<Flow> flowList = new ArrayList<>();
+    private static ArrayList<Flow> flowList;
         /* Acts as an outer encasing List Object which wraps all the
            Flow objects inside. This allows the whole ArrayList to be
            instantiated rather than individual objects :)
@@ -63,6 +59,11 @@ public class DataManagerUtil implements Parcelable{
 
         flowList = buildFlowArrayList(context);
     } // End of Constructor
+
+    public static ArrayList<Flow> getFlowList() {
+        return flowList;
+    }
+
 
     /** Updates the flowList with the updated list containing the
      *  most recently saved flow objects. Converts this Wrapper object containing
@@ -218,7 +219,7 @@ public class DataManagerUtil implements Parcelable{
             // Returns flows to use for lvContent
         } catch (Exception e) {
             // Flow File not regenerated that sucks..
-            return null;
+            return  new ArrayList<>();
         }
 
     }

@@ -32,22 +32,44 @@ public class FlowElementFragment extends Fragment {
     private OnFragmentSelectedListener mCallback;
     private OnDataPass dataPasser;
 
-    // Container Activiy must implement this interface
+    /**
+     * Interface to allow onClick between FlowStateActivity and Fragments
+     * Must be implemented.
+     */
     public interface OnFragmentSelectedListener {
         void onNextSelected(View view);
         void onMoreTimeSelected(View view);
     }
 
-
+    /**
+     * Interface to allow data passing between FlowStateActivity and Fragments
+     * Must be implemented.
+     */
     public interface OnDataPass {
         void onDataPass(Bundle b, int elementNumber);
     }
 
-    public void passData(Bundle b, int elementNumber) {
+    /**
+     * Passes a bundle key:value pair with the elementNumber by calling
+     * the implemented onDataPass Inteface method in the parent activity
+     *
+     * @param b , the bundle containing the k:v pair
+     * @param elementNumber , the current location of the element in the flow
+     */
+    private void passData(Bundle b, int elementNumber) {
         dataPasser.onDataPass(b, elementNumber);
     }
 
 
+    /**
+     * Cancels the running UI Timer, creates a bundle key:value pair
+     * with:
+     *
+     * key = element location in flow
+     * value = time taken to finish the element.
+     *
+     * then passes the data via helper passData
+     */
     public void cancelTimerAndPassData() {
         if (element.getLocation()<0) {
             // Do not pass Data
@@ -220,6 +242,7 @@ public class FlowElementFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        /* Displays updated progress bar with time remaining */
         progressBar.setProgress(
                 (int) elementTimer.getTimeRemaining()/1000
         );

@@ -11,12 +11,12 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/BaseTheme">
+        android:theme="@style/AppTheme"
+        android:screenOrientation="portrait">
         <activity
-            android:name=".TheStreamActivity"
+            android:name=".TheHubActivity"
             android:label="@string/app_name"
             android:noHistory="true"
-            android:screenOrientation="portrait"
             android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,14 +24,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".EULAActivity"
             android:label=""
-            android:parentActivityName=".TheStreamActivity"
+            android:parentActivityName=".TheHubActivity"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pressurelabs.flow.TheStreamActivity" />
+                android:value=".TheHubActivity" />
         </activity>
 
         <activity
@@ -47,6 +48,8 @@
             android:name=".FinishedFlowActivity"
             android:noHistory="true"
             android:screenOrientation="portrait" />
+
+
 
     </application>
 

@@ -34,7 +34,7 @@ public class FlowStateActivity extends AppCompatActivity
         implements FlowElementFragment.OnFragmentSelectedListener, FlowElementFragment.OnDataPass {
 
     private Flow parentFlow;
-    private int currentElement =0;
+    private int currentElement;
     private Integer[] millisInFlow;
         // Holds each currentElement's completetion time matching to it's Flow Location
     private FlowElementFragment fragment;
@@ -62,6 +62,7 @@ public class FlowStateActivity extends AppCompatActivity
                 return;
             }
 
+            currentElement=0;
             fragment = FlowElementFragment.newInstance(
                     parentFlow.getChildElements().get(currentElement)
             );
@@ -161,29 +162,26 @@ public class FlowStateActivity extends AppCompatActivity
            while passData is sending bundle related to previous element
            therefore currentElement-1 (basically a count)
          */
-        if (currentElement!=0) {
-            millisInFlow[currentElement-1]= recievedData.getInt(
-                    String.valueOf(elementNumber));
-        } else {
-            millisInFlow[currentElement]= recievedData.getInt(
-                    String.valueOf(elementNumber));
-        }
+
+        millisInFlow[currentElement] = recievedData.getInt(
+                String.valueOf(elementNumber));
     }
 
     private void goToFinishScreen() {
-        finish();
         Intent i = new Intent(this, FinishedFlowActivity.class);
         i.putExtra("finishedFlow", parentFlow);
         i.putExtra("completionTime", this.calculateTimeInFlow());
+        finish();
         startActivity(i);
     }
 
     private String calculateTimeInFlow() {
-        int time=0;
+        int time = 0;
 
-        for (int i = 0; i< millisInFlow.length-1; i++) {
+        for (int i = 0; i <=millisInFlow.length-1; i++) {
             time = time + millisInFlow[i];
         }
+
 
         return String.format("%02d:%02d:%02d",
                 TimeUnit.MILLISECONDS.toHours(time),

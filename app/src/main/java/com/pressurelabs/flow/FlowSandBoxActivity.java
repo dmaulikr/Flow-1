@@ -74,6 +74,21 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         setClickListeners();
     }
 
+    /**
+     * Sets the onClick action when an element in the grid is clicked.
+     */
+    private void setClickListeners() {
+        elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                String eName = currentFlow.returnElement(position).getElementName();
+                int eTime = currentFlow.returnElement(position).getTimeEstimate();
+                String eUnits = currentFlow.returnElement(position).getTimeUnits();
+
+                showToast("" + eName + "\n" + eTime + " " + eUnits);
+            }
+        });
+    }
     /** Launches a new Element Designer Activity waiting to receive a new
      *  FlowElement Object back as a Parcel
      *
@@ -82,7 +97,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     public void createElement(View view) {
         Intent in = new Intent(FlowSandBoxActivity.this, ElementDesignerActivity.class);
         startActivityForResult(in, 1);
-            //Starts new activity waiting for the return data
+        //Starts new activity waiting for the return data
     }
 
     /** Receives Parcel Object from previous Element Designer Activity
@@ -98,7 +113,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
 
         if(resultCode==RESULT_OK) {
             newElement = data.getParcelableExtra("newElement");
-            saveElementToFlow(newElement);
+            addElementToFlow(newElement);
         }
 
     }
@@ -108,7 +123,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
      *
      * @param newElement the FlowElement being saved
      */
-    private void saveElementToFlow(FlowElement newElement) {
+    private void addElementToFlow(FlowElement newElement) {
 
         newElement.setLocation(currentFlow.getElementCount());
         currentFlow.addElement(newElement);
@@ -116,25 +131,9 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         updateSandBox();
 
         util.overwriteFlow(currentFlow.getFlowManagerIndex(), currentFlow, FlowSandBoxActivity.this);
-            // Saves the updated JSONFlowWrapper ArrayList as
-            // the updated list (acts as the updated list
+        // Saves the updated JSONFlowWrapper ArrayList as
+        // the updated list (acts as the updated list
 
-    }
-
-    /**
-     * Sets the onClick action when an element in the grid is clicked.
-     */
-    private void setClickListeners() {
-        elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View v,
-                                    int position, long id) {
-                String eName = currentFlow.returnElement(position).getElementName();
-                int eTime = currentFlow.returnElement(position).getTimeEstimate();
-                String eUnits = currentFlow.returnElement(position).getTimeUnits();
-
-                showToast("" + eName + "\n" + eTime + " " + eUnits);
-            }
-        });
     }
 
     private void showToast(String text)
@@ -158,11 +157,11 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the onBackPressed event by sending user to TheStreamActivity
+     * Handles the onBackPressed event by sending user to TheHubActivity
      */
     @Override
     public void onBackPressed() {
-        Intent i= new Intent(FlowSandBoxActivity.this, TheStreamActivity.class);
+        Intent i= new Intent(FlowSandBoxActivity.this, TheHubActivity.class);
         startActivity(i);//starting main activity
         super.onBackPressed();
     }

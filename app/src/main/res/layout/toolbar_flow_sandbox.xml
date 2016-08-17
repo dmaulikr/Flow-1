@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sb_toolbar"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:minHeight="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    android:theme="@style/FlowTheme.AppBarOverlay"
+    android:popupTheme="@style/FlowTheme.PopupOverlay">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbar_title"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:layout_alignParentStart="true"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:gravity="center"
+            android:layout_alignParentEnd="true"
+            android:id="@+id/time_complete"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:paddingLeft="5dp"
+            android:layout_marginEnd="30dp"
+            android:textColor="@color/colorWhite"
+            android:visibility="visible"
+            android:layout_marginTop="5dp"/>
+        <ImageView
+            android:scaleType="fitCenter"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/times_completed_white_48dp"
+            android:layout_toLeftOf="@+id/time_complete"
+            android:id="@+id/complete_tokens"
+            android:contentDescription="Completion Tokens"
+            android:adjustViewBounds="false"
+            android:visibility="visible"
+            android:layout_alignBottom="@+id/time_complete" />
+
+    </RelativeLayout>
+
+
+</android.support.v7.widget.Toolbar>

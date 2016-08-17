@@ -12,7 +12,7 @@
         android:fitsSystemWindows="true"
         tools:context=".Main.FlowSandBoxActivity">
 
-        <include layout="@layout/sandbox_toolbar"/>
+        <include layout="@layout/toolbar_flow_sandbox"/>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
