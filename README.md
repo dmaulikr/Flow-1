@@ -6,9 +6,9 @@
 
 Flow was a project started at a hackathon, that I've continued to build as I've learned more and developed further in the Android environment.
 
-At a base level, I hoped with Flow to be able to apply the pomodoro technique to multiple tasks in a to-do type list. 
+At a base level, the idea was to be able to apply the [pomodoro technique](https://en.wikipedia.org/wiki/Pomodoro_Technique) to multiple tasks in a "to-do" type list. 
 
-However, because of my personal style of needing to visualize things in order to best understand, I wanted to be able to SEE the actual tasks I would be completing rather than just a wall of text in a usual to-do.
+However, because of my personal style of needing to visualize things in order to best understand, I wanted to be able to SEE the actual tasks I would be completing rather than just a wall of text in a usual "to-do".
 
 At the same time I wanted to be able to save these workflows and repeat them later in time
 
