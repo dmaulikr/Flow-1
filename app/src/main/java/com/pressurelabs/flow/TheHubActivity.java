@@ -1,6 +1,5 @@
 package com.pressurelabs.flow;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,20 +33,13 @@ import java.util.ArrayList;
  *  Flows into a new Activity
  */
 public class TheHubActivity extends AppCompatActivity {
-    public static final String RESTORED_USER_FLOWS = "RESTORED_USER_FLOWS";
-    public static final String RESTORED_MANAGER_UTIL = "RESTORED_MANAGER_UTIL";
 
-    private Flow newFlow;
-    //Blank flow object declared.
-    // Manages the content present within the ListView
-
-    private DataManagerUtil manager;
+    private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
 
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private ArrayList<Flow> rvContent;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,11 +60,11 @@ public class TheHubActivity extends AppCompatActivity {
 
         if (savedInstanceState!=null && !savedInstanceState.isEmpty())
         {
-            rvContent = savedInstanceState.getParcelableArrayList(RESTORED_USER_FLOWS);
-            manager = savedInstanceState.getParcelable(RESTORED_MANAGER_UTIL);
+            rvContent = savedInstanceState.getParcelableArrayList(AppConstants.RESTORED_USER_FLOWS);
+            manager = savedInstanceState.getParcelable(AppConstants.RESTORED_DATA_MANAGER);
         } else {
             rvContent = new ArrayList<>();
-            manager = new DataManagerUtil(this);
+            manager = new AppDataManager(this);
         }
 
 
@@ -132,13 +124,11 @@ public class TheHubActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         populateRecycleView();
+        /* DATA LEAK HERE */
+//        ComplexPreferences cPrefs = ComplexPreferences
+//                .getComplexPreferences(this, AppConstants.COMPLEX_PREFS, MODE_PRIVATE);
+//        cPrefs.putObject(AppConstants.APP_DATA_MANAGER,manager);
     }
-
-    /** Sets up each of the individual list view items to be clicked and launch an
-     *  new activity based on selected Flow Object.
-     *
-     */
-
 
 
     /** Populates the RecycleView by asking for internal storage to be read,
@@ -147,7 +137,7 @@ public class TheHubActivity extends AppCompatActivity {
      */
     private void populateRecycleView() {
 
-        boolean savedContentAvailable = !manager.getFlowList().isEmpty();
+        boolean savedContentAvailable = manager.hasData();
         // Reads Internal Storage JSON file, receiving return in String Format
 
         if (savedContentAvailable) {
@@ -155,7 +145,7 @@ public class TheHubActivity extends AppCompatActivity {
             new Runnable() {
                 @Override
                 public void run() {
-                    rebuildContent(TheHubActivity.this);
+                    rebuildContent();
                 }
             }.run();
 
@@ -176,11 +166,10 @@ public class TheHubActivity extends AppCompatActivity {
     /** Attempts to rebuild the RecycleView Content by rebuilding the RecycleView ArrayList
      *  from file and recreating the Array Adapter.
      *
-     * @param context current activity context
      */
-    private void rebuildContent(Context context) {
+    private void rebuildContent() {
 
-        rvContent = manager.getFlowList();
+        rvContent = manager.generateArrayList();
 
         adapter = new RecyclerViewAdapter(TheHubActivity.this, rvContent);
         // Recreate FlowArrayAdapter and set
@@ -211,11 +200,12 @@ public class TheHubActivity extends AppCompatActivity {
                             createNewFlow(); //Recall the dialog
                         } else {
 
-                            updateUIContent(
-                                    new Flow(nameInputET.getText().toString(), 0)
-                                    );
+                            Flow newF = new Flow(nameInputET.getText().toString(), 0);
 
-                            manager.saveToFile(TheHubActivity.this, rvContent);
+                            updateUIContent(newF);
+
+                            manager.save(newF.getUuid(),newF);
+
                         }
                     }
                 });
@@ -264,15 +254,13 @@ public class TheHubActivity extends AppCompatActivity {
     }
 
 
-    /** Updates the ListViewContent with a received Flow Object, and
+    /** Updates the View Content with a received Flow Object, and
      *  updates the UI to display the relevant changes.
      *
-     * @param flow the Flow being added to the ListView Content
+     * @param flow the Flow being added to the content
      */
-// Updates the UI ListView content to display the newly created Flow Object
     private void updateUIContent(Flow flow) {
         if (adapter != null) {
-            flow.setFlowManagerIndex(rvContent.size());
             rvContent.add(flow);
             // Set the Flow Manager Index and add to List View Content
 
@@ -309,7 +297,7 @@ public class TheHubActivity extends AppCompatActivity {
      */
     private void deleteAllFlowData() {
         rvContent.removeAll(rvContent);
-        manager.eraseFileData(this);
+        manager.deleteAll();
         adapter.notifyDataSetChanged();
     }
 
@@ -341,8 +329,8 @@ public class TheHubActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(RESTORED_USER_FLOWS, rvContent);
-        outState.putParcelable(RESTORED_MANAGER_UTIL, manager);
+        outState.putParcelableArrayList(AppConstants.RESTORED_USER_FLOWS, rvContent);
+        outState.putParcelable(AppConstants.RESTORED_DATA_MANAGER, manager);
         super.onSaveInstanceState(outState);
     }
 

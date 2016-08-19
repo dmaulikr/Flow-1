@@ -30,7 +30,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
 
     private Flow currentFlow;
         // Flow currently being worked on
-    private DataManagerUtil util;
+    private AppDataManager util;
     private GridView elementGridView;
     private ImageAdapter imgAdapater;
     private Toast currentToast = null;
@@ -41,14 +41,18 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
             // Not keeping Flow Object's in their own capsules
         setContentView(R.layout.activity_sand_box);
-        currentFlow = getIntent().getParcelableExtra("selectedFlow");
+        util = new AppDataManager(this);
+
+        currentFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_SENT));
 
         sbToolbar = (Toolbar) findViewById(R.id.sb_toolbar);
 
         TextView title = (TextView) findViewById(R.id.toolbar_title);
-        title.setText(currentFlow.getName());
+
+
         TextView timesComplete = (TextView) findViewById(R.id.time_complete);
         timesComplete.setText(String.valueOf(currentFlow.getCompletionTokens()));
+        title.setText(currentFlow.getName());
 
         setSupportActionBar(sbToolbar);
 
@@ -64,7 +68,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             // Passes the number of elements in the Flow's child elements to set the
             // Adapter's initial size
         elementGridView.setAdapter(imgAdapater);
-        util = new DataManagerUtil(this);
+
 
     }
 
@@ -108,14 +112,19 @@ public class FlowSandBoxActivity extends AppCompatActivity {
      * @param data the Parcelled object stored as intent data
      */
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+
         FlowElement newElement;
 
-        if(resultCode==RESULT_OK) {
+        if(requestCode==1 && resultCode==RESULT_OK) {
             newElement = data.getParcelableExtra("newElement");
             addElementToFlow(newElement);
         }
 
+        if(requestCode==2 && resultCode==RESULT_OK){
+          //TODO Updates UI to # of completed flows?
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /** Adds the newElement passed via parameter to the currentFlow's ArrayList
@@ -129,8 +138,8 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         currentFlow.addElement(newElement);
 
         updateSandBox();
+        util.overwrite(currentFlow.getUuid(),currentFlow);
 
-        util.overwriteFlow(currentFlow.getFlowManagerIndex(), currentFlow, FlowSandBoxActivity.this);
         // Saves the updated JSONFlowWrapper ArrayList as
         // the updated list (acts as the updated list
 
@@ -173,7 +182,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             );
         } else {
             Intent in = new Intent(this, FlowStateActivity.class);
-            in.putExtra("parent", currentFlow);
+            in.putExtra(AppConstants.UUID_SENT,currentFlow.getUuid());
             startActivity(in);
         }
     }

@@ -1,7 +1,5 @@
 package com.pressurelabs.flow;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -13,24 +11,16 @@ import java.util.Random;
 
 public class FinishedFlowActivity extends AppCompatActivity {
 
-    private static final String COMPLEX_PREFS = "COMPLEX_PREFS";
-    private static final String USER_FLOWS = "USER_FLOWS";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finished_flow);
 
 
-        Flow finishedFlow = getIntent().getParcelableExtra("finishedFlow");
         String completionTime = getIntent().getStringExtra("completionTime");
-        DataManagerUtil util =
-                ComplexPreferences
-                        .getComplexPreferences(
-                                this,
-                                COMPLEX_PREFS,
-                                MODE_PRIVATE)
-                        .getObject(USER_FLOWS, DataManagerUtil.class);
+        AppDataManager util = new AppDataManager(this);
+        Flow finishedFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_SENT));
+
         // Gets the Flow Manager Util saved in TheHubActivity from Complex Preferences
 
         finishedFlow.addCompletionToken();
@@ -46,9 +36,8 @@ public class FinishedFlowActivity extends AppCompatActivity {
         complete.setText(finishedFlow.getName() + " was finished in:");
         time.setText(completionTime);
 
+        util.overwrite(finishedFlow.getUuid(), finishedFlow);
 
-
-        util.overwriteFlow(finishedFlow.getFlowManagerIndex(),finishedFlow, this);
         // Overwrites current flow in the file
     }
 

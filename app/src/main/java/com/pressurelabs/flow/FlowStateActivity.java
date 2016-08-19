@@ -47,7 +47,8 @@ public class FlowStateActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flow_state);
 
-        parentFlow = getIntent().getParcelableExtra("parent");
+        parentFlow = new AppDataManager(this).load(getIntent().getStringExtra(AppConstants.UUID_SENT));
+
         millisInFlow = new Integer[parentFlow.getChildElements().size()];
         endFlag=NOT_FINISHED;
         // Check that the activity is using the layout version with
@@ -169,7 +170,7 @@ public class FlowStateActivity extends AppCompatActivity
 
     private void goToFinishScreen() {
         Intent i = new Intent(this, FinishedFlowActivity.class);
-        i.putExtra("finishedFlow", parentFlow);
+        i.putExtra(AppConstants.UUID_SENT, parentFlow.getUuid());
         i.putExtra("completionTime", this.calculateTimeInFlow());
         finish();
         startActivity(i);

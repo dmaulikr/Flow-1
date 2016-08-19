@@ -31,11 +31,10 @@ public class Flow implements Parcelable{
         // Keeps track of the current FlowElements which belong to this Flow
 
     private double totalTime=0;
-    private int flowManagerIndex;
-    private String uniqueID;
+    private String uuid;
 
-    public String getUniqueID() {
-        return uniqueID;
+    public String getUuid() {
+        return uuid;
     }
 
     /** Overloaded Flow Object constructor.
@@ -46,7 +45,7 @@ public class Flow implements Parcelable{
         this.name = name;
         this.totalTime = time;
         this.completionTokens=0;
-        this.uniqueID = UUID.randomUUID().toString();
+        this.uuid = UUID.randomUUID().toString();
     } // End of overload constructor
 
 
@@ -101,8 +100,8 @@ public class Flow implements Parcelable{
     @Override
     public boolean equals(Object o) {
         Flow other = (Flow) o;
-        String otherUniqueId = other.getUniqueID();
-        return this.uniqueID==otherUniqueId;
+        String otherUniqueId = other.getUuid();
+        return this.uuid ==otherUniqueId;
     }
 
     /** Sets the totalTime for the Flow once called from calculateTime()
@@ -110,22 +109,6 @@ public class Flow implements Parcelable{
      */
     public void setTotalTime(double time){
         this.totalTime = time;
-    }
-
-    /** Get the index which this Flow belongs to in the flowManager
-     *  ArrayList<Flow>
-     * @return flowManagerIndex , the index of the Flow in flowManager
-     */
-    public int getFlowManagerIndex() {
-        return flowManagerIndex;
-    }
-
-    /** Sets the index which this Flow belongs to in the flowManager
-     *  ArrayList<Flow>
-     * @param  flowManagerIndex , the index of the Flow in flowManager
-     */
-    public void setFlowManagerIndex(int flowManagerIndex) {
-        this.flowManagerIndex = flowManagerIndex;
     }
 
     /**
@@ -201,7 +184,7 @@ public class Flow implements Parcelable{
         return "Flow{" +
                 "childFlowElements=" + childFlowElements +
                 ", completionTokens='" + completionTokens+
-                ", flowManagerIndex=" + flowManagerIndex +
+                ", uuid=" + uuid +
                 ", name='" + name  +
                 ", totalTime=" + totalTime +
                 '}';
@@ -212,19 +195,18 @@ public class Flow implements Parcelable{
     // Still need to make method to calculate the total time for the flow based on elements
     // The order of READING and WRITING is important (Read and write in same order)
     private Flow(Parcel in) {
-        String[] data = new String[5];
+        String[] data = new String[4];
         // data[0] = name
         // data[1] = totalTime
-        // data[2] = flowManagerIndex
+        // data[2] = uuid
         // data[3] = completionTokens
 
         in.readStringArray(data);
         this.name = data[0];
         this.totalTime = Double.parseDouble(data[1]);
-        this.flowManagerIndex = Integer.parseInt(data[2]);
+        this.uuid = data[2];
         this.completionTokens = Integer.parseInt(data[3]);
         this.childFlowElements = in.readArrayList(getClass().getClassLoader());
-        this.uniqueID = data[4];
 
           /* Similar implementation:
               this.name = parcel.readString();
@@ -252,9 +234,9 @@ public class Flow implements Parcelable{
                 new String[] {
                         this.name,
                         String.valueOf(this.totalTime),
-                        String.valueOf(this.flowManagerIndex),
+                        this.uuid,
                         String.valueOf(this.completionTokens),
-                        this.uniqueID
+
                 }
         );
         destination.writeList(this.childFlowElements);

@@ -66,7 +66,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                     Intent i = new Intent(mContext, FlowSandBoxActivity.class);
 
-                    i.putExtra("selectedFlow", flow);
+                    i.putExtra(AppConstants.UUID_SENT, flow.getUuid());
 
                     mContext.startActivity(i);
                     // Parcels the Flow Object to @ be passed to new activity
@@ -161,6 +161,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     public int getItemCount() {
         return flowList.size();
     }
+
 
 
 }
