@@ -43,7 +43,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sand_box);
         util = new AppDataManager(this);
 
-        currentFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_SENT));
+        currentFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_PASSED));
 
         sbToolbar = (Toolbar) findViewById(R.id.sb_toolbar);
 
@@ -182,7 +182,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             );
         } else {
             Intent in = new Intent(this, FlowStateActivity.class);
-            in.putExtra(AppConstants.UUID_SENT,currentFlow.getUuid());
+            in.putExtra(AppConstants.UUID_PASSED,currentFlow.getUuid());
             startActivity(in);
         }
     }

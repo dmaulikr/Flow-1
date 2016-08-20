@@ -66,9 +66,9 @@
         Apps are pretty cool right?
         If you like this app you can rate it on the Google Play store!
         But you knew that already didn\'t you? </string>
-    <string name="rate">Let me rate it, I\'m smarter than a robot</string>
-    <string name="no_rate">No, but I don\'t want to rate it</string>
-    <string name="rate_cancel">Go away!</string>
+    <string name="rate">OF COURSE (RATE)</string>
+    <string name="no_rate">GO AWAY!</string>
+    <string name="rate_cancel">LER</string>
     <string-array name="praise_msg">
         <item> Nice work ! </item>
         <item> Congrats ! </item>

@@ -32,7 +32,7 @@ import java.util.ArrayList;
  *  The class allows for the creation and saving of new Flows, destruction of current ones and launching of the
  *  Flows into a new Activity
  */
-public class TheHubActivity extends AppCompatActivity {
+public class TheHubActivity extends AppCompatActivity implements RecyclerViewAdapter.onCardClickListener {
 
     private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
@@ -116,15 +116,15 @@ public class TheHubActivity extends AppCompatActivity {
 
     }
 
-    /** Recreates the original Stream ListView by reading internal storage data
-     *  and repopulating the ListView
+    /** Recreates the original RecView by reading internal storage data
+     *  and repopulating the rvContent ArrayList
      *
      */
     @Override
     protected void onResume() {
         super.onResume();
         populateRecycleView();
-        /* DATA LEAK HERE */
+        /* DATA LEAK HERE DON'T TOUCH*/
 //        ComplexPreferences cPrefs = ComplexPreferences
 //                .getComplexPreferences(this, AppConstants.COMPLEX_PREFS, MODE_PRIVATE);
 //        cPrefs.putObject(AppConstants.APP_DATA_MANAGER,manager);
@@ -157,7 +157,7 @@ public class TheHubActivity extends AppCompatActivity {
 
             adapter = new RecyclerViewAdapter(TheHubActivity.this, rvContent);
             // Create new adapter with Recycle View Content
-
+//            adapter.setCardEditingCallback(this);
             recyclerView.setAdapter(adapter);
 
         }
@@ -173,6 +173,8 @@ public class TheHubActivity extends AppCompatActivity {
 
         adapter = new RecyclerViewAdapter(TheHubActivity.this, rvContent);
         // Recreate FlowArrayAdapter and set
+
+//        adapter.setCardEditingCallback(this);
         recyclerView.setAdapter(adapter);
 
     }
@@ -290,7 +292,7 @@ public class TheHubActivity extends AppCompatActivity {
                 .show();
     }
 
-    /** Deletes All Flows visible in the ListView as well as
+    /** Deletes All Flows visible in the RecView as well as
      *  requests for all Flow data to be deleted from Internal Storage.
      *
      * @return boolean, confirmation of
@@ -300,6 +302,15 @@ public class TheHubActivity extends AppCompatActivity {
         manager.deleteAll();
         adapter.notifyDataSetChanged();
     }
+
+    @Override
+    public void deleteCard(Flow flowToDelete, int position) {
+        /* Commented out to prevent app breaking (Delete single flows for next commit) */
+        rvContent.remove(position);
+        manager.delete(flowToDelete.getUuid());
+        adapter.notifyItemRemoved(position);
+    }
+
 
 
     @Override
@@ -313,8 +324,7 @@ public class TheHubActivity extends AppCompatActivity {
         super.onStart();
         // Monitor launch times and interval from installation
         RateThisApp.onStart(this);
-
-        RateThisApp.Config config = new RateThisApp.Config(3, 10);
+        RateThisApp.Config config = new RateThisApp.Config(10, 10);
         // Custom title ,message and buttons names
         config.setTitle(R.string.rate_app_title);
         config.setMessage(R.string.rate_app_message);

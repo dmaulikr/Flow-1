@@ -47,7 +47,7 @@ public class FlowStateActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flow_state);
 
-        parentFlow = new AppDataManager(this).load(getIntent().getStringExtra(AppConstants.UUID_SENT));
+        parentFlow = new AppDataManager(this).load(getIntent().getStringExtra(AppConstants.UUID_PASSED));
 
         millisInFlow = new Integer[parentFlow.getChildElements().size()];
         endFlag=NOT_FINISHED;
@@ -170,7 +170,7 @@ public class FlowStateActivity extends AppCompatActivity
 
     private void goToFinishScreen() {
         Intent i = new Intent(this, FinishedFlowActivity.class);
-        i.putExtra(AppConstants.UUID_SENT, parentFlow.getUuid());
+        i.putExtra(AppConstants.UUID_PASSED, parentFlow.getUuid());
         i.putExtra("completionTime", this.calculateTimeInFlow());
         finish();
         startActivity(i);

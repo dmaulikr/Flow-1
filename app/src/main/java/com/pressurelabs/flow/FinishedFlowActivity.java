@@ -19,7 +19,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         String completionTime = getIntent().getStringExtra("completionTime");
         AppDataManager util = new AppDataManager(this);
-        Flow finishedFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_SENT));
+        Flow finishedFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_PASSED));
 
         // Gets the Flow Manager Util saved in TheHubActivity from Complex Preferences
 

@@ -2,6 +2,7 @@ package com.pressurelabs.flow;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,10 +24,12 @@ import java.util.ArrayList;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
     private Context mContext;
     private ArrayList<Flow> flowList;
+    private onCardClickListener cardClickCallback;
 
     public RecyclerViewAdapter(Context mContext, ArrayList<Flow> flowList) {
         this.mContext = mContext;
         this.flowList = flowList;
+        this.cardClickCallback = (onCardClickListener) mContext;
     }
 
     /**
@@ -66,11 +69,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                     Intent i = new Intent(mContext, FlowSandBoxActivity.class);
 
-                    i.putExtra(AppConstants.UUID_SENT, flow.getUuid());
+                    i.putExtra(AppConstants.UUID_PASSED, flow.getUuid());
 
                     mContext.startActivity(i);
-                    // Parcels the Flow Object to @ be passed to new activity
-                    //TODO DM~Flag Parcelling Object will change with new DM Map
                 }
             });
 
@@ -81,6 +82,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 public boolean onLongClick(View v) {
                     // View is the child view provided from AdapterView parent
                     showPopUpMenu();
+
                     return true;
                 }
             });
@@ -90,22 +92,26 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         private void showPopUpMenu() {
 
-            LinearLayout viewGroup = (LinearLayout) card.findViewById(R.id.popup);
             LayoutInflater layoutInflater = (LayoutInflater) mContext
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View layout = layoutInflater.inflate(R.layout.popup_window, viewGroup);
+            View layout = layoutInflater.inflate(R.layout.popup_window, null);
+
+            LinearLayout viewGroup = (LinearLayout)  layout.findViewById(R.id.popup);
 
             // Creating the PopupWindow
-            final PopupWindow popup = new PopupWindow(mContext);
-            popup.setContentView(layout);
+            final PopupWindow popup = new PopupWindow(layout, RecyclerView.LayoutParams.WRAP_CONTENT,
+                    RecyclerView.LayoutParams.WRAP_CONTENT);
+
+            int dividerMargin = viewGroup.getDividerPadding(); // Top bottom
+            int popupPadding = layout.getPaddingBottom();
+            int popupDisplayHeight = -(card.getHeight()-dividerMargin-popupPadding);
+
+
+                // Prevents border
+
+            popup.setBackgroundDrawable(new ColorDrawable());
             popup.setFocusable(true);
 
-            int dividerMargin = 30; // Top bottom
-            int popupPadding = layout.getPaddingBottom();
-            int popupDisplayHeight = -(card.getHeight()-dividerMargin+popupPadding);
-
-            // Displaying the popup at the specified location, + offsets.
-            popup.showAsDropDown(card,0,popupDisplayHeight, Gravity.RIGHT);
             // Getting a reference to Close button, and close the popup when clicked.
             ImageView delete = (ImageView) layout.findViewById(R.id.delete_item);
 
@@ -113,27 +119,17 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
                 @Override
                 public void onClick(View v) {
-                    deleteCard(flow, position);
+                    cardClickCallback.deleteCard(flow, position);
                     popup.dismiss();
                 }
             });
+
+            // Displaying the popup at the specified location, + offsets.
+            popup.showAsDropDown(card, card.getMeasuredWidth(),popupDisplayHeight, Gravity.TOP);
+
         }
 
     }
-
-    private void deleteCard(Flow flowToDelete, int position) {
-        //TODO DM~Flag position will be removed when DM updated
-        /* Commented out to prevent app breaking (Delete single flows for next commit) */
-
-//          manager.delete(
-//                  (Flow) listView.getItemAtPosition(position),
-//                  TheHubActivity.this
-//        );
-//
-//        helperAdapter.notifyDataSetChanged();
-    }
-
-
 
 
 
@@ -147,15 +143,16 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        Flow flow = flowList.get(position);
-        holder.name.setText(String.valueOf(flow.getName()));
-        // String.valueOf() otherwise Resources$NotFoundException thrown
-        holder.elements.setText(String.valueOf(flow.getElementCount()));
+            Flow flow = flowList.get(position);
+            holder.name.setText(String.valueOf(flow.getName()));
+            // String.valueOf() otherwise Resources$NotFoundException thrown
+            holder.elements.setText(String.valueOf(flow.getElementCount()));
 
-        holder.timeEstimate.setText(String.valueOf(flow.getFormattedTime()));
-        holder.prepare(flow, position);
+            holder.timeEstimate.setText(String.valueOf(flow.getFormattedTime()));
+            holder.prepare(flow, position);
+
+
     }
-
 
     @Override
     public int getItemCount() {
@@ -163,5 +160,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
 
-
+    public interface onCardClickListener {
+//        void onCardClick(Flow clickedCard);
+//        void onCardLongClick(Flow longClickedCard, int cardPosition);
+        void deleteCard(Flow flowToDelete, int cardPosition);
+    }
 }
