@@ -20,16 +20,41 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <TextView
-                android:textAppearance=
-                    "?android:attr/textAppearanceMedium"
+            <ViewSwitcher
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/rename_switcher"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="12dp"
-                android:id="@+id/item_flow_name" />
+                android:layout_height="wrap_content" >
+
+                <TextView
+                    android:textAppearance=
+                        "?android:attr/textAppearanceMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="12dp"
+                    android:maxWidth = "200dip"
+                    android:inputType="textMultiLine"
+                    android:maxLines="2"
+                    android:id="@+id/item_flow_name" />
+
+                <EditText
+                    android:visibility="gone"
+                    android:textAppearance=
+                        "?android:attr/textAppearanceMedium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="12dp"
+                    android:id="@+id/item_flow_rename" />
+            </ViewSwitcher>
+
+
             <!-- Flow Symbol Icon item_flow_name-->
+
+
 
 
             <ImageView

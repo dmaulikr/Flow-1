@@ -8,10 +8,12 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import java.util.ArrayList;
 
@@ -42,6 +44,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         public int position;
             // The position of this card in the recycler view
         public TextView name, elements, timeEstimate;
+        public EditText rename;
+        public ViewSwitcher switcher;
 
         public ViewHolder(View view) {
             super(view);
@@ -49,6 +53,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             name = (TextView) view.findViewById(R.id.item_flow_name);
             elements = (TextView) view.findViewById(R.id.item_element_count);
             timeEstimate = (TextView) view.findViewById(R.id.item_total_time);
+            rename = (EditText) view.findViewById(R.id.item_flow_rename);
+            switcher = (ViewSwitcher) view.findViewById(R.id.rename_switcher);
             /* Set up views for set operations */
         }
 
@@ -66,12 +72,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 /* Passes Flow but passes the memory address of the childFlowElements
                      instead of the actual object containing the
                       */
-
-                    Intent i = new Intent(mContext, FlowSandBoxActivity.class);
-
-                    i.putExtra(AppConstants.UUID_PASSED, flow.getUuid());
-
-                    mContext.startActivity(i);
+                    cardClickCallback.onCardClick(flow);
                 }
             });
 
@@ -81,8 +82,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override
                 public boolean onLongClick(View v) {
                     // View is the child view provided from AdapterView parent
-                    showPopUpMenu();
-
+                    cardClickCallback.onCardLongClick(flow, position, card);
                     return true;
                 }
             });
@@ -90,44 +90,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         }
 
-        private void showPopUpMenu() {
 
-            LayoutInflater layoutInflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View layout = layoutInflater.inflate(R.layout.popup_window, null);
-
-            LinearLayout viewGroup = (LinearLayout)  layout.findViewById(R.id.popup);
-
-            // Creating the PopupWindow
-            final PopupWindow popup = new PopupWindow(layout, RecyclerView.LayoutParams.WRAP_CONTENT,
-                    RecyclerView.LayoutParams.WRAP_CONTENT);
-
-            int dividerMargin = viewGroup.getDividerPadding(); // Top bottom
-            int popupPadding = layout.getPaddingBottom();
-            int popupDisplayHeight = -(card.getHeight()-dividerMargin-popupPadding);
-
-
-                // Prevents border
-
-            popup.setBackgroundDrawable(new ColorDrawable());
-            popup.setFocusable(true);
-
-            // Getting a reference to Close button, and close the popup when clicked.
-            ImageView delete = (ImageView) layout.findViewById(R.id.delete_item);
-
-            delete.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    cardClickCallback.deleteCard(flow, position);
-                    popup.dismiss();
-                }
-            });
-
-            // Displaying the popup at the specified location, + offsets.
-            popup.showAsDropDown(card, card.getMeasuredWidth(),popupDisplayHeight, Gravity.TOP);
-
-        }
 
     }
 
@@ -161,8 +124,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
 
     public interface onCardClickListener {
-//        void onCardClick(Flow clickedCard);
-//        void onCardLongClick(Flow longClickedCard, int cardPosition);
-        void deleteCard(Flow flowToDelete, int cardPosition);
+        void onCardClick(Flow clickedFlow);
+        void onCardLongClick(Flow longClickedFlow, int cardPosition, View cardViewClicked);
     }
 }

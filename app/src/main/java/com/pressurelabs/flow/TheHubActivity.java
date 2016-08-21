@@ -1,7 +1,9 @@
 package com.pressurelabs.flow;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -11,12 +13,19 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
 
 import com.kobakei.ratethisapp.RateThisApp;
 
@@ -36,10 +45,12 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
     private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
-
+    private String menuState;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private ArrayList<Flow> rvContent;
+    private PopupWindow longClickPopup, editingPopup;
+    private InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +61,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         toolbarTitle.setText("The Hub");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -67,7 +78,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
             manager = new AppDataManager(this);
         }
 
-
+        menuState = AppConstants.MENU_NATIVE;
 
     }
 
@@ -76,6 +87,15 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     public boolean onPrepareOptionsMenu(final Menu menu) {
         menu.clear();
         getMenuInflater().inflate(R.menu.menu_the_hub, menu);
+
+        MenuItem newF = menu.findItem(R.id.action_new_flow);
+        MenuItem deleteAllF = menu.findItem(R.id.action_delete_flows);
+        MenuItem terms = menu.findItem(R.id.terms_of_use);
+        if (menuState==AppConstants.MENU_HIDE) {
+            newF.setVisible(false);
+            deleteAllF.setVisible(false);
+            terms.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -87,6 +107,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         and passes a MenuItem object to indicate which item was clicked */
 
         switch (item.getItemId()) {
+
             case R.id.action_delete_flows:
                 deleteFlowsDialog();
                 return true;
@@ -124,10 +145,6 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     protected void onResume() {
         super.onResume();
         populateRecycleView();
-        /* DATA LEAK HERE DON'T TOUCH*/
-//        ComplexPreferences cPrefs = ComplexPreferences
-//                .getComplexPreferences(this, AppConstants.COMPLEX_PREFS, MODE_PRIVATE);
-//        cPrefs.putObject(AppConstants.APP_DATA_MANAGER,manager);
     }
 
 
@@ -180,6 +197,8 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     }
 
 
+
+
     /** Launches the process of creating a new Flow Object by
      *  developing a Custom Dialog Box and determining valid
      *  user input.
@@ -189,7 +208,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
         //Create edit text field for name entry
         final EditText nameInputET = new EditText(TheHubActivity.this);
-        AlertDialog.Builder customDialog = customDialog(nameInputET);
+        AlertDialog.Builder customDialog = generateCustomDialog(nameInputET);
 
         customDialog.setPositiveButton("Lets Roll",
                 new DialogInterface.OnClickListener() {
@@ -204,7 +223,12 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
                             Flow newF = new Flow(nameInputET.getText().toString(), 0);
 
-                            updateUIContent(newF);
+                            if (adapter != null) {
+                                rvContent.add(newF);
+                                // Set the Flow Manager Index and add to List View Content
+
+                                adapter.notifyDataSetChanged();
+                            }
 
                             manager.save(newF.getUuid(),newF);
 
@@ -224,7 +248,9 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
     }
 
-    private AlertDialog.Builder customDialog(EditText nameInputET) {
+
+
+    private AlertDialog.Builder generateCustomDialog(EditText nameInputET) {
         AlertDialog.Builder newFlowDialog = new AlertDialog.Builder(TheHubActivity.this);
 
         //Sets up Layout Parameters
@@ -255,20 +281,6 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         return newFlowDialog;
     }
 
-
-    /** Updates the View Content with a received Flow Object, and
-     *  updates the UI to display the relevant changes.
-     *
-     * @param flow the Flow being added to the content
-     */
-    private void updateUIContent(Flow flow) {
-        if (adapter != null) {
-            rvContent.add(flow);
-            // Set the Flow Manager Index and add to List View Content
-
-            adapter.notifyDataSetChanged();
-        }
-    }
 
     /**
      * Creates and prompts user for confirmation of deleting all
@@ -304,13 +316,184 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     }
 
     @Override
-    public void deleteCard(Flow flowToDelete, int position) {
-        /* Commented out to prevent app breaking (Delete single flows for next commit) */
-        rvContent.remove(position);
-        manager.delete(flowToDelete.getUuid());
-        adapter.notifyItemRemoved(position);
+    public void onCardClick(Flow clickedFlow) {
+        Intent i = new Intent(TheHubActivity.this, FlowSandBoxActivity.class);
+
+        i.putExtra(AppConstants.UUID_PASSED, clickedFlow.getUuid());
+        startActivity(i);
     }
 
+    @Override
+    public void onCardLongClick(Flow longClickedFlow, int cardPosition, View cardViewClicked) {
+        showLongClickPopUpMenu(longClickedFlow,cardPosition, cardViewClicked);
+    }
+
+    private PopupWindow showLongClickPopUpMenu(final Flow longClickedFlow, final int cardPosition, final View cardViewClicked) {
+
+        LayoutInflater layoutInflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.popup_window_longclick, null);
+
+        LinearLayout viewGroup = (LinearLayout)  layout.findViewById(R.id.popup_longclick);
+
+        // Creating the PopupWindow
+        final PopupWindow popup = new PopupWindow(layout, RecyclerView.LayoutParams.WRAP_CONTENT,
+                RecyclerView.LayoutParams.WRAP_CONTENT);
+
+        int dividerMargin = viewGroup.getDividerPadding(); // Top bottom
+        int popupPadding = layout.getPaddingBottom();
+        int popupDisplayHeight = -(cardViewClicked.getHeight()-dividerMargin-popupPadding);
+
+
+        // Prevents border
+
+        popup.setBackgroundDrawable(new ColorDrawable());
+        popup.setFocusable(true);
+
+        // Getting a reference to Close button, and close the popup when clicked.
+        ImageView delete = (ImageView) layout.findViewById(R.id.popup_delete_item);
+
+        delete.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                /* Deletes current Flow from file and UI */
+                rvContent.remove(cardPosition);
+                manager.delete(longClickedFlow.getUuid());
+                adapter.notifyItemRemoved(cardPosition);
+                popup.dismiss();
+            }
+        });
+
+        ImageView edit = (ImageView) layout.findViewById(R.id.popup_edit_item);
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popup.dismiss();
+                renameFlow(cardPosition, cardViewClicked);
+
+                // TODO If going down this route change options menu to check ? How to recieve Input, change UI and update file.
+            }
+        });
+
+        // Displaying the popup at the specified location, + offsets.
+        popup.showAsDropDown(cardViewClicked, cardViewClicked.getMeasuredWidth(),popupDisplayHeight, Gravity.TOP);
+
+        longClickPopup = popup;
+        return popup;
+    }
+
+    private void renameFlow(final int cardPosition, final View cardViewClicked) {
+        menuState = AppConstants.MENU_HIDE;
+        invalidateOptionsMenu();
+        final ViewSwitcher switcher = (ViewSwitcher) cardViewClicked.findViewById(R.id.rename_switcher);
+        final EditText rename = (EditText) switcher.findViewById(R.id.item_flow_rename);
+
+        rename.setInputType(InputType.TYPE_CLASS_TEXT);
+        //Only allows A-Z, a-z, 0-9, and special characters (%$!@)
+
+        rename.setFilters(new InputFilter[] {
+                new InputFilter.LengthFilter(20)
+        });
+
+
+        rename.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (rename.hasFocus()) {
+                    showEditPopupWindow(rename, cardViewClicked, switcher, cardPosition);
+                } else {
+                    imm.hideSoftInputFromWindow(rename.getWindowToken(), 0);
+                }
+
+            }
+        });
+
+        switcher.showNext();
+
+        rename.requestFocus();
+        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
+        /* Forces keyboard */
+
+
+    }
+
+    private void showEditPopupWindow(final EditText newName, View cardViewClicked, final ViewSwitcher switcher, final int cardPosition) {
+        LayoutInflater layoutInflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.popup_window_editing, null);
+
+        LinearLayout viewGroup = (LinearLayout)  layout.findViewById(R.id.popup_editing);
+
+        // Creating the PopupWindow
+        final PopupWindow popup = new PopupWindow(layout, RecyclerView.LayoutParams.WRAP_CONTENT,
+                RecyclerView.LayoutParams.WRAP_CONTENT);
+
+        int dividerMargin = viewGroup.getDividerPadding(); // Top bottom
+        int popupPadding = layout.getPaddingBottom();
+        int popupDisplayHeight = -(cardViewClicked.getHeight()-dividerMargin-popupPadding);
+
+
+        // Prevents border from appearing outside popupwindow
+        popup.setBackgroundDrawable(new ColorDrawable());
+        popup.setFocusable(false);
+
+        // Getting a reference to Close button, and close the popup when clicked.
+        ImageView confirmEdit = (ImageView) layout.findViewById(R.id.popup_confirm_item_changes);
+
+        confirmEdit.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Flow toChange = rvContent.get(cardPosition);
+                if (newName.getText().toString().equals("")) {
+                    // Need to optimize this so that the dialog does NOT disappear and just display toast
+                    Toast.makeText(TheHubActivity.this, "This Flow needs a name!", Toast.LENGTH_LONG).show();
+                } else {
+                    toChange.setName(newName.getText().toString());
+                    manager.overwrite(toChange.getUuid(), toChange);
+                    adapter.notifyDataSetChanged();
+                    switcher.showNext();
+                    menuState=AppConstants.MENU_NATIVE;
+                    invalidateOptionsMenu();
+                    popup.dismiss();
+                    newName.clearFocus();
+                }
+
+            }
+        });
+
+        ImageView cancelEdit = (ImageView) layout.findViewById(R.id.popup_cancel_item_changes);
+
+        cancelEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switcher.showNext();
+                menuState=AppConstants.MENU_NATIVE;
+                invalidateOptionsMenu();
+                popup.dismiss();
+            }
+        });
+
+        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+
+            }
+        });
+
+        // Displaying the popup at the specified location, + offsets.
+        popup.showAsDropDown(cardViewClicked, cardViewClicked.getMeasuredWidth(),popupDisplayHeight, Gravity.TOP);
+        editingPopup = popup;
+    }
+
+
+    @Override
+    protected void onPause() {
+        dismissPopups();
+        super.onPause();
+    }
 
 
     @Override
@@ -344,4 +527,13 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         super.onSaveInstanceState(outState);
     }
 
+    private void dismissPopups() {
+        if (longClickPopup!=null && longClickPopup.isShowing()) {
+            longClickPopup.dismiss();
+        }
+
+        if (editingPopup!=null && editingPopup.isShowing()) {
+            editingPopup.dismiss();
+        }
+    }
 }

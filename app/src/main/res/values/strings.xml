@@ -61,14 +61,15 @@
     </string>
     <string name="terms_of_use">Terms of Use</string>
     <string name="menu_delete">Delete Flow</string>
-    <string name="rate_app_title">Hey There!</string>
+    <string name="rate_app_title">Apps are pretty cool right?</string>
     <string name="rate_app_message">
-        Apps are pretty cool right?
         If you like this app you can rate it on the Google Play store!
         But you knew that already didn\'t you? </string>
     <string name="rate">OF COURSE (RATE)</string>
     <string name="no_rate">GO AWAY!</string>
-    <string name="rate_cancel">LER</string>
+    <string name="rate_cancel">LATER</string>
+    <string name="action_finished_edit">Finish editing Flow</string>
+    <string name="action_cancel_edit">Cancel editing Flow</string>
     <string-array name="praise_msg">
         <item> Nice work ! </item>
         <item> Congrats ! </item>

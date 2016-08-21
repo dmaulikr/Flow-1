@@ -13,5 +13,7 @@ public class AppConstants {
     public static final String RESTORED_USER_FLOWS = "RESTORED_USER_FLOWS";
     public static final String RESTORED_DATA_MANAGER = "RESTORED_DATA_MANAGER";
     public static final String UUID_PASSED = "UUID_PASSED";
+    public static final String MENU_NATIVE = "MENU_NATIVE";
+    public static final String MENU_HIDE = "MENU_HIDE";
 
 }

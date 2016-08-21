@@ -2,8 +2,12 @@ package com.pressurelabs.flow;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -34,10 +38,11 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     private GridView elementGridView;
     private ImageAdapter imgAdapater;
     private Toast currentToast = null;
+    private Toolbar sbToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Toolbar sbToolbar;
+
         super.onCreate(savedInstanceState);
             // Not keeping Flow Object's in their own capsules
         setContentView(R.layout.activity_sand_box);
@@ -46,9 +51,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         currentFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_PASSED));
 
         sbToolbar = (Toolbar) findViewById(R.id.sb_toolbar);
-
         TextView title = (TextView) findViewById(R.id.toolbar_title);
-
 
         TextView timesComplete = (TextView) findViewById(R.id.time_complete);
         timesComplete.setText(String.valueOf(currentFlow.getCompletionTokens()));
@@ -68,7 +71,10 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             // Passes the number of elements in the Flow's child elements to set the
             // Adapter's initial size
         elementGridView.setAdapter(imgAdapater);
-
+        elementGridView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
+        elementGridView.setMultiChoiceModeListener(new MultiChoiceListener());
+        elementGridView.setDrawSelectorOnTop(true);
+        elementGridView.setSelector(ContextCompat.getDrawable(FlowSandBoxActivity.this, R.drawable.gridview_selector));
 
     }
 
@@ -165,15 +171,6 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         setClickListeners();
     }
 
-    /**
-     * Handles the onBackPressed event by sending user to TheHubActivity
-     */
-    @Override
-    public void onBackPressed() {
-        Intent i= new Intent(FlowSandBoxActivity.this, TheHubActivity.class);
-        startActivity(i);//starting main activity
-        super.onBackPressed();
-    }
 
     public void goFlowState(View v) {
         if (currentFlow.getChildElements().isEmpty()) {
@@ -186,5 +183,59 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             startActivity(in);
         }
     }
+
+    class MultiChoiceListener implements GridView.MultiChoiceModeListener {
+
+        //TODO Gridview not appearing as selected even when item has been selected
+        //TODO Make Action bar be converted to ActionMode bar
+        //Add Delete Feature
+
+        @Override
+        public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+            int selectCount = elementGridView.getCheckedItemCount();
+            switch (selectCount) {
+                case 1:
+                    mode.setSubtitle("One item selected");
+                    break;
+                default:
+                    mode.setSubtitle("" + selectCount + " items selected");
+                    break;
+            }
+        }
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            sbToolbar.setVisibility(View.GONE);
+            mode.setTitle("Select Items");
+            mode.setSubtitle("One item selected");
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            return false;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            sbToolbar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /**
+     * Handles the onBackPressed event by sending user to TheHubActivity
+     */
+    @Override
+    public void onBackPressed() {
+        Intent i= new Intent(FlowSandBoxActivity.this, TheHubActivity.class);
+        startActivity(i);//starting main activity
+        super.onBackPressed();
+    }
+
 
 }

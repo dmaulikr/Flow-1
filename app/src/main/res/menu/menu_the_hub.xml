@@ -2,6 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:compat="http://schemas.android.com/apk/res-auto">
 
+
     <item
         android:id="@+id/action_new_flow"
         android:icon="@drawable/add_white_36dp"
