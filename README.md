@@ -12,7 +12,7 @@ However, because of my personal style of needing to visualize things in order to
 
 At the same time I wanted to be able to save these workflows and repeat them later in time
 
-Although I am not completely "open sourcing" the code, I am hoping that by putting my code up here, other new developers might be able to learn from it and see how (in this case) a native multi activity app actually works together! 
+Although I am not completely "open sourcing" the code, I am hoping that by putting my code up here, other new android devs might be able to learn from it and see how (in this case) a native multi activity app actually works together! 
 
 
 ### Screenshots
