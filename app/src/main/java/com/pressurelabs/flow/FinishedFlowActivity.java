@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.util.Random;
@@ -19,7 +20,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         String completionTime = getIntent().getStringExtra("completionTime");
         AppDataManager util = new AppDataManager(this);
-        Flow finishedFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_PASSED));
+        Flow finishedFlow = util.load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
 
         // Gets the Flow Manager Util saved in TheHubActivity from Complex Preferences
 
@@ -32,11 +33,18 @@ public class FinishedFlowActivity extends AppCompatActivity {
         String[] array = this.getResources().getStringArray(R.array.praise_msg);
         String randomStr = array[new Random().nextInt(array.length)];
 
-        msg.setText(randomStr);
-        complete.setText(finishedFlow.getName() + " was finished in:");
-        time.setText(completionTime);
+        try {
+            msg.setText(randomStr);
+            complete.setText(finishedFlow.getName() + " was finished in:");
+            time.setText(completionTime);
+            util.overwrite(finishedFlow.getUuid(), finishedFlow);
+        } catch (NullPointerException e) {
+            Toast.makeText(this, "Woops, couldn't finish the Flow!", Toast.LENGTH_LONG).show();
+            this.onBackPressed();
+        }
 
-        util.overwrite(finishedFlow.getUuid(), finishedFlow);
+
+
 
         // Overwrites current flow in the file
     }

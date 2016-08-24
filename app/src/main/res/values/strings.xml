@@ -58,6 +58,9 @@
         "\n\n7. INDEMITY. You agree to indemnify, defend and hold the Owner harmless from and against any and all damages, losses and expenses arising"
         "directly or indirectly from (i) your acts and omissions to act in using the Software pursuant to the terms of the EULA; or (ii) your breach of"
         "this EULA."
+
+
+
     </string>
     <string name="terms_of_use">Terms of Use</string>
     <string name="menu_delete">Delete Flow</string>
@@ -70,6 +73,8 @@
     <string name="rate_cancel">LATER</string>
     <string name="action_finished_edit">Finish editing Flow</string>
     <string name="action_cancel_edit">Cancel editing Flow</string>
+    <string name="fs_notification_title">Kickin\' it in Flow State</string>
+    <string name="fs_task_finish_msg">Finished!</string>
     <string-array name="praise_msg">
         <item> Nice work ! </item>
         <item> Congrats ! </item>

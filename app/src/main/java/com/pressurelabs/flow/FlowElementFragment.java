@@ -1,9 +1,12 @@
 package com.pressurelabs.flow;
 
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +34,9 @@ public class FlowElementFragment extends Fragment {
     private TextView timeDisplay;
     private OnFragmentSelectedListener mCallback;
     private OnDataPass dataPasser;
+    private Context mContext;
+    private String activityStateFlag;
+    private NotificationCompat.Builder mNotify;
 
     /**
      * Interface to allow onClick between FlowStateActivity and Fragments
@@ -48,6 +54,7 @@ public class FlowElementFragment extends Fragment {
     public interface OnDataPass {
         void onDataPass(Bundle b, int elementNumber);
     }
+
 
     /**
      * Passes a bundle key:value pair with the elementNumber by calling
@@ -87,6 +94,14 @@ public class FlowElementFragment extends Fragment {
     }
 
 
+    /**
+     * Creates Fragment View containing progress bar, element name and options for continuing to next
+     * fragment
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -146,7 +161,11 @@ public class FlowElementFragment extends Fragment {
     }
 
 
-
+    /**
+     * Creates new instance of a fragment with blank bundle.
+     * @param e
+     * @return
+     */
     public static FlowElementFragment newInstance(FlowElement e) {
         Bundle args = new Bundle();
         args.putParcelable(FLOW_ELEMENT, e);
@@ -156,6 +175,9 @@ public class FlowElementFragment extends Fragment {
     }
 
 
+    /**
+     * Starts the Element Timer on the UI Thread.
+     */
     private void startTimerOnUi() {
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -166,6 +188,11 @@ public class FlowElementFragment extends Fragment {
 
     }
 
+    /**
+     * Ensures that all interface callbacks are assigned context
+     *
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -174,17 +201,24 @@ public class FlowElementFragment extends Fragment {
         try {
             mCallback = (OnFragmentSelectedListener) context;
             dataPasser = (OnDataPass) context;
-
+            this.mContext = context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                 + " must implement the appropriate interface");
         }
     }
 
+    /**
+     * Blank constructor
+     */
     public FlowElementFragment() {
 
     }
 
+    /**
+     * Basic CountDownTimer with some additional properties for determining time remaining and
+     * passing data regarding time between multiple activities.
+     */
     class ElementTimer extends CountDownTimer {
         public int getTimeFinishedInMilliSecs() {
             return (int) (timeStart-timeRemaining);
@@ -194,34 +228,53 @@ public class FlowElementFragment extends Fragment {
         }
         long timeStart;
         long timeRemaining;
+        private NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
 
+        /**
+         * Reduces Progress Bar and sets text to current time remaining
+         *
+         * @param millisUntilFinished
+         */
         @Override
         public void onTick(long millisUntilFinished) {
+            if (activityStateFlag.equals(AppConstants.FS_NOTIFICATION_ACTIVE)) {
+                mNotifyMgr.notify(
+                        AppConstants.FLOW_STATE_NOTIFICATION_ID,
+                        mNotify
+                                .setContentText(
+                                        "You've got " +  buildTimeOutput(millisUntilFinished) + " left in " + element.getElementName()
+                                )
+                                .build()
+                );
+            }
+
             timeRemaining=millisUntilFinished;
 
             progressBar.setProgress(progress--);
 
-            timeDisplay.setText(
-                    String.format("%02d:%02d:%02d",
-                            TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
-                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                                    - TimeUnit.HOURS.toMinutes(
-                                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
-                            ),
-                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)
-                                    - TimeUnit.MINUTES.toSeconds(
-                                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                            )
-
-                    )
-            );
+            timeDisplay.setText(buildTimeOutput(millisUntilFinished));
 
         }
 
+        /**
+         * Produces animation, sets text to finish
+         */
         @Override
         public void onFinish() {
+            if (activityStateFlag.equals(AppConstants.FS_NOTIFICATION_ACTIVE)) {
+                mNotifyMgr.notify(
+                        AppConstants.FLOW_STATE_NOTIFICATION_ID,
+                        mNotify
+                                .setContentText(
+                                        getString(R.string.fs_task_finish_msg)
+                                )
+                                .setDefaults(Notification.DEFAULT_VIBRATE | Notification.DEFAULT_LIGHTS)
+                                .build()
+                );
+            }
+
             Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
-            timeDisplay.setText("Finished!");
+            timeDisplay.setText(getString(R.string.fs_task_finish_msg));
             timeDisplay.setAnimation(fadeInAnimation);
             /*
             // Future Version For Now We will have the user self advance to new tasks
@@ -237,14 +290,56 @@ public class FlowElementFragment extends Fragment {
             this.timeStart=millisInFuture;
         }
 
+        /**
+         * Returns time output in the form 00:00:00 based on parameters
+         * @param millisUntilFinished , the amount of milliseconds until the time reaches 0
+         * @return formatted time output
+         */
+        private String buildTimeOutput(long millisUntilFinished) {
+            return String.format("%02d:%02d:%02d",
+                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
+                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
+                            - TimeUnit.HOURS.toMinutes(
+                            TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
+                    ),
+                    TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)
+                            - TimeUnit.MINUTES.toSeconds(
+                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
+                    )
+
+            );
+        }
+
+
     }
+
 
     @Override
     public void onResume() {
         super.onResume();
+        activityStateFlag=AppConstants.FS_UI_ACTIVE;
         /* Displays updated progress bar with time remaining */
         progressBar.setProgress(
                 (int) elementTimer.getTimeRemaining()/1000
         );
     }
+
+    public ElementTimer getTimer() {
+        return this.elementTimer;
+    }
+
+    public void notifyBackPressed() {
+        elementTimer.cancel();
+    }
+
+    public void notificationsActive(NotificationCompat.Builder unbuiltNotify) {
+        mNotify = unbuiltNotify;
+        this.activityStateFlag=AppConstants.FS_NOTIFICATION_ACTIVE;
+    }
+
+    public void uiActive() {
+        this.activityStateFlag=AppConstants.FS_UI_ACTIVE;
+    }
+
+
 }

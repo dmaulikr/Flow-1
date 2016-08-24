@@ -11,5 +11,6 @@
     android:verticalSpacing="25dp"
     android:horizontalSpacing="10dp"
     android:stretchMode="columnWidth"
-    android:gravity="center">
+    android:gravity="center"
+    android:background="?android:attr/activatedBackgroundIndicator">
 </GridView>

@@ -32,8 +32,10 @@ import java.util.Set;
  * @author Robert Simoes, 2016-07-09
  *         Copyright (c) 2016, Robert Simoes All rights reserved.
  *
- * AppDataManager is a utility that saves and all Flows to a compact ArrayList which is
- * converted to JSON and saved to plain text in internal storage.
+ * AppDataManager is a utility that saves and all Flows to a a HashMap by converting to JSON format
+ * and saving in .json file in in internal storage.
+ *
+ *
  */
 public class AppDataManager implements Parcelable{
 
@@ -53,38 +55,83 @@ public class AppDataManager implements Parcelable{
         dataMap = buildMap(mContext);
     } // End of Constructor
 
+    /**
+     * Adds the given FlowObject to the HashMap under the keyToSave key.
+     *
+     * Then saves the new Map to Storage
+     *
+     * @param keyToSave key being saved
+     * @param objectToSave Flow Object being saved
+     */
     public void save(String keyToSave, Flow objectToSave) {
             dataMap.put(keyToSave,objectToSave);
             saveFile();
     }
 
+    /**
+     * returns the FlowObject value associated with the keyToLoad key in the HashMap
+     * Then saves the new Map to Storage
+     *
+     * @param keyToLoad key paired with value to load
+     * @return
+     */
     public Flow load(String keyToLoad) {
         return dataMap.get(keyToLoad);
     }
 
+    /**
+     * Overwrites the value already present in keyToWrite with a new FlowObject value
+     * Then saves the new Map to Storage
+     *
+     * @param keyToOverwrite key paired with value to overwrite
+     * @param valueToWrite new value to overwrite with
+     */
     public void overwrite(String keyToOverwrite, Flow valueToWrite) {
         dataMap.put(keyToOverwrite, valueToWrite);
         saveFile();
     }
 
+    /**
+     * Removes the value present at keyToDelete from the Hashmap.
+     * Then saves the new Map to Storage
+     * @param keyToDelete
+     */
     public void delete(String keyToDelete) {
         dataMap.remove(keyToDelete);
         saveFile();
     }
 
+    /**
+     * Removes all key:value pairs in the hashmap and then completely erases all data
+     * present in the internal storage file
+     */
     public void deleteAll() {
         dataMap.clear();
         eraseFileData();
     }
 
+    /**
+     * Builds an arraylist by iterating through the HashMap and populating the AL with the values
+     * present
+     * @return
+     */
     public ArrayList<Flow> generateArrayList(){
         return new ArrayList<>(dataMap.values());
     }
 
+    /**
+     * Flag to determine there is any data in the Manager
+     * @return
+     */
     public boolean hasData() {
         return !dataMap.isEmpty();
     }
 
+    /**
+     * Converts the HashMap to JSON Format and then writes the JSON String to the specified file name in
+     * internal storage
+     *
+     */
     private void saveFile() {
 
         Gson gson = new Gson();
@@ -101,13 +148,19 @@ public class AppDataManager implements Parcelable{
         } catch (Exception e) {
             Log.e("ERROR:", "\n " +e.getMessage());
 
-            // Toast.makeText(context, "Could not save file", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, "Could not save file", Toast.LENGTH_LONG).show();
         }
 
 
     }
 
 
+    /**
+     * Reads and builds a String Response from the data present in the specified internal
+     * storage file.
+     *
+     * @return a json string representation of the data in file.
+     */
     private String loadFile() {
         try {
 
@@ -134,6 +187,10 @@ public class AppDataManager implements Parcelable{
     }
 
 
+    /**
+     * Overwrites all data present in file with a blank file.
+     *
+     */
     private void eraseFileData() {
         try {
             FileOutputStream os = mContext.openFileOutput(mapFileName, Context.MODE_PRIVATE);
@@ -147,6 +204,7 @@ public class AppDataManager implements Parcelable{
     }
 
     /**
+     * Reads data from file as a json string, then builds a HashMap with the JSON obtained
      *
      * @param context the context in which the method is being called
      */

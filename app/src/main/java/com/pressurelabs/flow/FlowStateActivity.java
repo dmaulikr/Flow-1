@@ -1,10 +1,14 @@
 package com.pressurelabs.flow;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
@@ -27,7 +31,11 @@ import java.util.concurrent.TimeUnit;
  * @author Robert Simoes, 2016-07-09
  *         Copyright (c) 2016, Robert Simoes All rights reserved.
  *
- * FlowStateActivity is the container for the FlowElementFragments when in FlowState
+ * FlowStateActivity is the container for the FlowElementFragments when in FlowState.
+ *
+ * Flowstate is essentially the task completion activity for the Flow. A single Fragment containing
+ * the time to complete and a progress bar are shown, while a single option "NEXT" is provided in case
+ * the user completes the task early and wishes to moveon.
  */
 
 public class FlowStateActivity extends AppCompatActivity
@@ -38,19 +46,20 @@ public class FlowStateActivity extends AppCompatActivity
     private Integer[] millisInFlow;
         // Holds each currentElement's completetion time matching to it's Flow Location
     private FlowElementFragment fragment;
-    private int endFlag;
-    private static final int FINISHED = 1;
-    private static final int NOT_FINISHED = -1;
-
+    private int flowStateFlag;
+    private String activityStateFlag;
+    private NotificationCompat.Builder mBuilder;
+    private NotificationManager mNotifyMgr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flow_state);
 
-        parentFlow = new AppDataManager(this).load(getIntent().getStringExtra(AppConstants.UUID_PASSED));
+        parentFlow = new AppDataManager(this).load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
 
         millisInFlow = new Integer[parentFlow.getChildElements().size()];
-        endFlag=NOT_FINISHED;
+        flowStateFlag =AppConstants.NOT_FINISHED;
+        activityStateFlag = AppConstants.FS_UI_ACTIVE;
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.flowstate_fragment_container) != null) {
@@ -63,13 +72,13 @@ public class FlowStateActivity extends AppCompatActivity
                 return;
             }
 
-            currentElement=0;
+            currentElement=0; //Location of current element
+
             fragment = FlowElementFragment.newInstance(
                     parentFlow.getChildElements().get(currentElement)
             );
 
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack
+
             android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction
                     .add(R.id.flowstate_fragment_container, fragment)
@@ -77,7 +86,8 @@ public class FlowStateActivity extends AppCompatActivity
 
         }
 
-
+        mNotifyMgr =
+                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Override
@@ -89,8 +99,10 @@ public class FlowStateActivity extends AppCompatActivity
                 .setCancelable(false)
                 .setPositiveButton("Understood", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        showCustomQuitingToast(FlowStateActivity.this);
+                        fragment.notifyBackPressed();
+                        flowStateFlag=AppConstants.EARLY_EXIT;
                         FlowStateActivity.super.onBackPressed();
+                        showCustomQuitingToast(FlowStateActivity.this);
                     }
                 })
                 .setNegativeButton("No Don't!", null)
@@ -99,6 +111,10 @@ public class FlowStateActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Displays custom toast with random phrase from resource file.
+     * @param context
+     */
     private void showCustomQuitingToast(Context context) {
         String[] array = context.getResources().getStringArray(R.array.quit_quotes);
         String randomStr = array[new Random().nextInt(array.length)];
@@ -118,6 +134,12 @@ public class FlowStateActivity extends AppCompatActivity
     }
 
 
+    /**
+     * Retrieves the time taken to complete the task while creating a new fragment for the next task.
+     *
+     * If there is no final task an exception is thrown and the Flow is completed
+     * @param v
+     */
     @Override
     public void onNextSelected(View v) {
 
@@ -142,20 +164,26 @@ public class FlowStateActivity extends AppCompatActivity
                 /* Index Out of Bounds Exception Thrown When Flow Ends */
 
                 if (fragment!=null) {
-                    endFlag=FINISHED;
+                    flowStateFlag =AppConstants.FINISHED;
                     transaction.remove(fragment);
                     transaction.commit();
                     transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                 }
 
             }
-        if (endFlag==FINISHED){
+        if (flowStateFlag ==AppConstants.FINISHED){
             goToFinishScreen();
         }
     }
 
 
-
+    /**
+     * Parses recieved data and adds to the Integer[] tracking the amount of time taken for each
+     * task to complete
+     *
+     * @param recievedData , a bundle containing the desired completion time data
+     * @param elementNumber , the location of the element in the flow and also the string used as a key
+     */
     @Override
     public void onDataPass(Bundle recievedData, int elementNumber) {
         /* onDataPass is called after onNextSelected is called,
@@ -170,12 +198,18 @@ public class FlowStateActivity extends AppCompatActivity
 
     private void goToFinishScreen() {
         Intent i = new Intent(this, FinishedFlowActivity.class);
-        i.putExtra(AppConstants.UUID_PASSED, parentFlow.getUuid());
+        i.putExtra(AppConstants.PASSING_UUID, parentFlow.getUuid());
         i.putExtra("completionTime", this.calculateTimeInFlow());
         finish();
         startActivity(i);
     }
 
+    /**
+     * Iterates through the Integer[] and returns a formatted String time output of the time
+     * taken to complete all tasks in the flow
+     *
+     * @return
+     */
     private String calculateTimeInFlow() {
         int time = 0;
 
@@ -258,5 +292,65 @@ public class FlowStateActivity extends AppCompatActivity
         return newFlowDialog;
     }
 
+    @Override
+    public void onPause() {
+        if (flowStateFlag !=AppConstants.FINISHED && flowStateFlag != AppConstants.EARLY_EXIT) {
+            onPauseNotifier(fragment.getTimer());
+        }
+
+        super.onPause();
+
+    }
+
+    /**
+     * Sets up and sends out a notification to the user keeping track of current time in Flow
+     * also notifies current fragment.
+     *
+     * @param timer
+     */
+    private void onPauseNotifier(FlowElementFragment.ElementTimer timer) {
+        mBuilder = buildTimeNotification(timer.getTimeRemaining());
+        activityStateFlag = AppConstants.FS_NOTIFICATION_ACTIVE;
+        fragment.notificationsActive(mBuilder);
+        // Builds the notification and issues it.
+        int mNotificationId = AppConstants.FLOW_STATE_NOTIFICATION_ID;
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+
+    }
+
+    /**
+     * Generates a notification with the pending intent to send the user to the Flow State at the current task
+     * being completed
+     *
+     * @param millisRemaining
+     * @return
+     */
+    public NotificationCompat.Builder buildTimeNotification(long millisRemaining) {
+        Intent notificationIntent = new Intent(getApplicationContext(), FlowStateActivity.class);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                .putExtra(AppConstants.PASSING_UUID,parentFlow.getUuid());
+        PendingIntent intent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.flow_state_notify)
+                        .setColor(getResources().getColor(R.color.colorPrimary))
+                        .setContentIntent(intent)
+                        .setContentTitle(getString(R.string.fs_notification_title))
+                        .setContentText("In Flow State")
+                        .setAutoCancel(true)
+                        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+
+        // Gets an instance of the NotificationManager service
+
+        return builder;
+    }
+
+    @Override
+    protected void onResume() {
+        activityStateFlag=AppConstants.FS_UI_ACTIVE;
+        fragment.uiActive();
+        super.onResume();
+    }
 
 }

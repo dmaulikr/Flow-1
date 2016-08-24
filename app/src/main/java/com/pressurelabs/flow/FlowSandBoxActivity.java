@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,7 +15,9 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Flow_V2
@@ -39,6 +42,8 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     private ImageAdapter imgAdapater;
     private Toast currentToast = null;
     private Toolbar sbToolbar;
+    private List<FlowElement> gridContent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,32 +53,38 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sand_box);
         util = new AppDataManager(this);
 
-        currentFlow = util.load(getIntent().getStringExtra(AppConstants.UUID_PASSED));
+        currentFlow = util.load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
 
         sbToolbar = (Toolbar) findViewById(R.id.sb_toolbar);
         TextView title = (TextView) findViewById(R.id.toolbar_title);
-
         TextView timesComplete = (TextView) findViewById(R.id.time_complete);
-        timesComplete.setText(String.valueOf(currentFlow.getCompletionTokens()));
-        title.setText(currentFlow.getName());
+
+        try {
+            timesComplete.setText(String.valueOf(currentFlow.getCompletionTokens()));
+            title.setText(currentFlow.getName());
+        } catch (NullPointerException e) {
+            timesComplete.setText("");
+            title.setText("");
+        }
+
 
         setSupportActionBar(sbToolbar);
 
         elementGridView = (GridView) findViewById(R.id.e_visual_grid);
 
 
-        final ArrayList<Integer> elementGrid = new ArrayList<>();
+        gridContent = new LinkedList<>();
+        Iterator<FlowElement> it = currentFlow.getChildElements().iterator();
         for (int i = 0; i< currentFlow.getElementCount(); i++){
-            elementGrid.add(R.drawable.flag_black_48dp);
+            gridContent.add(it.next());
         }
 
-        imgAdapater = new ImageAdapter(this, elementGrid);
+        imgAdapater = new ImageAdapter(this, (LinkedList<FlowElement>) gridContent);
             // Passes the number of elements in the Flow's child elements to set the
             // Adapter's initial size
         elementGridView.setAdapter(imgAdapater);
         elementGridView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
         elementGridView.setMultiChoiceModeListener(new MultiChoiceListener());
-        elementGridView.setDrawSelectorOnTop(true);
         elementGridView.setSelector(ContextCompat.getDrawable(FlowSandBoxActivity.this, R.drawable.gridview_selector));
 
     }
@@ -143,11 +154,13 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         newElement.setLocation(currentFlow.getElementCount());
         currentFlow.addElement(newElement);
 
-        updateSandBox();
+        gridContent.add(newElement);
+        imgAdapater.notifyDataSetChanged();
+
+        setClickListeners();
+
         util.overwrite(currentFlow.getUuid(),currentFlow);
 
-        // Saves the updated JSONFlowWrapper ArrayList as
-        // the updated list (acts as the updated list
 
     }
 
@@ -161,15 +174,6 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         currentToast.show();
     }
 
-    /**
-     *  Updates the SandBox's GridView after a single element has been created
-     */
-    private void updateSandBox() {
-        imgAdapater.addOne();
-        imgAdapater.notifyDataSetChanged();
-
-        setClickListeners();
-    }
 
 
     public void goFlowState(View v) {
@@ -179,7 +183,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             );
         } else {
             Intent in = new Intent(this, FlowStateActivity.class);
-            in.putExtra(AppConstants.UUID_PASSED,currentFlow.getUuid());
+            in.putExtra(AppConstants.PASSING_UUID,currentFlow.getUuid());
             startActivity(in);
         }
     }
@@ -187,25 +191,20 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     class MultiChoiceListener implements GridView.MultiChoiceModeListener {
 
         //TODO Gridview not appearing as selected even when item has been selected
-        //TODO Make Action bar be converted to ActionMode bar
         //Add Delete Feature
 
         @Override
         public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
             int selectCount = elementGridView.getCheckedItemCount();
-            switch (selectCount) {
-                case 1:
-                    mode.setSubtitle("One item selected");
-                    break;
-                default:
-                    mode.setSubtitle("" + selectCount + " items selected");
-                    break;
-            }
+
+            mode.setSubtitle("" + selectCount + " item(s) selected");
+
         }
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
             sbToolbar.setVisibility(View.GONE);
+            getMenuInflater().inflate(R.menu.menu_gridview_context,menu);
             mode.setTitle("Select Items");
             mode.setSubtitle("One item selected");
             return true;
@@ -218,7 +217,20 @@ public class FlowSandBoxActivity extends AppCompatActivity {
 
         @Override
         public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-            return false;
+
+            switch (item.getItemId()) {
+
+                case R.id.action_delete_selected_items:
+                    deleteSelection();
+                    mode.finish();
+                    return true;
+
+                default:
+                    // If we got here, the user's action was not recognized.
+                    // Invoke the superclass to handle it.
+
+                    return false;
+            }
         }
 
         @Override
@@ -238,4 +250,15 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     }
 
 
+    private void deleteSelection() {
+//        SparseBooleanArray selection = elementGridView.getCheckedItemPositions();
+//
+//        imgAdapater.onItemsRemoved(selection,
+//                (LinkedList<FlowElement>) gridContent,
+//                                elementGridView,
+//                                currentFlow,
+//                                FlowSandBoxActivity.this);
+
+    }
 }
+

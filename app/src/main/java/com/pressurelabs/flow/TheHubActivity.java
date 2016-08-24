@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -38,8 +37,8 @@ import java.util.ArrayList;
  *         Copyright (c) 2016, Robert Simoes All rights reserved.
  *
  *  The Hub Screen provides a List of the User's current Flows along with some minor details.
- *  The class allows for the creation and saving of new Flows, destruction of current ones and launching of the
- *  Flows into a new Activity
+ *  The class allows for the creation and saving of new Flows, destruction of current ones, editing and renaming of Flows
+ *  and launching of the Flows into a new Activity
  */
 public class TheHubActivity extends AppCompatActivity implements RecyclerViewAdapter.onCardClickListener {
 
@@ -50,7 +49,6 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     private RecyclerViewAdapter adapter;
     private ArrayList<Flow> rvContent;
     private PopupWindow longClickPopup, editingPopup;
-    private InputMethodManager imm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +59,6 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         toolbarTitle.setText("The Hub");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -137,10 +134,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
     }
 
-    /** Recreates the original RecView by reading internal storage data
-     *  and repopulating the rvContent ArrayList
-     *
-     */
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -180,8 +174,8 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         }
     }
 
-    /** Attempts to rebuild the RecycleView Content by rebuilding the RecycleView ArrayList
-     *  from file and recreating the Array Adapter.
+    /** Attempts to rebuild the RecycleView Content by asking for the AppDataManager to create
+     *  an ArrayList of it's available data  from file to recreate the RecViewAdapter.
      *
      */
     private void rebuildContent() {
@@ -315,21 +309,46 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         adapter.notifyDataSetChanged();
     }
 
+    /**
+     * Sends the user to the FlowSandbox Activity while passing the Flow that was clicked and it's
+     * UUID for use in the next activity
+     * @param clickedFlow flow that was clicked
+     */
     @Override
     public void onCardClick(Flow clickedFlow) {
         Intent i = new Intent(TheHubActivity.this, FlowSandBoxActivity.class);
 
-        i.putExtra(AppConstants.UUID_PASSED, clickedFlow.getUuid());
+        i.putExtra(AppConstants.PASSING_UUID, clickedFlow.getUuid());
         startActivity(i);
     }
 
+    /**
+     * Shows a popupmenu related to editing or deleting the Flow that was LongClicked
+     *
+     * @param longClickedFlow Flow represented by cardview longclicked
+     * @param cardPosition position of cardview in adapter
+     * @param cardViewClicked the cardview view object clicked
+     * @return boolean representing consumption
+     */
     @Override
-    public void onCardLongClick(Flow longClickedFlow, int cardPosition, View cardViewClicked) {
-        showLongClickPopUpMenu(longClickedFlow,cardPosition, cardViewClicked);
+    public boolean onCardLongClick(Flow longClickedFlow, int cardPosition, View cardViewClicked) {
+        return  showLongClickPopUpMenu(longClickedFlow,cardPosition, cardViewClicked);
     }
 
-    private PopupWindow showLongClickPopUpMenu(final Flow longClickedFlow, final int cardPosition, final View cardViewClicked) {
-
+    /**
+     * Generates a Popup Menu with Two Actions Edit and Delete.
+     *
+     * Deleting the Flow removes the single card from the UI and also notifiers the AppDataManager to
+     * delete from file
+     *
+     * Editing launches a renaming process
+     *
+        * @param longClickedFlow Flow represented by cardview longclicked
+      * @param cardPosition position of cardview in adapter
+     * @param cardViewClicked the cardview view object clicked
+     * @return
+     */
+    private boolean showLongClickPopUpMenu(final Flow longClickedFlow, final int cardPosition, final View cardViewClicked) {
         LayoutInflater layoutInflater = (LayoutInflater) this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = layoutInflater.inflate(R.layout.popup_window_longclick, null);
@@ -373,17 +392,22 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
                 popup.dismiss();
                 renameFlow(cardPosition, cardViewClicked);
 
-                // TODO If going down this route change options menu to check ? How to recieve Input, change UI and update file.
             }
         });
 
         // Displaying the popup at the specified location, + offsets.
         popup.showAsDropDown(cardViewClicked, cardViewClicked.getMeasuredWidth(),popupDisplayHeight, Gravity.TOP);
-
         longClickPopup = popup;
-        return popup;
+        return true;
     }
 
+    /**
+     * Hides the Options Menu and uses a ViewSwitcher to quick turn the exisiting TextView with the
+     * Flow's name into an EditText for the user to rename.
+     *
+     * @param cardPosition position of cardview in adapter
+     * @param cardViewClicked the cardview view object clicked
+     */
     private void renameFlow(final int cardPosition, final View cardViewClicked) {
         menuState = AppConstants.MENU_HIDE;
         invalidateOptionsMenu();
@@ -403,22 +427,30 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
             public void onFocusChange(View v, boolean hasFocus) {
                 if (rename.hasFocus()) {
                     showEditPopupWindow(rename, cardViewClicked, switcher, cardPosition);
-                } else {
-                    imm.hideSoftInputFromWindow(rename.getWindowToken(), 0);
                 }
-
             }
         });
 
         switcher.showNext();
 
         rename.requestFocus();
-        imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY);
         /* Forces keyboard */
 
 
     }
 
+    /**
+     * Displays a popup window prompting the user to
+     *
+     * Confirm the changes to the name, saving the new name to file and updating the UI.
+     *
+     * Cancel the changes, returning the user back to the original state before editing
+     *
+     * @param newName new name to be used
+     * @param cardPosition position of cardview in adapter
+     * @param cardViewClicked the cardview view object clicked
+     * @param switcher the viewSwitcher object used to rename
+     */
     private void showEditPopupWindow(final EditText newName, View cardViewClicked, final ViewSwitcher switcher, final int cardPosition) {
         LayoutInflater layoutInflater = (LayoutInflater) this
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -427,7 +459,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         LinearLayout viewGroup = (LinearLayout)  layout.findViewById(R.id.popup_editing);
 
         // Creating the PopupWindow
-        final PopupWindow popup = new PopupWindow(layout, RecyclerView.LayoutParams.WRAP_CONTENT,
+        final PopupWindow popupEditing = new PopupWindow(layout, RecyclerView.LayoutParams.WRAP_CONTENT,
                 RecyclerView.LayoutParams.WRAP_CONTENT);
 
         int dividerMargin = viewGroup.getDividerPadding(); // Top bottom
@@ -436,8 +468,8 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
 
         // Prevents border from appearing outside popupwindow
-        popup.setBackgroundDrawable(new ColorDrawable());
-        popup.setFocusable(false);
+        popupEditing.setBackgroundDrawable(new ColorDrawable());
+        popupEditing.setFocusable(false);
 
         // Getting a reference to Close button, and close the popup when clicked.
         ImageView confirmEdit = (ImageView) layout.findViewById(R.id.popup_confirm_item_changes);
@@ -457,7 +489,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
                     switcher.showNext();
                     menuState=AppConstants.MENU_NATIVE;
                     invalidateOptionsMenu();
-                    popup.dismiss();
+                    popupEditing.dismiss();
                     newName.clearFocus();
                 }
 
@@ -472,32 +504,26 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
                 switcher.showNext();
                 menuState=AppConstants.MENU_NATIVE;
                 invalidateOptionsMenu();
-                popup.dismiss();
-            }
-        });
-
-        popup.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-
+                popupEditing.dismiss();
             }
         });
 
         // Displaying the popup at the specified location, + offsets.
-        popup.showAsDropDown(cardViewClicked, cardViewClicked.getMeasuredWidth(),popupDisplayHeight, Gravity.TOP);
-        editingPopup = popup;
+        popupEditing.showAsDropDown(cardViewClicked, cardViewClicked.getMeasuredWidth(),popupDisplayHeight, Gravity.TOP);
+        editingPopup = popupEditing;
     }
 
 
     @Override
     protected void onPause() {
-        dismissPopups();
         super.onPause();
+        dismissPopups();
     }
 
 
     @Override
     public void onBackPressed() {
+        dismissPopups();
         super.onBackPressed();
     }
 
@@ -527,12 +553,17 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * Catches any popups still open to prevent window leaking when issuing new Intents
+     */
     private void dismissPopups() {
         if (longClickPopup!=null && longClickPopup.isShowing()) {
+            longClickPopup.setFocusable(false);
             longClickPopup.dismiss();
         }
 
         if (editingPopup!=null && editingPopup.isShowing()) {
+            editingPopup.setFocusable(false);
             editingPopup.dismiss();
         }
     }

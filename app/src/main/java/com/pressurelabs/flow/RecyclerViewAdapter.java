@@ -82,8 +82,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override
                 public boolean onLongClick(View v) {
                     // View is the child view provided from AdapterView parent
-                    cardClickCallback.onCardLongClick(flow, position, card);
-                    return true;
+                    return cardClickCallback.onCardLongClick(flow, position, card);
                 }
             });
 
@@ -125,6 +124,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     public interface onCardClickListener {
         void onCardClick(Flow clickedFlow);
-        void onCardLongClick(Flow longClickedFlow, int cardPosition, View cardViewClicked);
+        boolean onCardLongClick(Flow longClickedFlow, int cardPosition, View cardViewClicked);
     }
 }

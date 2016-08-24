@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class Flow implements Parcelable{
 
     private int completionTokens;
 
-    private List<FlowElement> childFlowElements = new ArrayList<>();
+    private List<FlowElement> childFlowElements;
         // Keeps track of the current FlowElements which belong to this Flow
 
     private double totalTime=0;
@@ -45,6 +46,7 @@ public class Flow implements Parcelable{
         this.name = name;
         this.totalTime = time;
         this.completionTokens=0;
+        this.childFlowElements = new LinkedList<>();
         this.uuid = UUID.randomUUID().toString();
     } // End of overload constructor
 
@@ -53,6 +55,9 @@ public class Flow implements Parcelable{
 
     public List<FlowElement> getChildElements() {
         return childFlowElements;
+    }
+    public void setChildElements(LinkedList<FlowElement> newDataSet) {
+        this.childFlowElements = newDataSet;
     }
 
     /** Sets the name for the Flow
@@ -101,7 +106,7 @@ public class Flow implements Parcelable{
     public boolean equals(Object o) {
         Flow other = (Flow) o;
         String otherUniqueId = other.getUuid();
-        return this.uuid ==otherUniqueId;
+        return this.uuid.equals(otherUniqueId);
     }
 
     /** Sets the totalTime for the Flow once called from calculateTime()

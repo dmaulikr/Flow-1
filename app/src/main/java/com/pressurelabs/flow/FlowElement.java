@@ -95,6 +95,16 @@ public class FlowElement implements Parcelable{
 
     }
 
+    @Override
+    public String toString() {
+        return "\n#FLOW ELEMENT\n"
+                + this.elementName + " "
+                + "\nTime: " + this.getTimeEstimate()  + " "
+                + "\nLocation " + this.getLocation() +"\n";
+    }
+
+
+
     /* Parcel Implementation for Object Passing Between Activities! */
     private FlowElement(Parcel in) {
         String[] data = new String[3];
