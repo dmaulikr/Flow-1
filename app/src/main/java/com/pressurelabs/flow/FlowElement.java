@@ -31,7 +31,14 @@ public class FlowElement implements Parcelable{
     } //End of constructor
 
     /*~~~~~ Getter and Setter Methods: ~~~~~*/
+    public String getFormattedTime() {
+        if(timeUnits.equals("hours")) {
+            return timeEstimate + " HRS";
+        } else {
+            return timeEstimate + " MINS";
+        }
 
+    }
     /** Gets the name for flowElement
      * @return elementName
      */
@@ -70,6 +77,7 @@ public class FlowElement implements Parcelable{
     /**
      * Returns time units for the FlowElement in milliseconds
      * @return millis, long
+     * //TODO Refractor FlowElements to store time in consistent unit
      */
     public long parseTimeToMilliSecs() {
         if (timeUnits.equals("minutes")){

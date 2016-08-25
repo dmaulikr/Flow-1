@@ -2,9 +2,11 @@ package com.pressurelabs.flow;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -15,9 +17,8 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Flow_V2
@@ -42,7 +43,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     private ImageAdapter imgAdapater;
     private Toast currentToast = null;
     private Toolbar sbToolbar;
-    private List<FlowElement> gridContent;
+    private LinkedList<FlowElement> gridContent;
 
 
     @Override
@@ -74,12 +75,9 @@ public class FlowSandBoxActivity extends AppCompatActivity {
 
 
         gridContent = new LinkedList<>();
-        Iterator<FlowElement> it = currentFlow.getChildElements().iterator();
-        for (int i = 0; i< currentFlow.getElementCount(); i++){
-            gridContent.add(it.next());
-        }
+        gridContent.addAll(currentFlow.getChildElements());
 
-        imgAdapater = new ImageAdapter(this, (LinkedList<FlowElement>) gridContent);
+        imgAdapater = new ImageAdapter(this, gridContent);
             // Passes the number of elements in the Flow's child elements to set the
             // Adapter's initial size
         elementGridView.setAdapter(imgAdapater);
@@ -203,7 +201,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
 
         @Override
         public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            sbToolbar.setVisibility(View.GONE);
+            sbToolbar.setVisibility(View.INVISIBLE);
             getMenuInflater().inflate(R.menu.menu_gridview_context,menu);
             mode.setTitle("Select Items");
             mode.setSubtitle("One item selected");
@@ -237,6 +235,8 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         public void onDestroyActionMode(ActionMode mode) {
             sbToolbar.setVisibility(View.VISIBLE);
         }
+
+
     }
 
     /**
@@ -245,20 +245,62 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         Intent i= new Intent(FlowSandBoxActivity.this, TheHubActivity.class);
-        startActivity(i);//starting main activity
+        startActivity(i);
         super.onBackPressed();
     }
 
-
+    /**
+     * Deletes selected elements by getting the checked elements in the gridview,
+     * iterating through each to add the element paired to the specific selection key to temp List.
+     *
+     * Removes the elements present in the temp List from the Flow's childElements List, updates the adapter
+     * and saves the new flow.
+     *
+     * Provides additional option to undo via SnackBar
+     */
     private void deleteSelection() {
-//        SparseBooleanArray selection = elementGridView.getCheckedItemPositions();
-//
-//        imgAdapater.onItemsRemoved(selection,
-//                (LinkedList<FlowElement>) gridContent,
-//                                elementGridView,
-//                                currentFlow,
-//                                FlowSandBoxActivity.this);
+        SparseBooleanArray selection = elementGridView.getCheckedItemPositions();
 
+        final LinkedList<FlowElement> reference = new LinkedList<>(gridContent);
+        final LinkedList<FlowElement> deletedChildElements = new LinkedList<>();
+
+        try {
+            for (int i=0; i<selection.size();i++) {
+                deletedChildElements.add(gridContent.get(selection.keyAt(i)));
+                /* If the element was checked it will be in the selection SBA,
+                   so we add it to the collection of elements to remove but getting the element in the grid content
+                   at the index = to the key found in the selection SBA
+                 */
+            }
+
+            currentFlow.removeSelected(deletedChildElements);
+
+            gridContent = (currentFlow.getChildElements());
+
+            imgAdapater.update(gridContent);
+
+            util.overwrite(currentFlow.getUuid(), currentFlow);
+
+        } catch (Exception e) {
+            Toast.makeText(this,R.string.sandbox_no_delete_msg,Toast.LENGTH_LONG);
+        }
+
+
+            Snackbar bar = Snackbar.make(elementGridView, "Yeah... just delete your work away!", Snackbar.LENGTH_SHORT)
+                    .setAction("UNDO", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            currentFlow.setChildElements(reference);
+                            currentFlow.recalculateTotalTime();
+                            gridContent=currentFlow.getChildElements();
+                            imgAdapater.update(gridContent);
+                            util.overwrite(currentFlow.getUuid(),currentFlow);
+                        }
+                    });
+
+
+            bar.show();
     }
+
 }
 

@@ -59,7 +59,7 @@
         "directly or indirectly from (i) your acts and omissions to act in using the Software pursuant to the terms of the EULA; or (ii) your breach of"
         "this EULA."
 
-
+        "\n\n\n"
 
     </string>
     <string name="terms_of_use">Terms of Use</string>
@@ -75,6 +75,7 @@
     <string name="action_cancel_edit">Cancel editing Flow</string>
     <string name="fs_notification_title">Kickin\' it in Flow State</string>
     <string name="fs_task_finish_msg">Finished!</string>
+    <string name="sandbox_no_delete_msg">Elements could not be deleted...\\nLooks like we messed up..</string>
     <string-array name="praise_msg">
         <item> Nice work ! </item>
         <item> Congrats ! </item>

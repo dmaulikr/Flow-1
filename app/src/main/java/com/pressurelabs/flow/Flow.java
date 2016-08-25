@@ -3,9 +3,8 @@ package com.pressurelabs.flow;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -28,10 +27,10 @@ public class Flow implements Parcelable{
 
     private int completionTokens;
 
-    private List<FlowElement> childFlowElements;
+    private LinkedList<FlowElement> childFlowElements;
         // Keeps track of the current FlowElements which belong to this Flow
 
-    private double totalTime=0;
+    private double totalTime=0; // Always calculated in fractions of hours
     private String uuid;
 
     public String getUuid() {
@@ -53,7 +52,7 @@ public class Flow implements Parcelable{
 
     /*~~~~~~~~~ Getters & Setters ~~~~~~~~~*/
 
-    public List<FlowElement> getChildElements() {
+    public LinkedList<FlowElement> getChildElements() {
         return childFlowElements;
     }
     public void setChildElements(LinkedList<FlowElement> newDataSet) {
@@ -133,16 +132,6 @@ public class Flow implements Parcelable{
 
     /* Action Methods */
 
-    /** Searches for the parameter specified FlowElement and returns the Element's
-     *  index in the Flow's children ArrayList if found
-     *
-     * @param element the element being searched for in the Flow
-     * @return index the index position of the element in the Flow
-     */
-    public int findElement(FlowElement element) {
-        return childFlowElements.indexOf(element);
-    }
-
     /** Retrieves the FlowElement at the specified index position within
      *  the Flow's children ArrayList
      *
@@ -179,6 +168,35 @@ public class Flow implements Parcelable{
         }
     }
 
+    public void removeSelected(LinkedList<FlowElement> deletedChildElements) {
+        childFlowElements.removeAll(deletedChildElements);
+        this.recalculateTotalTime();
+    }
+
+
+
+    public void recalculateTotalTime(){
+        totalTime=0;
+        Iterator<FlowElement> it = childFlowElements.iterator();
+
+        while (it.hasNext()) {
+            FlowElement e = it.next();
+            switch (e.getTimeUnits()){
+            /* Must cast getTimeEst to double in order to calculate the minutes from hrs*/
+                case "minutes":
+                    totalTime = totalTime +
+                            (((double)e.getTimeEstimate()/(60)));
+                    break;
+                case "hours":
+                    totalTime = totalTime +
+                            (double) e.getTimeEstimate();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
     /** Overriding of original toString() because its natural
      *  implementation is no bueno!
      *
@@ -211,7 +229,7 @@ public class Flow implements Parcelable{
         this.totalTime = Double.parseDouble(data[1]);
         this.uuid = data[2];
         this.completionTokens = Integer.parseInt(data[3]);
-        this.childFlowElements = in.readArrayList(getClass().getClassLoader());
+        in.readList(childFlowElements,getClass().getClassLoader());
 
           /* Similar implementation:
               this.name = parcel.readString();
@@ -262,6 +280,8 @@ public class Flow implements Parcelable{
                     return new Flow[size];
                 }
             };
+
+
 
 
 

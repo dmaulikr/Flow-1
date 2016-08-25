@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -381,6 +382,19 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
                 manager.delete(longClickedFlow.getUuid());
                 adapter.notifyItemRemoved(cardPosition);
                 popup.dismiss();
+
+                Snackbar bar = Snackbar.make(cardViewClicked, "Another Flow to the data graveyard..", Snackbar.LENGTH_LONG)
+                        .setAction("NO!!!", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                rvContent.add(cardPosition, longClickedFlow);
+                                manager.save(longClickedFlow.getUuid(), longClickedFlow);
+                                adapter.notifyItemInserted(cardPosition);
+                            }
+                        });
+
+
+                bar.show();
             }
         });
 
