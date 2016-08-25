@@ -12,8 +12,8 @@ However, because of my personal style of needing to visualize things in order to
 
 At the same time I wanted to be able to save these workflows and repeat them later in time
 
-Although I am not completely "open sourcing" the code, I am hoping that by putting my code up here, other new android devs might be able to learn from it and see how (in this case) a native multi activity app actually works together! 
+I hoping that by putting my code up here, other new android devs might be able to learn from it!
 
 
 ### Screenshots
-<img src="http://i.imgur.com/UxmH8zP.png" width="225" height="375"/> <img src="http://i.imgur.com/gEs28oF.png" width="225" height="375"/> <img src="http://i.imgur.com/Zn52pXC.png" width="225" height="375"/>
+<img src="http://i.imgur.com/UxmH8zP.png" width="275" height="475"/> <img src="http://i.imgur.com/gEs28oF.png" width="275" height="475"/> <img src="http://i.imgur.com/Zn52pXC.png" width="275" height="475"/>
