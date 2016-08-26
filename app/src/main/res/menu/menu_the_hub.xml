@@ -15,9 +15,4 @@
         compat:showAsAction="always"/>
 
 
-    <!-- Settings, should always be in the overflow -->
-    <item android:id="@+id/terms_of_use"
-        android:title="@string/terms_of_use"
-        compat:showAsAction="never"/>
-
  </menu>

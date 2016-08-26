@@ -5,6 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -29,7 +35,11 @@ import android.widget.ViewSwitcher;
 
 import com.kobakei.ratethisapp.RateThisApp;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Random;
 
 /**
  * Flow_app
@@ -41,26 +51,42 @@ import java.util.ArrayList;
  *  The class allows for the creation and saving of new Flows, destruction of current ones, editing and renaming of Flows
  *  and launching of the Flows into a new Activity
  */
-public class TheHubActivity extends AppCompatActivity implements RecyclerViewAdapter.onCardClickListener {
+public class TheHubActivity extends AppCompatActivity implements RecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
-    private String menuState;
+
+    /* Recycler View */
     private RecyclerView recyclerView;
     private RecyclerViewAdapter adapter;
     private ArrayList<Flow> rvContent;
+
+    /* Card Interactions */
+    private String menuState;
     private PopupWindow longClickPopup, editingPopup;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_the_hub);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_the_hub);
-        TextView toolbarTitle = (TextView) findViewById(R.id.title_the_hub);
-        toolbarTitle.setText("The Hub");
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        /* Set up ActionBar */
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_the_hub);
+        setSupportActionBar(toolbar);
+
+        /* Set up Navigation Drawer */
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.hub_drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        generateDrawerGreeting(navigationView);
+
+        /* Set up recycler and Card View */
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -80,6 +106,65 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
     }
 
+    private void generateDrawerGreeting(NavigationView view) {
+        View header=view.getHeaderView(0);
+        TextView greeting = (TextView) header.findViewById(R.id.ndrawer_date_greeting);
+        String[] array = this.getResources().getStringArray(R.array.drawer_gretting);
+
+        switch(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)){
+            case Calendar.MONDAY:
+                greeting.setText(array[0]);
+                break;
+
+            case Calendar.TUESDAY:
+                greeting.setText(array[1]);
+                break;
+
+            case Calendar.WEDNESDAY:
+                greeting.setText(array[2]);
+                break;
+            case Calendar.THURSDAY:
+                greeting.setText(array[3]);
+                break;
+            case Calendar.FRIDAY:
+                greeting.setText(array[4]);
+                break;
+            case Calendar.SATURDAY:
+                greeting.setText(array[5]);
+                break;
+
+            case Calendar.SUNDAY:
+                greeting.setText(array[6]);
+                break;
+
+            default:
+                greeting.setText(array[7]);
+                break;
+
+        }
+
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.hub_drawer_layout);
+
+        switch (menuItem.getItemId()) {
+
+            case R.id.action_tou:
+                drawer.closeDrawer(GravityCompat.START);
+                goToEULA();
+                return false;
+            case R.id.action_support_devs:
+                Toast.makeText(this,R.string.feature_not_ready,Toast.LENGTH_LONG).show();
+                return false;
+            default:
+                return false;
+        }
+
+    }
+
+
     /* Allows the menu items to appear in the toolbar */
     @Override
     public boolean onPrepareOptionsMenu(final Menu menu) {
@@ -88,11 +173,9 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
         MenuItem newF = menu.findItem(R.id.action_new_flow);
         MenuItem deleteAllF = menu.findItem(R.id.action_delete_flows);
-        MenuItem terms = menu.findItem(R.id.terms_of_use);
         if (menuState==AppConstants.MENU_HIDE) {
             newF.setVisible(false);
             deleteAllF.setVisible(false);
-            terms.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -114,12 +197,6 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
                 createNewFlow();
                 return true;
 
-            case R.id.terms_of_use:
-                // User chose the "Settings" item, show the app settings UI...
-                goToEULA();
-                return false;
-
-            // TODO Implement settings again?
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -139,6 +216,8 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     @Override
     protected void onResume() {
         super.onResume();
+        menuState=AppConstants.MENU_NATIVE;
+        invalidateOptionsMenu();
         populateRecycleView();
     }
 
@@ -378,9 +457,11 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
             @Override
             public void onClick(View v) {
                 /* Deletes current Flow from file and UI */
-                rvContent.remove(cardPosition);
-                manager.delete(longClickedFlow.getUuid());
-                adapter.notifyItemRemoved(cardPosition);
+                    rvContent.remove(cardPosition);
+                    manager.delete(longClickedFlow.getUuid());
+                    adapter.notifyItemRemoved(cardPosition);
+                    adapter.notifyItemRangeChanged(cardPosition, adapter.getItemCount());
+
                 popup.dismiss();
 
                 Snackbar bar = Snackbar.make(cardViewClicked, "Another Flow to the data graveyard..", Snackbar.LENGTH_LONG)
@@ -538,6 +619,12 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     @Override
     public void onBackPressed() {
         dismissPopups();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.hub_drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
         super.onBackPressed();
     }
 
@@ -580,5 +667,10 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
             editingPopup.setFocusable(false);
             editingPopup.dismiss();
         }
+
+
     }
+
+
+
 }
