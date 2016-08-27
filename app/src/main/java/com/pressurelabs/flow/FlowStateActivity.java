@@ -1,6 +1,5 @@
 package com.pressurelabs.flow;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -348,9 +347,10 @@ public class FlowStateActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        super.onResume();
         activityStateFlag=AppConstants.FS_UI_ACTIVE;
         fragment.uiActive();
-        super.onResume();
+
     }
 
 }

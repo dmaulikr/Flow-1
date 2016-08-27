@@ -35,11 +35,9 @@ import android.widget.ViewSwitcher;
 
 import com.kobakei.ratethisapp.RateThisApp;
 
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Random;
 
 /**
  * Flow_app
@@ -109,7 +107,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     private void generateDrawerGreeting(NavigationView view) {
         View header=view.getHeaderView(0);
         TextView greeting = (TextView) header.findViewById(R.id.ndrawer_date_greeting);
-        String[] array = this.getResources().getStringArray(R.array.drawer_gretting);
+        String[] array = this.getResources().getStringArray(R.array.drawer_greeting);
 
         switch(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)){
             case Calendar.MONDAY:
@@ -173,7 +171,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
         MenuItem newF = menu.findItem(R.id.action_new_flow);
         MenuItem deleteAllF = menu.findItem(R.id.action_delete_flows);
-        if (menuState==AppConstants.MENU_HIDE) {
+        if (menuState.equals(AppConstants.MENU_HIDE)) {
             newF.setVisible(false);
             deleteAllF.setVisible(false);
         }

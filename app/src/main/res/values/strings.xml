@@ -75,7 +75,7 @@
     <string name="action_cancel_edit">Cancel editing Flow</string>
     <string name="fs_notification_title">Kickin\' it in Flow State</string>
     <string name="fs_task_finish_msg">Finished!</string>
-    <string name="sandbox_no_delete_msg">Elements could not be deleted...\\nLooks like we messed up..</string>
+    <string name="sandbox_delete_exception">Elements could not be deleted...\\nLooks like we messed up..</string>
     <string-array name="praise_msg">
         <item> Nice work ! </item>
         <item> Congrats ! </item>
@@ -86,12 +86,12 @@
         <item> <i> "Sitting quietly, doing nothing,\n Spring comes, and the grass grows by itself." \n- Zen Proverb </i> </item>
         <item> <i> "All of the significant battles are waged within the self." \n-Sheldon Kopp </i> </item>
     </string-array>
-    <string-array name="drawer_gretting">
+    <string-array name="drawer_greeting">
         <item name="monday"> Happy manic Monday! </item>
         <item name="tuesday"> Happy tubular Tuesday! </item>
         <item name="wednesday"> Happy wonderful Wednesday! </item>
-        <item name="thursday"> Happy throttled Thursday !</item>
-        <item name="friday"> Happy feel-good Friday !</item>
+        <item name="thursday"> Happy thankful Thursday !</item>
+        <item name="friday"> Happy funky Friday !</item>
         <item name="saturday"> Happy slack Saturday !</item>
         <item name="sunday"> Happy Super Sunday! </item>
         <item name="default"> Hey There! </item>
@@ -99,11 +99,12 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="ndrawer_subtext">Let\'s get some stuff done.</string>
+    <string name="navigation_drawer_subtext">Let\'s get some stuff done.</string>
     <string name="terms_of_use">Terms of Use</string>
-    <string name="support_devs">Support the developers.</string>
-    <string name="res_attribution">Icons</string>
-    <string name="feature_not_ready">Oops.. looks like that feature\'s not ready yet!</string>
+    <string name="support_devs">Support the developers</string>
+    <string name="res_attribution">Icons by: \nIcons8 and Google </string>
+    <string name="feature_not_ready">Oops.. \nlooks like that feature\'s not ready yet!</string>
     <string name="drawer_about">About</string>
+    <string name="snackbar_sandbox_msg">Yeah... just delete your work away!</string>
 
 </resources>

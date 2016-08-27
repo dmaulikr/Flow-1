@@ -1,17 +1,11 @@
 package com.pressurelabs.flow;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -58,6 +52,12 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             /* Set up views for set operations */
         }
 
+        /**
+         * Sets the view up with the parameters
+         *
+         * @param inFlow
+         * @param inPosition
+         */
         public void prepare(Flow inFlow, int inPosition) {
             /* since data is not avaliable until onBindViewHolder assign Flow and position here */
             this.flow = inFlow;
@@ -65,6 +65,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             setOnClicks();
         }
 
+        /**
+         * Sets onClick and onLongClick actions using the parent activities' implemented
+         * interface methods.
+         */
         private void setOnClicks() {
             card.setOnClickListener(new View.OnClickListener() {
                 @Override

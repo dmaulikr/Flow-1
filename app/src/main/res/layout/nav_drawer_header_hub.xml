@@ -32,7 +32,7 @@
         android:id="@+id/ndrawer_subtext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/ndrawer_subtext"
+        android:text="@string/navigation_drawer_subtext"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </LinearLayout>

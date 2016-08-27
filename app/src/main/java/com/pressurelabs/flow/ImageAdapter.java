@@ -8,7 +8,6 @@ import android.widget.Checkable;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 
 import java.util.LinkedList;
@@ -111,5 +110,10 @@ public class ImageAdapter extends BaseAdapter {
             setChecked(!mChecked);
         }
 
+    }
+
+    @Override
+    public String toString() {
+        return this.elementList.toString();
     }
 }

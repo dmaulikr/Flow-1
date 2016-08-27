@@ -6,7 +6,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -17,7 +16,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -148,17 +146,16 @@ public class FlowSandBoxActivity extends AppCompatActivity {
      * @param newElement the FlowElement being saved
      */
     private void addElementToFlow(FlowElement newElement) {
-
         newElement.setLocation(currentFlow.getElementCount());
-        currentFlow.addElement(newElement);
 
         gridContent.add(newElement);
+        currentFlow.addElement(newElement);
+
         imgAdapater.notifyDataSetChanged();
 
         setClickListeners();
 
         util.overwrite(currentFlow.getUuid(),currentFlow);
-
 
     }
 
@@ -275,24 +272,26 @@ public class FlowSandBoxActivity extends AppCompatActivity {
 
             currentFlow.removeSelected(deletedChildElements);
 
-            gridContent = (currentFlow.getChildElements());
+            gridContent.clear();
+            gridContent.addAll(currentFlow.getChildElements());
 
             imgAdapater.update(gridContent);
 
             util.overwrite(currentFlow.getUuid(), currentFlow);
 
         } catch (Exception e) {
-            Toast.makeText(this,R.string.sandbox_no_delete_msg,Toast.LENGTH_LONG);
+            Toast.makeText(this,R.string.sandbox_delete_exception,Toast.LENGTH_LONG);
         }
 
 
-            Snackbar bar = Snackbar.make(elementGridView, "Yeah... just delete your work away!", Snackbar.LENGTH_SHORT)
+            Snackbar bar = Snackbar.make(elementGridView, R.string.snackbar_sandbox_msg, Snackbar.LENGTH_SHORT)
                     .setAction("UNDO", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             currentFlow.setChildElements(reference);
                             currentFlow.recalculateTotalTime();
-                            gridContent=currentFlow.getChildElements();
+                            gridContent.clear();
+                            gridContent.addAll(currentFlow.getChildElements());
                             imgAdapater.update(gridContent);
                             util.overwrite(currentFlow.getUuid(),currentFlow);
                         }

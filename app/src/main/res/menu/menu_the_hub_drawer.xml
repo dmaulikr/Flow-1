@@ -11,13 +11,6 @@
                 android:icon="@drawable/pressure_labs"
                 android:title="@string/support_devs" />
 
-            <item
-                android:id="@+id/footer_spacer"
-                android:checkable="false"
-                android:enabled="false"
-                android:orderInCategory="200"
-                android:title="" />
-
         </menu>
     </item>
 

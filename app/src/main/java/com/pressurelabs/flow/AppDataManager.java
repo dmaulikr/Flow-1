@@ -1,10 +1,8 @@
 package com.pressurelabs.flow;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,8 +21,6 @@ import java.io.StringReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Flow_V2
@@ -51,7 +47,7 @@ public class AppDataManager implements Parcelable{
      *  with the return data
       */
     public AppDataManager(Context context){
-        this.mContext = context;
+        mContext = context;
         dataMap = buildMap(mContext);
     } // End of Constructor
 
@@ -238,7 +234,10 @@ public class AppDataManager implements Parcelable{
 
     }
 
-
+    @Override
+    public String toString() {
+        return this.loadFile();
+    }
     // Parcel Implementation to pass data from the Stream to the Sandbox about
     // the current flow object.
     // Still need to make method to calculate the total time for the flow based on elements
