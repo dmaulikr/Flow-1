@@ -1,37 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".SandBoxActivity">
 
-    <android.support.design.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        tools:context=".Main.FlowSandBoxActivity">
-
-        <include layout="@layout/sandbox_appbar"/>
-
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            tools:showIn="@layout/activity_sand_box">
-
-            <include layout="@layout/sb_drag_drop_gridview"
-                android:layout_height="match_parent"
-                android:layout_width="match_parent"
-                android:layout_below="@+id/sb_toolbar" />
-        </RelativeLayout>
-
+        <include layout="@layout/sandbox_appbar_main"/>
 
         <!-- Floating button for new flows! -->
         <android.support.design.widget.FloatingActionButton
@@ -52,5 +27,5 @@
             android:src="@drawable/fish_white_48"
             android:onClick="goFlowState"/>
 
-        </android.support.design.widget.CoordinatorLayout>
-    </RelativeLayout>
+
+</android.support.design.widget.CoordinatorLayout>

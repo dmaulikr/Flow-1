@@ -3,7 +3,6 @@ package com.pressurelabs.flow;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -36,6 +35,7 @@ public class SandBoxActivity extends AppCompatActivity {
     //
     ///// and the user can specify if they've finished the task move to next activity || need more time (+why) || ask help (slack)
 
+    private final String TAG = this.getClass().toString();
 
     private Flow currentFlow;
         // Flow currently being worked on
@@ -58,7 +58,7 @@ public class SandBoxActivity extends AppCompatActivity {
 
         currentFlow = util.load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
 
-        sbToolbar = (Toolbar) findViewById(R.id.sb_toolbar);
+        sbToolbar = (Toolbar) findViewById(R.id.toolbar_sb);
 
         setSupportActionBar(sbToolbar);
         getSupportActionBar().setTitle(currentFlow.getName());
@@ -77,9 +77,9 @@ public class SandBoxActivity extends AppCompatActivity {
 
         menuState = AppConstants.MENU_NATIVE;
         sortToggle=0;
-        setGridFunctionalState(AppConstants.GS_DRAG_DROP);
-
-//        setGridFunctionalState(AppConstants.GS_MCL_CHECKABLE);
+//        setGridFunctionalState(AppConstants.GS_DRAG_DROP);
+//
+////        setGridFunctionalState(AppConstants.GS_MCL_CHECKABLE);
     }
 
     /**
@@ -135,7 +135,7 @@ public class SandBoxActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(final Menu menu) {
         menu.clear();
         getMenuInflater().inflate(R.menu.menu_sandbox, menu);
-
+        Log.d(TAG, "TEST!");
         MenuItem reorder = menu.findItem(R.id.action_reorder_elements);
         MenuItem statistics = menu.findItem(R.id.action_flow_statistics);
         if (menuState.equals(AppConstants.MENU_HIDE)) {
@@ -144,6 +144,7 @@ public class SandBoxActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+
     /* Invokes methods based on the icon picked in the toolbar */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -151,18 +152,23 @@ public class SandBoxActivity extends AppCompatActivity {
         calls your activity's onOptionsItemSelected() callback method,
         and passes a MenuItem object to indicate which item was clicked */
 
+        Log.d(TAG, "Execute");
         switch (item.getItemId()) {
 
             case R.id.action_reorder_elements:
+                Log.d(TAG, "Inside action");
                 if (sortToggle==0) {
                     menuState=AppConstants.MENU_HIDE;
+                    Log.d(TAG, "\n\n Menu is hidden \nsortToggle was 0 \nSetting Title \nInvalidating OptionsMenu \n Changing Grid State");
+                    getSupportActionBar().setTitle("Sorting");
                     invalidateOptionsMenu();
                     setGridFunctionalState(AppConstants.GS_DRAG_DROP);
-                    getSupportActionBar().setTitle("Sorting");
                     sortToggle = 1;
                     return true;
                 } else {
+                    Log.d(TAG, "\n\n Menu is Native \nsortToggle was 1 \nReseting Setting Title \nInvalidating OptionsMenu \n Changing Grid State to Checkable");
                     menuState=AppConstants.MENU_NATIVE;
+                    getSupportActionBar().setTitle(currentFlow.getName());
                     invalidateOptionsMenu();
                     setGridFunctionalState(AppConstants.GS_MCL_CHECKABLE);
                     sortToggle = 0;
@@ -173,7 +179,7 @@ public class SandBoxActivity extends AppCompatActivity {
 
 
             case R.id.action_flow_statistics:
-                Toast.makeText(SandBoxActivity.this, "Statistics not avaliable yet.",Toast.LENGTH_LONG).show();
+                Toast.makeText(SandBoxActivity.this, "Statistics not available yet.",Toast.LENGTH_LONG).show();
                 return true;
 
             default:
@@ -285,8 +291,6 @@ public class SandBoxActivity extends AppCompatActivity {
 
     class MultiChoiceListener implements GridView.MultiChoiceModeListener {
 
-        //TODO Gridview not appearing as selected even when item has been selected
-        //Add Delete Feature
 
         @Override
         public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
@@ -330,7 +334,7 @@ public class SandBoxActivity extends AppCompatActivity {
 
         @Override
         public void onDestroyActionMode(ActionMode mode) {
-            sbToolbar.setVisibility(View.VISIBLE);
+            getSupportActionBar().show();
         }
 
 
