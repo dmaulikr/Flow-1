@@ -25,7 +25,7 @@ import android.widget.Toast;
 
 public class ElementDesignerActivity extends AppCompatActivity {
 
-    // The Element Designer is the resource provider, FlowSandBoxActivity is the blacksmith!
+    // The Element Designer is the resource provider, SandBoxActivity is the blacksmith!
     private Spinner selectTime;
 
     @Override

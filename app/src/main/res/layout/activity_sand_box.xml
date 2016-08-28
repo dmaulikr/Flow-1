@@ -12,7 +12,7 @@
         android:fitsSystemWindows="true"
         tools:context=".Main.FlowSandBoxActivity">
 
-        <include layout="@layout/toolbar_flow_sandbox"/>
+        <include layout="@layout/sandbox_appbar"/>
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,9 +26,9 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             tools:showIn="@layout/activity_sand_box">
 
-            <include layout="@layout/element_visual_grid"
-                android:layout_height="wrap_content"
-                android:layout_width="fill_parent"
+            <include layout="@layout/sb_drag_drop_gridview"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
                 android:layout_below="@+id/sb_toolbar" />
         </RelativeLayout>
 

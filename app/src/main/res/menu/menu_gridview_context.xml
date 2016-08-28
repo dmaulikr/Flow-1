@@ -5,5 +5,5 @@
         android:title="Delete items"
         android:id="@+id/action_delete_selected_items"
         compat:showAsAction="always"
-        android:icon="@drawable/delete_all_white_24dp"/>
+        android:icon="@drawable/delete_all_white_36dp"/>
 </menu>

@@ -106,5 +106,7 @@
     <string name="feature_not_ready">Oops.. \nlooks like that feature\'s not ready yet!</string>
     <string name="drawer_about">About</string>
     <string name="snackbar_sandbox_msg">Yeah... just delete your work away!</string>
+    <string name="action_reorder_elements">Reorder elements</string>
+    <string name="action_flow_statistics">Statistics</string>
 
 </resources>

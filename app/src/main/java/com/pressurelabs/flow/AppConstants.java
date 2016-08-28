@@ -22,6 +22,10 @@ public class AppConstants {
     public static final int NOT_FINISHED = 0;
     public static final String FS_NOTIFICATION_ACTIVE = "FS_NOTIFICATION_ACTIVE";
     public static final String FS_UI_ACTIVE = "FS_UI_ACTIVE";
-
+    public static final String GS_MCL_CHECKABLE = "GS_MCL_CHECKABLE";
+    public static final String GS_DRAG_DROP = "GS_DRAP_DROP";
     public static int FLOW_STATE_NOTIFICATION_ID = 100;
+
+    public class CHECKABLE_SELECTION_DELETE {
+    }
 }
