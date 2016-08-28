@@ -237,16 +237,6 @@ public class FlowSandBoxActivity extends AppCompatActivity {
     }
 
     /**
-     * Handles the onBackPressed event by sending user to TheHubActivity
-     */
-    @Override
-    public void onBackPressed() {
-        Intent i= new Intent(FlowSandBoxActivity.this, TheHubActivity.class);
-        startActivity(i);
-        super.onBackPressed();
-    }
-
-    /**
      * Deletes selected elements by getting the checked elements in the gridview,
      * iterating through each to add the element paired to the specific selection key to temp List.
      *

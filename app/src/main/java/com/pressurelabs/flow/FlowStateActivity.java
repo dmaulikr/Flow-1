@@ -101,6 +101,7 @@ public class FlowStateActivity extends AppCompatActivity
                         fragment.notifyBackPressed();
                         flowStateFlag=AppConstants.EARLY_EXIT;
                         FlowStateActivity.super.onBackPressed();
+
                         showCustomQuitingToast(FlowStateActivity.this);
                     }
                 })
@@ -109,6 +110,7 @@ public class FlowStateActivity extends AppCompatActivity
 
 
     }
+
 
     /**
      * Displays custom toast with random phrase from resource file.
@@ -293,11 +295,12 @@ public class FlowStateActivity extends AppCompatActivity
 
     @Override
     public void onPause() {
+        super.onPause();
         if (flowStateFlag !=AppConstants.FINISHED && flowStateFlag != AppConstants.EARLY_EXIT) {
-            onPauseNotifier(fragment.getTimer());
+            onPauseNotifier();
         }
 
-        super.onPause();
+
 
     }
 
@@ -305,10 +308,9 @@ public class FlowStateActivity extends AppCompatActivity
      * Sets up and sends out a notification to the user keeping track of current time in Flow
      * also notifies current fragment.
      *
-     * @param timer
      */
-    private void onPauseNotifier(FlowElementFragment.ElementTimer timer) {
-        mBuilder = buildTimeNotification(timer.getTimeRemaining());
+    private void onPauseNotifier() {
+        mBuilder = buildNotification();
         activityStateFlag = AppConstants.FS_NOTIFICATION_ACTIVE;
         fragment.notificationsActive(mBuilder);
         // Builds the notification and issues it.
@@ -321,12 +323,11 @@ public class FlowStateActivity extends AppCompatActivity
      * Generates a notification with the pending intent to send the user to the Flow State at the current task
      * being completed
      *
-     * @param millisRemaining
      * @return
      */
-    public NotificationCompat.Builder buildTimeNotification(long millisRemaining) {
+    public NotificationCompat.Builder buildNotification() {
         Intent notificationIntent = new Intent(getApplicationContext(), FlowStateActivity.class);
-        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .putExtra(AppConstants.PASSING_UUID,parentFlow.getUuid());
         PendingIntent intent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -347,9 +348,10 @@ public class FlowStateActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
-        super.onResume();
         activityStateFlag=AppConstants.FS_UI_ACTIVE;
         fragment.uiActive();
+
+        super.onResume();
 
     }
 

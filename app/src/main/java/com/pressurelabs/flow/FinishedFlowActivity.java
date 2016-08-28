@@ -51,8 +51,8 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        finish();
         super.onBackPressed();
+        finish();
     }
 
     public void completeFlow(View v) {

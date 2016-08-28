@@ -131,6 +131,7 @@ public class FlowElementFragment extends Fragment {
         elementTimer= new ElementTimer(element.parseTimeToMilliSecs(), 1000);
         startTimerOnUi();
 
+
         new Runnable() {
 
             @Override
@@ -223,13 +224,12 @@ public class FlowElementFragment extends Fragment {
         public int getTimeFinishedInMilliSecs() {
             return (int) (timeStart-timeRemaining);
         }
-        public long getTimeRemaining() {
+        public long getTimeRemainingMilliSecs() {
             return timeRemaining;
         }
         long timeStart;
         long timeRemaining;
         private NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-
         /**
          * Reduces Progress Bar and sets text to current time remaining
          *
@@ -250,7 +250,7 @@ public class FlowElementFragment extends Fragment {
 
             timeRemaining=millisUntilFinished;
 
-            progressBar.setProgress(progress--);
+            progressBar.setProgress(--progress);
 
             timeDisplay.setText(buildTimeOutput(millisUntilFinished));
 
@@ -313,33 +313,39 @@ public class FlowElementFragment extends Fragment {
 
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        activityStateFlag=AppConstants.FS_UI_ACTIVE;
-        /* Displays updated progress bar with time remaining */
-        progressBar.setProgress(
-                (int) elementTimer.getTimeRemaining()/1000
-        );
-    }
-
-    public ElementTimer getTimer() {
-        return this.elementTimer;
-    }
-
+    /**
+     * Cancels timer activity in fragment if FlowState is exited early.
+     *
+     */
     public void notifyBackPressed() {
         elementTimer.cancel();
     }
 
+
+    /**
+     * Creates reference to passed notification object for use in the timer subclass
+     * Sets notification flag active for update.
+     *
+     * @param unbuiltNotify
+     */
     public void notificationsActive(NotificationCompat.Builder unbuiltNotify) {
         mNotify = unbuiltNotify;
         this.activityStateFlag=AppConstants.FS_NOTIFICATION_ACTIVE;
     }
 
     public void uiActive() {
+        NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         this.activityStateFlag=AppConstants.FS_UI_ACTIVE;
+        mNotifyMgr.cancel(AppConstants.FLOW_STATE_NOTIFICATION_ID);
+            /* When UI is active, a notification should not be present */
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        progressBar.setProgress(progress);
+        this.uiActive();
+        /* Displays updated progress bar with time remaining */
 
+    }
 }
