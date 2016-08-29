@@ -49,14 +49,14 @@ import java.util.Calendar;
  *  The class allows for the creation and saving of new Flows, destruction of current ones, editing and renaming of Flows
  *  and launching of the Flows into a new Activity
  */
-public class TheHubActivity extends AppCompatActivity implements RecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class TheHubActivity extends AppCompatActivity implements HubRecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
 
     /* Recycler View */
     private RecyclerView recyclerView;
-    private RecyclerViewAdapter adapter;
+    private HubRecyclerViewAdapter adapter;
     private ArrayList<Flow> rvContent;
 
     /* Card Interactions */
@@ -244,7 +244,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
                    feed a blank RecycleView
                  */
 
-            adapter = new RecyclerViewAdapter(TheHubActivity.this, rvContent);
+            adapter = new HubRecyclerViewAdapter(TheHubActivity.this, rvContent);
             // Create new adapter with Recycle View Content
 //            adapter.setCardEditingCallback(this);
             recyclerView.setAdapter(adapter);
@@ -260,7 +260,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
         rvContent = manager.generateArrayList();
 
-        adapter = new RecyclerViewAdapter(TheHubActivity.this, rvContent);
+        adapter = new HubRecyclerViewAdapter(TheHubActivity.this, rvContent);
         // Recreate FlowArrayAdapter and set
 
 //        adapter.setCardEditingCallback(this);

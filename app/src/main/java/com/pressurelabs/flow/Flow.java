@@ -33,9 +33,6 @@ public class Flow implements Parcelable{
     private double totalTime=0; // Always calculated in fractions of hours
     private String uuid;
 
-    public String getUuid() {
-        return uuid;
-    }
 
     /** Overloaded Flow Object constructor.
      * @param name name of the flow object being instantiated
@@ -51,6 +48,11 @@ public class Flow implements Parcelable{
 
 
     /*~~~~~~~~~ Getters & Setters ~~~~~~~~~*/
+
+    public String getUuid() {
+        return uuid;
+    }
+
 
     public LinkedList<FlowElement> getChildElements() {
         return childFlowElements;
@@ -138,7 +140,7 @@ public class Flow implements Parcelable{
      * @param flowIndex the index position which the FlowElement is at
      * @return FlowElement the element which has been found
      */
-    public FlowElement returnElement(int flowIndex) {
+    public FlowElement getChildAt(int flowIndex) {
       return childFlowElements.get(flowIndex);
     }
 
@@ -168,11 +170,15 @@ public class Flow implements Parcelable{
         }
     }
 
-    public void removeSelected(LinkedList<FlowElement> deletedChildElements) {
+    public void removeSelectedCollection(LinkedList<FlowElement> deletedChildElements) {
         childFlowElements.removeAll(deletedChildElements);
         this.recalculateTotalTime();
     }
 
+    public void removeElement(FlowElement elementToRemove) {
+        this.childFlowElements.remove(elementToRemove);
+
+    }
 
 
     public void recalculateTotalTime(){

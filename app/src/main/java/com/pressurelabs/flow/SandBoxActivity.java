@@ -12,7 +12,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import org.askerov.dynamicgrid.DynamicGridView;
@@ -30,23 +29,23 @@ import java.util.LinkedList;
  * 4) Executing the elementDetails activity
  * 5) Beginning the FlowStateActivity, where the flow begins and the timer counts down
  */
-public class SandBoxActivity extends AppCompatActivity {
+public class SandBoxActivity extends AppCompatActivity implements MultiFunctionGridView.GridInteractionListener {
     // The SandBox serves as a hub for the flows, with several functions:
     //
     ///// and the user can specify if they've finished the task move to next activity || need more time (+why) || ask help (slack)
 
-    private final String TAG = this.getClass().toString();
+    private final String TAG = "debug";
 
     private Flow currentFlow;
         // Flow currently being worked on
     private AppDataManager util;
     private DynamicGridView elementGridView;
-    private SandBoxGridAdapter imgAdapater;
+    private SandBoxGridAdapter gridAdapter;
     private Toast currentToast = null;
     private Toolbar sbToolbar;
     private LinkedList<FlowElement> gridContent;
     private String menuState;
-    private int sortToggle;
+    private int reorderToggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,71 +62,26 @@ public class SandBoxActivity extends AppCompatActivity {
         setSupportActionBar(sbToolbar);
         getSupportActionBar().setTitle(currentFlow.getName());
 
-        elementGridView = (DynamicGridView) findViewById(R.id.drag_drop_gridview);
+        elementGridView = (MultiFunctionGridView) findViewById(R.id.drag_drop_gridview);
 
 
         gridContent = new LinkedList<>();
         gridContent.addAll(currentFlow.getChildElements());
 
-        imgAdapater = new SandBoxGridAdapter(this, gridContent,3);
+        gridAdapter = new SandBoxGridAdapter(this, gridContent,3);
+
             // Passes the number of elements in the Flow's child elements to set the
             // Adapter's initial size
-        elementGridView.setAdapter(imgAdapater);
+
+        // Passes the number of elements in the Flow's child elements to set the
+        // Adapter's initial size
+        elementGridView.setAdapter(gridAdapter);
 
 
         menuState = AppConstants.MENU_NATIVE;
-        sortToggle=0;
-//        setGridFunctionalState(AppConstants.GS_DRAG_DROP);
-//
-////        setGridFunctionalState(AppConstants.GS_MCL_CHECKABLE);
-    }
+        reorderToggle =0;
 
-    /**
-     * The grid has multiple functional states:
-     * --> Drag and Drop Mode
-     * --> Selection Deletion Mode
-     *
-     * Sets the current functional state of the grid based on gridState input
-     * @param status current stats of the grid
-     */
-    private void setGridFunctionalState(String status) {
-
-        if (status.equals(AppConstants.GS_DRAG_DROP)) {
-            elementGridView.setOnDropListener(new DynamicGridView.OnDropListener()
-        {
-            @Override
-            public void onActionDrop()
-            {
-                elementGridView.stopEditMode();
-            }
-        });
-
-            elementGridView.setOnDragListener(new DynamicGridView.OnDragListener() {
-                @Override
-                public void onDragStarted(int position) {
-                    Log.d("TAG", "drag started at position " + position);
-                    //TODO What to do here ?
-                }
-
-                @Override
-                public void onDragPositionsChanged(int oldPosition, int newPosition) {
-                    Log.d("TAG", String.format("drag item position changed from %d to %d", oldPosition, newPosition));
-                }
-            });
-            elementGridView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-                @Override
-                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    elementGridView.startEditMode(position);
-                    return true;
-                }
-            });
-
-        } else {
-//            elementGridView.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
-//            elementGridView.setMultiChoiceModeListener(new MultiChoiceListener());
-//            elementGridView.setSelector(ContextCompat.getDrawable(SandBoxActivity.this, R.drawable.gridview_selector));
-        }
-
+        ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_MCL_CHECKABLE);
     }
 
     /* Allows the menu items to appear in the toolbar */
@@ -135,7 +89,6 @@ public class SandBoxActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(final Menu menu) {
         menu.clear();
         getMenuInflater().inflate(R.menu.menu_sandbox, menu);
-        Log.d(TAG, "TEST!");
         MenuItem reorder = menu.findItem(R.id.action_reorder_elements);
         MenuItem statistics = menu.findItem(R.id.action_flow_statistics);
         if (menuState.equals(AppConstants.MENU_HIDE)) {
@@ -150,32 +103,28 @@ public class SandBoxActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         /* When the user selects one of the app bar items, the system
         calls your activity's onOptionsItemSelected() callback method,
-        and passes a MenuItem object to indicate which item was clicked */
+        and passes a MenuItem object to indicate which item was clicked
 
-        Log.d(TAG, "Execute");
+        Requires menu items to use app:showAsAction="xyz"*/
+
         switch (item.getItemId()) {
 
             case R.id.action_reorder_elements:
-                Log.d(TAG, "Inside action");
-                if (sortToggle==0) {
+                if (reorderToggle ==0) {
                     menuState=AppConstants.MENU_HIDE;
-                    Log.d(TAG, "\n\n Menu is hidden \nsortToggle was 0 \nSetting Title \nInvalidating OptionsMenu \n Changing Grid State");
-                    getSupportActionBar().setTitle("Sorting");
+                    getSupportActionBar().setTitle(R.string.sb_sort_title);
                     invalidateOptionsMenu();
-                    setGridFunctionalState(AppConstants.GS_DRAG_DROP);
-                    sortToggle = 1;
+                    ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_DRAG_DROP);
+                    reorderToggle = 1;
                     return true;
                 } else {
-                    Log.d(TAG, "\n\n Menu is Native \nsortToggle was 1 \nReseting Setting Title \nInvalidating OptionsMenu \n Changing Grid State to Checkable");
                     menuState=AppConstants.MENU_NATIVE;
                     getSupportActionBar().setTitle(currentFlow.getName());
                     invalidateOptionsMenu();
-                    setGridFunctionalState(AppConstants.GS_MCL_CHECKABLE);
-                    sortToggle = 0;
+                    ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_MCL_CHECKABLE);
+                    reorderToggle = 0;
                     return true;
                 }
-
-
 
 
             case R.id.action_flow_statistics:
@@ -191,6 +140,8 @@ public class SandBoxActivity extends AppCompatActivity {
     }
 
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -204,11 +155,11 @@ public class SandBoxActivity extends AppCompatActivity {
         elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                String eName = currentFlow.returnElement(position).getElementName();
-                int eTime = currentFlow.returnElement(position).getTimeEstimate();
-                String eUnits = currentFlow.returnElement(position).getTimeUnits();
+                String eName = currentFlow.getChildAt(position).getElementName();
+                int eTime = currentFlow.getChildAt(position).getTimeEstimate();
+                String eUnits = currentFlow.getChildAt(position).getTimeUnits();
 
-                showToast("" + eName + "\n" + eTime + " " + eUnits);
+                showToast(eName + "\n" + eTime + " " + eUnits);
             }
         });
     }
@@ -257,7 +208,7 @@ public class SandBoxActivity extends AppCompatActivity {
         gridContent.add(newElement);
         currentFlow.addElement(newElement);
 
-        imgAdapater.notifyDataSetChanged();
+        gridAdapter.notifyDataSetUpdated(gridContent);
 
         setClickListeners();
 
@@ -289,56 +240,7 @@ public class SandBoxActivity extends AppCompatActivity {
         }
     }
 
-    class MultiChoiceListener implements GridView.MultiChoiceModeListener {
 
-
-        @Override
-        public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-            int selectCount = elementGridView.getCheckedItemCount();
-
-            mode.setSubtitle("" + selectCount + " item(s) selected");
-
-        }
-
-        @Override
-        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-            getSupportActionBar().hide();
-            getMenuInflater().inflate(R.menu.menu_gridview_context,menu);
-            mode.setTitle("Select Items");
-            mode.setSubtitle("One item selected");
-            return true;
-        }
-
-        @Override
-        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-            return false;
-        }
-
-        @Override
-        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
-            switch (item.getItemId()) {
-
-                case R.id.action_delete_selected_items:
-                    deleteSelection();
-                    mode.finish();
-                    return true;
-
-                default:
-                    // If we got here, the user's action was not recognized.
-                    // Invoke the superclass to handle it.
-
-                    return false;
-            }
-        }
-
-        @Override
-        public void onDestroyActionMode(ActionMode mode) {
-            getSupportActionBar().show();
-        }
-
-
-    }
 
     /**
      * Deletes selected elements by getting the checked elements in the gridview,
@@ -364,12 +266,11 @@ public class SandBoxActivity extends AppCompatActivity {
                  */
             }
 
-            currentFlow.removeSelected(deletedChildElements);
+            currentFlow.removeSelectedCollection(deletedChildElements);
 
             gridContent.clear();
             gridContent.addAll(currentFlow.getChildElements());
-
-            imgAdapater.update(gridContent);
+            gridAdapter.notifyDataSetUpdated(gridContent);
 
             util.overwrite(currentFlow.getUuid(), currentFlow);
 
@@ -386,7 +287,7 @@ public class SandBoxActivity extends AppCompatActivity {
                             currentFlow.recalculateTotalTime();
                             gridContent.clear();
                             gridContent.addAll(currentFlow.getChildElements());
-                            imgAdapater.update(gridContent);
+                            gridAdapter.notifyDataSetUpdated(gridContent);
                             util.overwrite(currentFlow.getUuid(),currentFlow);
                         }
                     });
@@ -403,6 +304,40 @@ public class SandBoxActivity extends AppCompatActivity {
             super.onBackPressed();
         }
     }
+
+    @Override
+    public void reorderElements(int originalLocation, int desiredPosition) {
+
+    }
+
+    @Override
+    public boolean createActionMenu(ActionMode mode, Menu menu) {
+        getSupportActionBar().hide();
+        getMenuInflater().inflate(R.menu.menu_gridview_context,menu);
+        mode.setTitle("Select Items");
+        mode.setSubtitle("One item selected");
+        return true;
+    }
+
+    @Override
+    public boolean actionItemClicked(ActionMode mode, MenuItem item) {
+        deleteSelection();
+        mode.finish();
+        return true;
+    }
+
+    @Override
+    public void destroyActionMenu(ActionMode mode) {
+        getSupportActionBar().show();
+    }
+
+    @Override
+    public void updateActionMenuCheckState(ActionMode mode) {
+        int selectCount = elementGridView.getCheckedItemCount();
+
+        mode.setSubtitle("" + selectCount + " item(s) selected");
+    }
+
 
 }
 

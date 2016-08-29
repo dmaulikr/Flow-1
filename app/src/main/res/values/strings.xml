@@ -108,5 +108,6 @@
     <string name="snackbar_sandbox_msg">Yeah... just delete your work away!</string>
     <string name="action_reorder_elements">Reorder</string>
     <string name="action_flow_statistics">Stats</string>
+    <string name="sb_sort_title">Sorting</string>
 
 </resources>

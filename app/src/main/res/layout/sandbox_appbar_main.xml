@@ -23,8 +23,28 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <include layout="@layout/sb_content"
+        <include layout="@layout/sandbox_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+    <!-- Floating button for new flows! -->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/action_new_flow_element"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/add_white_36dp"
+        android:onClick="createElement"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/flow_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@drawable/fish_white_48"
+        android:onClick="goFlowState"/>
+
 
     </android.support.design.widget.CoordinatorLayout>

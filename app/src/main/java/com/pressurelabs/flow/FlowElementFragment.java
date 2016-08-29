@@ -324,7 +324,7 @@ public class FlowElementFragment extends Fragment {
 
     /**
      * Creates reference to passed notification object for use in the timer subclass
-     * Sets notification flag active for update.
+     * Sets notification flag active for notifyDataSetUpdated.
      *
      * @param unbuiltNotify
      */
