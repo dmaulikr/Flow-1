@@ -28,30 +28,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="486c37e3-12fb-42a7-a578-92cd9e77c96f" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/CheckableLayout.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/MultiFunctionGridView.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/app/src/main/res/layout/sandbox_gridview_item.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/cache.properties.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileHashes.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/outputFileStates.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.bin" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localClassSetAnalysis/localClassSetAnalysis.lock" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" afterPath="$PROJECT_DIR$/.gradle/2.10/tasks/_app_compileDebugJavaWithJavac/localJarClasspathSnapshot/localJarClasspathSnapshot.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build/generated/mockable-android-23.jar" afterPath="$PROJECT_DIR$/build/generated/mockable-android-23.jar" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/Flow.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/Flow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/FlowElementFragment.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/FlowElementFragment.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxGridAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxGridAdapter.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/TheHubActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/TheHubActivity.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_sand_box.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_sand_box.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/layout/sandbox_appbar_main.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/sandbox_appbar_main.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/RecyclerViewAdapter.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/HubRecyclerViewAdapter.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/sb_content.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/sandbox_content.xml" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/app/src/main/res/layout/sb_drag_drop_gridview.xml" afterPath="$PROJECT_DIR$/app/src/main/res/layout/sandbox_dragdrop_gridview.xml" />
     </list>
     <ignored path="Flow_app.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -110,12 +96,12 @@
       <file leaf-file-name="SandBoxActivity.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxActivity.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.5576208">
-              <caret line="309" column="0" selection-start-line="309" selection-start-column="0" selection-end-line="309" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.6067708">
+              <caret line="321" column="28" selection-start-line="321" selection-start-column="28" selection-end-line="321" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#11550#11551#0" expanded="true" />
-                <element signature="e#11594#11595#0" expanded="true" />
+                <element signature="e#12379#12380#0" expanded="true" />
+                <element signature="e#12423#12424#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -124,8 +110,8 @@
       <file leaf-file-name="Flow.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/Flow.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-6.7586207">
-              <caret line="179" column="0" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
+            <state vertical-scroll-proportion="-10.275862">
+              <caret line="172" column="0" selection-start-line="172" selection-start-column="0" selection-end-line="172" selection-end-column="0" />
               <folding>
                 <element signature="e#1617#1618#0" expanded="true" />
                 <element signature="e#1644#1645#0" expanded="true" />
@@ -1949,14 +1935,14 @@
         <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/RecyclerViewAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/HubRecyclerViewAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/checkable_layout.xml" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/TheHubActivity.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/CheckableLayout.java" />
         <option value="$PROJECT_DIR$/app/src/main/res/layout/sandbox_gridview_item.xml" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/FlowElementFragment.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxGridAdapter.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/MultiFunctionGridView.java" />
-        <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/Flow.java" />
         <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/TheHubActivity.java" />
+        <option value="$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/Flow.java" />
       </list>
     </option>
   </component>
@@ -2590,7 +2576,13 @@
       <option name="project" value="LOCAL" />
       <updated>1472409057020</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Grid Content Responds to Sorting Option&#10;&#10;Add and Inflate Checkable Layout">
+      <created>1472430696306</created>
+      <option name="number" value="00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1472430696306</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TodoView">
@@ -2614,7 +2606,7 @@
       <window_info id="Android Model" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="true" content_ui="tabs" />
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.26962456" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.443686" sideWeight="0.49007633" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Android Monitor" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24744028" sideWeight="0.49007633" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Captures" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37201366" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
@@ -2697,14 +2689,15 @@
     <MESSAGE value="v0.5 Beta Pool Release" />
     <MESSAGE value="ISS#43 Progress Bar UI Refix&#10;&#10;- Adapted notifications to prevent FlowState Notification from being present in Flow." />
     <MESSAGE value="Fix menu response to actions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fix menu response to actions" />
+    <MESSAGE value="Grid Content Responds to Sorting Option&#10;&#10;Add and Inflate Checkable Layout" />
+    <option name="LAST_COMMIT_MESSAGE" value="Grid Content Responds to Sorting Option&#10;&#10;Add and Inflate Checkable Layout" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/TheHubActivity.java</url>
-          <line>519</line>
+          <line>521</line>
           <properties method="onFocusChange" />
           <option name="timeStamp" value="15" />
         </line-breakpoint>
@@ -2738,14 +2731,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="21" column="24" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/res/layout/sandbox_content.xml">
       <provider editor-type-id="android-designer">
         <state />
@@ -2877,16 +2862,6 @@
           <folding>
             <element signature="e#1001#1002#0" expanded="false" />
             <element signature="e#1037#1038#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/TheHubActivity.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="72" column="29" selection-start-line="72" selection-start-column="29" selection-end-line="72" selection-end-column="29" />
-          <folding>
-            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -3153,6 +3128,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="jar://$USER_HOME$/AppData/Local/Android/sdk/extras/android/m2repository/com/android/support/support-v4/23.4.0/support-v4-23.4.0-sources.jar!/android/support/v4/widget/DrawerLayout.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.33171913">
+          <caret line="542" column="16" selection-start-line="542" selection-start-column="16" selection-end-line="542" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/TheHubActivity.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.29427084">
+          <caret line="81" column="8" selection-start-line="81" selection-start-column="8" selection-end-line="81" selection-end-column="8" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#2754#2785#0" expanded="true" />
+            <element signature="e#2787#2819#0" expanded="true" />
+            <element signature="e#9351#10401#0" expanded="true" />
+            <element signature="e#10400#10401#0" expanded="true" />
+            <element signature="e#10473#10678#0" expanded="true" />
+            <element signature="e#10677#10678#0" expanded="true" />
+            <element signature="e#12219#12656#0" expanded="true" />
+            <element signature="e#12655#12656#0" expanded="true" />
+            <element signature="e#15752#16853#0" expanded="true" />
+            <element signature="e#16375#16797#0" expanded="true" />
+            <element signature="e#16796#16797#0" expanded="true" />
+            <element signature="e#16852#16853#0" expanded="true" />
+            <element signature="e#16970#17179#0" expanded="true" />
+            <element signature="e#17178#17179#0" expanded="true" />
+            <element signature="e#18360#18655#0" expanded="true" />
+            <element signature="e#18654#18655#0" expanded="true" />
+            <element signature="e#20505#21423#0" expanded="true" />
+            <element signature="e#21422#21423#0" expanded="true" />
+            <element signature="e#21562#21848#0" expanded="true" />
+            <element signature="e#21847#21848#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxGridAdapter.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -3168,8 +3181,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/Flow.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-6.7586207">
-          <caret line="179" column="0" selection-start-line="179" selection-start-column="0" selection-end-line="179" selection-end-column="0" />
+        <state vertical-scroll-proportion="-10.275862">
+          <caret line="172" column="0" selection-start-line="172" selection-start-column="0" selection-end-line="172" selection-end-column="0" />
           <folding>
             <element signature="e#1617#1618#0" expanded="true" />
             <element signature="e#1644#1645#0" expanded="true" />
@@ -3179,12 +3192,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/pressurelabs/flow/SandBoxActivity.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5576208">
-          <caret line="309" column="0" selection-start-line="309" selection-start-column="0" selection-end-line="309" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.6067708">
+          <caret line="321" column="28" selection-start-line="321" selection-start-column="28" selection-end-line="321" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#11550#11551#0" expanded="true" />
-            <element signature="e#11594#11595#0" expanded="true" />
+            <element signature="e#12379#12380#0" expanded="true" />
+            <element signature="e#12423#12424#0" expanded="true" />
           </folding>
         </state>
       </provider>

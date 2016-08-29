@@ -125,6 +125,19 @@ public class Flow implements Parcelable{
         return completionTokens;
     }
 
+
+
+    /*~~~~~~~~ Action Methods ~~~~~~~~~~*/
+
+    /**
+     * Reassigns Child Element Location Parameters to match their current location in the LinkedList.
+     */
+    public void reassignChildLocations() {
+        for (int i=0; i<childFlowElements.size(); i++) {
+            childFlowElements.get(i).setLocation(i);
+        }
+    }
+
     /**
      * Adds a completion token to the current flow
      */
@@ -132,7 +145,6 @@ public class Flow implements Parcelable{
         completionTokens++;
     }
 
-    /* Action Methods */
 
     /** Retrieves the FlowElement at the specified index position within
      *  the Flow's children ArrayList
@@ -149,10 +161,16 @@ public class Flow implements Parcelable{
      *
      * @param newElement the Element being added to the Flow's ArrayList
      */
-    public void addElement(FlowElement newElement) {
+    public void add(FlowElement newElement) {
             childFlowElements.add(newElement);
             addToTotalTime(newElement);
         // Will receive argument from the elementDesigner for the new flowElement object
+    }
+
+
+    public void reorderChildren(int originalLocation, int newLocation) {
+        //TODO this method as a single
+
     }
     private void addToTotalTime(FlowElement e) {
         switch (e.getTimeUnits()){
@@ -173,11 +191,6 @@ public class Flow implements Parcelable{
     public void removeSelectedCollection(LinkedList<FlowElement> deletedChildElements) {
         childFlowElements.removeAll(deletedChildElements);
         this.recalculateTotalTime();
-    }
-
-    public void removeElement(FlowElement elementToRemove) {
-        this.childFlowElements.remove(elementToRemove);
-
     }
 
 
@@ -286,11 +299,6 @@ public class Flow implements Parcelable{
                     return new Flow[size];
                 }
             };
-
-
-
-
-
 
     /* How to use:
         ~ SENDING ACTIVITY ~

@@ -206,7 +206,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         newElement.setLocation(currentFlow.getElementCount());
 
         gridContent.add(newElement);
-        currentFlow.addElement(newElement);
+        currentFlow.add(newElement);
 
         gridAdapter.notifyDataSetUpdated(gridContent);
 
@@ -308,6 +308,22 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     @Override
     public void reorderElements(int originalLocation, int desiredPosition) {
 
+        Log.d(TAG, "Before Reorder \n" + currentFlow.getChildElements().toString());
+        FlowElement e = currentFlow.getChildElements().remove(originalLocation);
+
+        Log.d(TAG, "After E Remove \n" + currentFlow.getChildElements().toString());
+
+        currentFlow.getChildElements().add(desiredPosition, e);
+        Log.d(TAG, "After Readd \n" + currentFlow.getChildElements().toString());
+
+        currentFlow.reassignChildLocations();
+        //TODO Refactor into one method ("Insert Element At") in currentFlow (also remove getChild Elements)
+
+        gridContent.clear();
+        gridContent.addAll(currentFlow.getChildElements());
+        Log.d(TAG, "Grid Content After update \n" + gridContent.toString());
+        gridAdapter.notifyDataSetUpdated(gridContent);
+        util.overwrite(currentFlow.getUuid(),currentFlow);
     }
 
     @Override
