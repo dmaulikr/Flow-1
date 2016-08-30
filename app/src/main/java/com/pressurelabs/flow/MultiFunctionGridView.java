@@ -2,7 +2,6 @@ package com.pressurelabs.flow;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,7 +64,7 @@ public class MultiFunctionGridView extends DynamicGridView {
                 @Override
                 public void onActionDrop()
                 {
-                    mReorderCallback.reorderElements(startLocation, insertionLocation);
+                    mReorderCallback.adjustLocation(startLocation, insertionLocation);
                     stopEditMode();
                 }
             });
@@ -79,7 +78,6 @@ public class MultiFunctionGridView extends DynamicGridView {
                 @Override
                 public void onDragPositionsChanged(int oldPosition, int newPosition) {
                     insertionLocation = newPosition;
-                    Log.d("TAG", String.format("drag item position changed from %d to %d", oldPosition, newPosition));
                 }
             });
             this.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -93,7 +91,7 @@ public class MultiFunctionGridView extends DynamicGridView {
         } else {
             this.setChoiceMode(GridView.CHOICE_MODE_MULTIPLE_MODAL);
             this.setMultiChoiceModeListener(new MultiChoiceListener());
-            this.setSelector(R.drawable.gridview_selector);
+            this.setSelector(R.color.colorAccent);
         }
 
     }
@@ -143,7 +141,7 @@ public class MultiFunctionGridView extends DynamicGridView {
 
     //TODO Refactor this to distinguish between MultiChoice Selection INterface Methods and Dynamic Gridview methods
     public interface GridInteractionListener {
-        void reorderElements(int originalLocation, int insertionPosition);
+        void adjustLocation(int originalLocation, int insertionPosition);
         boolean createActionMenu(ActionMode mode, Menu menu);
         boolean actionItemClicked(ActionMode mode, MenuItem item);
         void destroyActionMenu(ActionMode mode);

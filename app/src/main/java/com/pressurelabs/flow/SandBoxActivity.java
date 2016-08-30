@@ -1,11 +1,13 @@
 package com.pressurelabs.flow;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -17,6 +19,9 @@ import android.widget.Toast;
 import org.askerov.dynamicgrid.DynamicGridView;
 
 import java.util.LinkedList;
+
+import xyz.hanks.library.SmallBang;
+import xyz.hanks.library.SmallBangListener;
 
 
 /**
@@ -42,10 +47,9 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     private DynamicGridView elementGridView;
     private SandBoxGridAdapter gridAdapter;
     private Toast currentToast = null;
-    private Toolbar sbToolbar;
     private LinkedList<FlowElement> gridContent;
     private String menuState;
-    private int reorderToggle;
+    private SmallBang mSmallBang;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
 
         currentFlow = util.load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
 
-        sbToolbar = (Toolbar) findViewById(R.id.toolbar_sb);
+        Toolbar sbToolbar = (Toolbar) findViewById(R.id.toolbar_sb);
 
         setSupportActionBar(sbToolbar);
         getSupportActionBar().setTitle(currentFlow.getName());
@@ -79,9 +83,11 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
 
 
         menuState = AppConstants.MENU_NATIVE;
-        reorderToggle =0;
 
         ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_MCL_CHECKABLE);
+
+        mSmallBang = SmallBang.attach2Window(this);
+
     }
 
     /* Allows the menu items to appear in the toolbar */
@@ -89,9 +95,9 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     public boolean onPrepareOptionsMenu(final Menu menu) {
         menu.clear();
         getMenuInflater().inflate(R.menu.menu_sandbox, menu);
-        MenuItem reorder = menu.findItem(R.id.action_reorder_elements);
+
         MenuItem statistics = menu.findItem(R.id.action_flow_statistics);
-        if (menuState.equals(AppConstants.MENU_HIDE)) {
+        if (menuState.equals(AppConstants.MENU_PARTIAL)) {
             statistics.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -110,21 +116,8 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         switch (item.getItemId()) {
 
             case R.id.action_reorder_elements:
-                if (reorderToggle ==0) {
-                    menuState=AppConstants.MENU_HIDE;
-                    getSupportActionBar().setTitle(R.string.sb_sort_title);
-                    invalidateOptionsMenu();
-                    ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_DRAG_DROP);
-                    reorderToggle = 1;
+                    toggleSortingState();
                     return true;
-                } else {
-                    menuState=AppConstants.MENU_NATIVE;
-                    getSupportActionBar().setTitle(currentFlow.getName());
-                    invalidateOptionsMenu();
-                    ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_MCL_CHECKABLE);
-                    reorderToggle = 0;
-                    return true;
-                }
 
 
             case R.id.action_flow_statistics:
@@ -139,7 +132,54 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         }
     }
 
+    private void toggleSortingState() {
+        /* If hit toggle and menu is set to native, want to change to partial action bar view */
+        if (menuState.equals(AppConstants.MENU_NATIVE)) {
+            menuState=AppConstants.MENU_PARTIAL;
 
+            getSupportActionBar().setTitle(R.string.sb_sort_title);
+
+            invalidateOptionsMenu();
+
+            ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_DRAG_DROP);
+
+            mSmallBang.bang(elementGridView,75,new SmallBangListener() {
+                @Override
+                public void onAnimationStart() {
+
+                }
+
+                @Override
+                public void onAnimationEnd() {
+
+                }
+            });
+
+            toggleFABVisibility(AppConstants.FAB_HIDE);
+        } else if (menuState.equals(AppConstants.MENU_PARTIAL)) {
+            menuState=AppConstants.MENU_NATIVE;
+
+            getSupportActionBar().setTitle(currentFlow.getName());
+            invalidateOptionsMenu();
+            ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_MCL_CHECKABLE);
+
+            mSmallBang.bang(elementGridView,100,new SmallBangListener() {
+                @Override
+                public void onAnimationStart() {
+
+                }
+
+                @Override
+                public void onAnimationEnd() {
+
+                }
+            });
+
+            toggleFABVisibility(AppConstants.FAB_NATIVE);
+        }
+
+
+    }
 
 
     @Override
@@ -306,32 +346,23 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     }
 
     @Override
-    public void reorderElements(int originalLocation, int desiredPosition) {
+    public void adjustLocation(int originalLocation, int desiredPosition) {
 
-        Log.d(TAG, "Before Reorder \n" + currentFlow.getChildElements().toString());
-        FlowElement e = currentFlow.getChildElements().remove(originalLocation);
-
-        Log.d(TAG, "After E Remove \n" + currentFlow.getChildElements().toString());
-
-        currentFlow.getChildElements().add(desiredPosition, e);
-        Log.d(TAG, "After Readd \n" + currentFlow.getChildElements().toString());
-
-        currentFlow.reassignChildLocations();
-        //TODO Refactor into one method ("Insert Element At") in currentFlow (also remove getChild Elements)
+        currentFlow.reorderChildAt(originalLocation, desiredPosition);
 
         gridContent.clear();
         gridContent.addAll(currentFlow.getChildElements());
-        Log.d(TAG, "Grid Content After update \n" + gridContent.toString());
+
         gridAdapter.notifyDataSetUpdated(gridContent);
         util.overwrite(currentFlow.getUuid(),currentFlow);
     }
 
     @Override
     public boolean createActionMenu(ActionMode mode, Menu menu) {
-        getSupportActionBar().hide();
         getMenuInflater().inflate(R.menu.menu_gridview_context,menu);
         mode.setTitle("Select Items");
         mode.setSubtitle("One item selected");
+        getSupportActionBar().hide();
         return true;
     }
 
@@ -354,6 +385,44 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         mode.setSubtitle("" + selectCount + " item(s) selected");
     }
 
+    private void toggleFABVisibility(String fabState) {
+        FloatingActionButton flowState = (FloatingActionButton) findViewById(R.id.fab_flow_state);
+        FloatingActionButton newElement = (FloatingActionButton) findViewById(R.id.fab_new_flow_element);
 
+
+        switch (fabState) {
+            case AppConstants.FAB_HIDE:
+                viewRotateFade(flowState, AppConstants.ANIMATION_EXIT);
+                viewRotateFade(newElement, AppConstants.ANIMATION_EXIT);
+                break;
+            case AppConstants.FAB_NATIVE:
+                viewRotateFade(flowState, AppConstants.ANIMATION_ENTRY);
+                viewRotateFade(newElement, AppConstants.ANIMATION_ENTRY);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    private void viewRotateFade(View v, String animationState) {
+        ObjectAnimator rotate = ObjectAnimator.ofFloat(v, "rotation", 0f, 360f);
+                        rotate.setDuration(250);
+        AnimatorSet animSetFS = new AnimatorSet();
+        switch (animationState) {
+            case AppConstants.ANIMATION_ENTRY:
+                ObjectAnimator alphaEntry = ObjectAnimator.ofFloat(v, "alpha",0f, 1f);
+                alphaEntry.setDuration(200);
+                animSetFS.play(alphaEntry).before(rotate);
+                animSetFS.start();
+                break;
+            case AppConstants.ANIMATION_EXIT:
+                ObjectAnimator alphaExit = ObjectAnimator.ofFloat(v, "alpha",1f, 0f);
+                alphaExit.setDuration(200);
+                animSetFS.play(rotate).before(alphaExit);
+                animSetFS.start();
+                break;
+        }
+    }
 }
 

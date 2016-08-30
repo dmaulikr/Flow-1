@@ -29,7 +29,7 @@
 
     <!-- Floating button for new flows! -->
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/action_new_flow_element"
+        android:id="@+id/fab_new_flow_element"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -38,7 +38,7 @@
         android:onClick="createElement"/>
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/flow_state"
+        android:id="@+id/fab_flow_state"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|left"

@@ -51,5 +51,5 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'io.github.kobakei:ratethisapp:1.0.5'
     compile 'com.github.askerov:DynamicGrid:f81c028535'
-
+    compile 'hanks.xyz:smallbang-library:0.1.2'
 }

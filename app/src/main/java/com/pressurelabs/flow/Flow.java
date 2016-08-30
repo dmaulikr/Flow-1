@@ -168,9 +168,12 @@ public class Flow implements Parcelable{
     }
 
 
-    public void reorderChildren(int originalLocation, int newLocation) {
-        //TODO this method as a single
+    public void reorderChildAt(int originalLocation, int newLocation) {
+        FlowElement target = this.childFlowElements.remove(originalLocation);
 
+        this.childFlowElements.add(newLocation, target);
+
+        this.reassignChildLocations();
     }
     private void addToTotalTime(FlowElement e) {
         switch (e.getTimeUnits()){
