@@ -396,7 +396,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
     public void onCardClick(Flow clickedFlow) {
         Intent i = new Intent(TheHubActivity.this, FlowSandBoxActivity.class);
 
-        i.putExtra(AppConstants.PASSING_UUID, clickedFlow.getUuid());
+        i.putExtra(AppConstants.EXTRA_PASSING_UUID, clickedFlow.getUuid());
         startActivity(i);
     }
 

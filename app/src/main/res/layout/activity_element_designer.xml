@@ -43,7 +43,7 @@
         android:background="@android:color/transparent"
         android:hint="@string/new_task_name"
         android:ems="8"
-        android:id="@+id/nameInput"
+        android:id="@+id/designer_name_input"
         android:maxLines="1"
         android:maxLength="25"
         android:focusableInTouchMode="true"
@@ -77,24 +77,24 @@
         android:layout_height="wrap_content"
         android:inputType="number"
         android:ems="3"
-        android:id="@+id/timeInput"
+        android:id="@+id/designer_time_input"
         android:layout_marginLeft="0dp"
         android:hint="2"
         android:maxLength="2"
         android:layout_alignTop="@+id/timeEst"
-        android:layout_alignStart="@+id/nameInput" />
+        android:layout_alignStart="@+id/designer_name_input" />
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/select_time"
         android:spinnerMode="dropdown"
-        android:layout_toEndOf="@id/timeInput"
+        android:layout_toEndOf="@id/designer_time_input"
         android:layout_alignParentLeft="false"
         android:layout_alignParentTop="false"
         android:layout_marginTop="35dp"
         android:layout_below="@+id/task_name"
-        android:layout_toRightOf="@+id/timeInput" />
+        android:layout_toRightOf="@+id/designer_time_input" />
 
     <ImageView
         android:contentDescription="Image of check mark"

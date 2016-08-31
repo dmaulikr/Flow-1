@@ -13,11 +13,11 @@ import android.os.Parcelable;
 // At the moment, the flowElement can receive a name and time estimate from the user.
  */
 public class FlowElement implements Parcelable{
-    public static final String DEFAULT_UNITS = "minutes";
 
     private String elementName;
 
     private int timeEstimate;
+        // Time is stored in Millis
 
     private String timeUnits;
 
@@ -31,14 +31,7 @@ public class FlowElement implements Parcelable{
     } //End of constructor
 
     /*~~~~~ Getter and Setter Methods: ~~~~~*/
-    public String getFormattedTime() {
-        if(timeUnits.equals("hours")) {
-            return timeEstimate + " HRS";
-        } else {
-            return timeEstimate + " MINS";
-        }
 
-    }
     /** Gets the name for flowElement
      * @return elementName
      */
@@ -72,35 +65,6 @@ public class FlowElement implements Parcelable{
      */
     public void setLocation(int location) {
         this.location = location;
-    }
-
-    /**
-     * Returns time units for the FlowElement in milliseconds
-     * @return millis, long
-     * //TODO Refractor FlowElements to store time in consistent unit
-     */
-    public long parseTimeToMilliSecs() {
-        if (timeUnits.equals("minutes")){
-            return this.timeEstimate*60*1000;
-        } else {
-            // Else == "hours"
-            return this.timeEstimate*3600*1000;
-        }
-
-    }
-
-    /**
-     * Returns time units for the FlowElement in seconds
-     * @return seconds, long
-     */
-    public long parseTimeToSecs() {
-        if (timeUnits.equals("minutes")){
-            return this.timeEstimate*60;
-        } else {
-            // Else == "hours"
-            return this.timeEstimate*3600;
-        }
-
     }
 
     @Override
@@ -154,15 +118,4 @@ public class FlowElement implements Parcelable{
                     return new FlowElement[size];
                 }
             };
-
-    /* How to use:
-        ~ SENDING ACTIVITY ~
-        Flow obj = new Flow("bah");
-        Intent i = new Intent(this, recievingActivity.class);
-        i.putExtra("userTag",obj);
-        startActivity(i)
-       -------------------------------------
-       ~ RECEIVING ACTIVITY ~
-       Flow myObj = getIntent().getParcelableExtra("userTag");
-     */
 }

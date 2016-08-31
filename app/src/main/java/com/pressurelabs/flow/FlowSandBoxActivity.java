@@ -52,7 +52,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sand_box);
         util = new AppDataManager(this);
 
-        currentFlow = util.load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
+        currentFlow = util.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
 
         sbToolbar = (Toolbar) findViewById(R.id.sb_toolbar);
         TextView title = (TextView) findViewById(R.id.toolbar_title);
@@ -95,6 +95,8 @@ public class FlowSandBoxActivity extends AppCompatActivity {
      * Sets the onClick action when an element in the grid is clicked.
      */
     private void setClickListeners() {
+        //TODO Refactor this to match new millis pattern when Grid feature branch is merged
+
         elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
@@ -129,7 +131,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
         FlowElement newElement;
 
         if(requestCode==1 && resultCode==RESULT_OK) {
-            newElement = data.getParcelableExtra("newElement");
+            newElement = data.getParcelableExtra(AppConstants.EXTRA_ELEMENT_PARCEL);
             addElementToFlow(newElement);
         }
 
@@ -146,7 +148,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
      * @param newElement the FlowElement being saved
      */
     private void addElementToFlow(FlowElement newElement) {
-        newElement.setLocation(currentFlow.getElementCount());
+        newElement.setLocation(currentFlow.getChildCount());
 
         gridContent.add(newElement);
         currentFlow.addElement(newElement);
@@ -178,7 +180,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
             );
         } else {
             Intent in = new Intent(this, FlowStateActivity.class);
-            in.putExtra(AppConstants.PASSING_UUID,currentFlow.getUuid());
+            in.putExtra(AppConstants.EXTRA_PASSING_UUID,currentFlow.getUuid());
             startActivity(in);
         }
     }
@@ -260,7 +262,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
                  */
             }
 
-            currentFlow.removeSelected(deletedChildElements);
+            currentFlow.removeChildren(deletedChildElements);
 
             gridContent.clear();
             gridContent.addAll(currentFlow.getChildElements());

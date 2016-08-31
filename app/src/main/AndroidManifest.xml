@@ -31,15 +31,18 @@
         </activity>
         <activity
             android:name=".FlowSandBoxActivity"
+            android:parentActivityName=".TheHubActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ElementDesignerActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".FlowStateActivity"
+            android:parentActivityName=".FlowSandBoxActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".FinishedFlowActivity"
+            android:parentActivityName=".FlowSandBoxActivity"
             android:noHistory="true"
             android:screenOrientation="portrait" />
     </application>

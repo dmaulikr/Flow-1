@@ -3,8 +3,10 @@ package com.pressurelabs.flow;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -24,13 +26,14 @@ import java.util.UUID;
 public class Flow implements Parcelable{
 
     private String name;
-
     private int completionTokens;
 
     private LinkedList<FlowElement> childFlowElements;
         // Keeps track of the current FlowElements which belong to this Flow
 
-    private double totalTime=0; // Always calculated in fractions of hours
+    private int totalTime=0;
+        // Time is stored in Millis
+
     private String uuid;
 
     public String getUuid() {
@@ -43,7 +46,7 @@ public class Flow implements Parcelable{
      */
     public Flow(String name, double time) {
         this.name = name;
-        this.totalTime = time;
+        this.totalTime = (int) time;
         this.completionTokens=0;
         this.childFlowElements = new LinkedList<>();
         this.uuid = UUID.randomUUID().toString();
@@ -51,6 +54,7 @@ public class Flow implements Parcelable{
 
 
     /*~~~~~~~~~ Getters & Setters ~~~~~~~~~*/
+
 
     public LinkedList<FlowElement> getChildElements() {
         return childFlowElements;
@@ -76,7 +80,7 @@ public class Flow implements Parcelable{
     /** Gets the current Element count for the Flow
      * @return childFlowElements.size()
      */
-    public Integer getElementCount() {
+    public Integer getChildCount() {
         return childFlowElements.size();
     }
 
@@ -93,11 +97,7 @@ public class Flow implements Parcelable{
      */
     public String getFormattedTime() {
             // Total time includes hrs and minutes, int truncates the double
-        int hrs = (int)totalTime;
-
-        int mins = (int)((totalTime-hrs)*60);
-
-        return hrs +"H "+mins+"M";
+        return AppUtils.buildCardViewStyleTime(this.totalTime);
     }
 
 
@@ -106,13 +106,6 @@ public class Flow implements Parcelable{
         Flow other = (Flow) o;
         String otherUniqueId = other.getUuid();
         return this.uuid.equals(otherUniqueId);
-    }
-
-    /** Sets the totalTime for the Flow once called from calculateTime()
-     * @param time desired time of the flow object
-     */
-    public void setTotalTime(double time){
-        this.totalTime = time;
     }
 
     /**
@@ -148,54 +141,44 @@ public class Flow implements Parcelable{
      * @param newElement the Element being added to the Flow's ArrayList
      */
     public void addElement(FlowElement newElement) {
-            childFlowElements.add(newElement);
-            addToTotalTime(newElement);
-        // Will receive argument from the elementDesigner for the new flowElement object
-    }
-    private void addToTotalTime(FlowElement e) {
-        switch (e.getTimeUnits()){
-            /* Must cast getTimeEst to double in order to calculate the minutes from hrs*/
-            case "minutes":
-                totalTime = totalTime +
-                        (((double)e.getTimeEstimate()/(60)));
-                break;
-            case "hours":
-                totalTime = totalTime +
-                        (double) e.getTimeEstimate();
-                break;
-            default:
-                break;
-        }
+
+        childFlowElements.add(newElement);
+
+        totalTime = totalTime + newElement.getTimeEstimate();
     }
 
-    public void removeSelected(LinkedList<FlowElement> deletedChildElements) {
+
+    /**
+     * Removes the supplied collection of child elements to remove from this flow.
+     *
+     * * On avg case:
+     *      O(n) of calculating totalTime of deletedChildElement
+     *                          <
+     *      O(n) recalculating totalTime from remaining elements
+     *
+     *
+     * @param deletedChildElements
+     */
+    public void removeChildren(LinkedList<FlowElement> deletedChildElements) {
         childFlowElements.removeAll(deletedChildElements);
-        this.recalculateTotalTime();
+
+        for (FlowElement removed: deletedChildElements) {
+            totalTime = totalTime - removed.getTimeEstimate();
+        }
+
     }
 
-
-
-    public void recalculateTotalTime(){
+    /**
+     * Calculates the totalTime value from all elements in
+     * the current Flow
+     */
+    public void recalculateTotalTime() {
         totalTime=0;
-        Iterator<FlowElement> it = childFlowElements.iterator();
-
-        while (it.hasNext()) {
-            FlowElement e = it.next();
-            switch (e.getTimeUnits()){
-            /* Must cast getTimeEst to double in order to calculate the minutes from hrs*/
-                case "minutes":
-                    totalTime = totalTime +
-                            (((double)e.getTimeEstimate()/(60)));
-                    break;
-                case "hours":
-                    totalTime = totalTime +
-                            (double) e.getTimeEstimate();
-                    break;
-                default:
-                    break;
-            }
+        for (FlowElement element: childFlowElements) {
+            totalTime=totalTime + element.getTimeEstimate();
         }
     }
+
 
     /** Overriding of original toString() because its natural
      *  implementation is no bueno!
@@ -213,6 +196,17 @@ public class Flow implements Parcelable{
                 '}';
     }
 
+    public ArrayList<String> buildStatsExportList() {
+        ArrayList<String> temp = new ArrayList<>();
+
+        temp.add(this.getName());
+        temp.add(String.valueOf(this.getChildCount()));
+        temp.add(String.valueOf(this.getFormattedTime()));
+        temp.add(String.valueOf(this.getCompletionTokens()));
+
+        return temp;
+    }
+
     // Parcel Implementation to pass data from the Stream to the Sandbox about
     // the current flow object.
     // Still need to make method to calculate the total time for the flow based on elements
@@ -226,7 +220,7 @@ public class Flow implements Parcelable{
 
         in.readStringArray(data);
         this.name = data[0];
-        this.totalTime = Double.parseDouble(data[1]);
+        this.totalTime = Integer.parseInt(data[1]);
         this.uuid = data[2];
         this.completionTokens = Integer.parseInt(data[3]);
         in.readList(childFlowElements,getClass().getClassLoader());
@@ -248,7 +242,7 @@ public class Flow implements Parcelable{
     @Override
     public void writeToParcel(Parcel destination, int flags) {
         /* Similar implementation:
-             dest.writeString(this.name);
+            dest.writeString(this.name);
             dest.writeString(this.totalTime);
             dest.writeString(this.flowManagerIndex);
             dest.writeList(childFlowElements);
@@ -258,7 +252,7 @@ public class Flow implements Parcelable{
                         this.name,
                         String.valueOf(this.totalTime),
                         this.uuid,
-                        String.valueOf(this.completionTokens),
+                        String.valueOf(this.completionTokens)
 
                 }
         );
@@ -280,9 +274,6 @@ public class Flow implements Parcelable{
                     return new Flow[size];
                 }
             };
-
-
-
 
 
 

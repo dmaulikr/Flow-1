@@ -7,6 +7,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.util.ArrayList;
 import java.util.Random;
 
 
@@ -18,13 +19,17 @@ public class FinishedFlowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_finished_flow);
 
 
-        String completionTime = getIntent().getStringExtra("completionTime");
+        String timeComplete = getIntent().getStringExtra(AppConstants.EXTRA_FORMATTED_TIME);
+        int millisInFlow = getIntent().getIntExtra(AppConstants.EXTRA_MILLIS_IN_FLOW,0);
+
         AppDataManager util = new AppDataManager(this);
-        Flow finishedFlow = util.load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
+        Flow finishedFlow = util.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
 
         // Gets the Flow Manager Util saved in TheHubActivity from Complex Preferences
 
         finishedFlow.addCompletionToken();
+
+        String[] exportData = prepareCSVExport(finishedFlow, millisInFlow);
 
         TextView msg = (TextView)findViewById(R.id.praise_msg);
         TextView complete = (TextView) findViewById(R.id.flow_name);
@@ -36,7 +41,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
         try {
             msg.setText(randomStr);
             complete.setText(finishedFlow.getName() + " was finished in:");
-            time.setText(completionTime);
+            time.setText(timeComplete);
             util.overwrite(finishedFlow.getUuid(), finishedFlow);
         } catch (NullPointerException e) {
             Toast.makeText(this, "Woops, couldn't finish the Flow!", Toast.LENGTH_LONG).show();
@@ -47,6 +52,21 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
 
         // Overwrites current flow in the file
+    }
+
+    private String[] prepareCSVExport(Flow finishedFlow, int millisInFlow) {
+        /*
+            ArrayList[0] = flowName;
+            ArrayList[1] = childrenCount
+            ArrayList[2] = "xH yM" format estimated total time
+            ArrayList[3] = completion tokens
+         */
+        ArrayList<String> exportData = finishedFlow.buildStatsExportList();
+
+//        exportData.add(AppUtils.calculateHours());
+        String[] a = {"A","B"};
+
+        return a;
     }
 
     @Override
