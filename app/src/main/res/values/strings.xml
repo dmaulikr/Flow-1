@@ -82,9 +82,11 @@
         <item> Sweet !</item>
     </string-array>
     <string-array name="quit_quotes">
-        <item> <i> "Sit, walk, or run, but don't wobble." \n- Zen Proverb</i> </item>
-        <item> <i> "Sitting quietly, doing nothing,\n Spring comes, and the grass grows by itself." \n- Zen Proverb </i> </item>
-        <item> <i> "All of the significant battles are waged within the self." \n-Sheldon Kopp </i> </item>
+        <item><i>"Sit, walk, or run, but don't wobble." \n- Zen Proverb</i> </item>
+        <item><i>"For there is never anything but the present, and if one cannot live there, one cannot live anywhere. \n-Alan Watts" </i></item>
+        <item><i>"Sitting quietly, doing nothing,\n Spring comes, and the grass grows by itself." \n- Zen Proverb </i> </item>
+        <item><i>"All of the significant battles are waged within the self." \n-Sheldon Kopp </i> </item>
+        <item><i>"This is the real secret of life: \nbe completely engaged with what you are doing in the here and now. \n-Alan Watts"</i></item>
     </string-array>
     <string-array name="drawer_greeting">
         <item name="monday"> Happy manic Monday! </item>

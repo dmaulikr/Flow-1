@@ -325,7 +325,7 @@ public class FlowStateActivity extends AppCompatActivity
      *
      * @return
      */
-    public NotificationCompat.Builder buildNotification() {
+    private NotificationCompat.Builder buildNotification() {
         Intent notificationIntent = new Intent(getApplicationContext(), FlowStateActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 .putExtra(AppConstants.PASSING_UUID,parentFlow.getUuid());
@@ -338,7 +338,6 @@ public class FlowStateActivity extends AppCompatActivity
                         .setContentIntent(intent)
                         .setContentTitle(getString(R.string.fs_notification_title))
                         .setContentText("In Flow State")
-                        .setAutoCancel(true)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
         // Gets an instance of the NotificationManager service

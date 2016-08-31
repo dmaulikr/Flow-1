@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -146,6 +147,7 @@ public class FlowElementFragment extends Fragment {
                     @Override
                     public void onFinish() {
                         if (getActivity()!=null){
+                            progressBar.setProgress(0);
                             Animation fadeinAnimation = AnimationUtils.loadAnimation(getActivity(),android.R.anim.fade_in);
                             next.setAnimation(fadeinAnimation);
                             next.setVisibility(View.VISIBLE);
@@ -254,6 +256,7 @@ public class FlowElementFragment extends Fragment {
 
             timeDisplay.setText(buildTimeOutput(millisUntilFinished));
 
+
         }
 
         /**
@@ -343,7 +346,9 @@ public class FlowElementFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        progressBar.setProgress(0);
         progressBar.setProgress(progress);
+
         this.uiActive();
         /* Displays updated progress bar with time remaining */
 
