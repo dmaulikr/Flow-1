@@ -24,4 +24,7 @@ public class AppConstants {
     public static final String FS_UI_ACTIVE = "FS_UI_ACTIVE";
 
     public static int FLOW_STATE_NOTIFICATION_ID = 100;
+
+    public static int DESIGNER_REQUEST_CODE = 111;
+    public static int FS_REQUEST_CODE = 222;
 }

@@ -113,7 +113,7 @@ public class FlowSandBoxActivity extends AppCompatActivity {
      */
     public void createElement(View view) {
         Intent in = new Intent(FlowSandBoxActivity.this, ElementDesignerActivity.class);
-        startActivityForResult(in, 1);
+        startActivityForResult(in, AppConstants.DESIGNER_REQUEST_CODE);
         //Starts new activity waiting for the return data
     }
 
@@ -128,12 +128,12 @@ public class FlowSandBoxActivity extends AppCompatActivity {
 
         FlowElement newElement;
 
-        if(requestCode==1 && resultCode==RESULT_OK) {
+        if(requestCode == AppConstants.DESIGNER_REQUEST_CODE && resultCode==RESULT_OK) {
             newElement = data.getParcelableExtra("newElement");
             addElementToFlow(newElement);
         }
 
-        if(requestCode==2 && resultCode==RESULT_OK){
+        if(requestCode == AppConstants.FS_REQUEST_CODE && resultCode==RESULT_OK){
           //TODO Updates UI to # of completed flows?
         }
 

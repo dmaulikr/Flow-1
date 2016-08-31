@@ -462,7 +462,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
                 popup.dismiss();
 
-                Snackbar bar = Snackbar.make(cardViewClicked, "Another Flow to the data graveyard..", Snackbar.LENGTH_LONG)
+                Snackbar bar = Snackbar.make(cardViewClicked, R.string.snackbar_hub_msg, Snackbar.LENGTH_LONG)
                         .setAction("NO!!!", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

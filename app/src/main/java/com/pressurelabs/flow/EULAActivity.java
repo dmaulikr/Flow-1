@@ -21,9 +21,6 @@ public class EULAActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                startActivity(new Intent(
-                        EULAActivity.this, TheHubActivity.class
-                ));
                 finish();
                 // TODO Fix app bar up
                 return true;

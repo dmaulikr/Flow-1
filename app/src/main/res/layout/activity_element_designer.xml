@@ -79,7 +79,7 @@
         android:ems="3"
         android:id="@+id/timeInput"
         android:layout_marginLeft="0dp"
-        android:hint="2"
+        android:hint="@string/hint_zero"
         android:maxLength="2"
         android:layout_alignTop="@+id/timeEst"
         android:layout_alignStart="@+id/nameInput" />

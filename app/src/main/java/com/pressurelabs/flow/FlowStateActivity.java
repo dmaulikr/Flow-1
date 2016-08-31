@@ -100,9 +100,9 @@ public class FlowStateActivity extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int id) {
                         fragment.notifyBackPressed();
                         flowStateFlag=AppConstants.EARLY_EXIT;
+                        buildCustomQuitToast(FlowStateActivity.this).show();
                         FlowStateActivity.super.onBackPressed();
 
-                        showCustomQuitingToast(FlowStateActivity.this);
                     }
                 })
                 .setNegativeButton("No Don't!", null)
@@ -116,7 +116,7 @@ public class FlowStateActivity extends AppCompatActivity
      * Displays custom toast with random phrase from resource file.
      * @param context
      */
-    private void showCustomQuitingToast(Context context) {
+    private Toast buildCustomQuitToast(Context context) {
         String[] array = context.getResources().getStringArray(R.array.quit_quotes);
         String randomStr = array[new Random().nextInt(array.length)];
 
@@ -124,14 +124,14 @@ public class FlowStateActivity extends AppCompatActivity
         View layout = inflater.inflate(R.layout.quit_toast,
                 (ViewGroup) findViewById(R.id.toast_layout_container));
 
-        TextView text = (TextView) layout.findViewById(R.id.quote);
+        TextView text = (TextView) layout.findViewById(R.id.toast_fs_quit_quote);
         text.setText(randomStr);
 
         Toast toast = new Toast(getApplicationContext());
         toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
         toast.setDuration(Toast.LENGTH_SHORT);
         toast.setView(layout);
-        toast.show();
+        return toast;
     }
 
 

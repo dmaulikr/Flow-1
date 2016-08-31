@@ -8,7 +8,7 @@
     android:background="#1a1F0F"
     >
 
-    <TextView android:id="@+id/quote"
+    <TextView android:id="@+id/toast_fs_quit_quote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFA"
