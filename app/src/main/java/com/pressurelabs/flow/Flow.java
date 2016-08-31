@@ -33,9 +33,6 @@ public class Flow implements Parcelable{
     private double totalTime=0; // Always calculated in fractions of hours
     private String uuid;
 
-    public String getUuid() {
-        return uuid;
-    }
 
     /** Overloaded Flow Object constructor.
      * @param name name of the flow object being instantiated
@@ -51,6 +48,11 @@ public class Flow implements Parcelable{
 
 
     /*~~~~~~~~~ Getters & Setters ~~~~~~~~~*/
+
+    public String getUuid() {
+        return uuid;
+    }
+
 
     public LinkedList<FlowElement> getChildElements() {
         return childFlowElements;
@@ -123,6 +125,19 @@ public class Flow implements Parcelable{
         return completionTokens;
     }
 
+
+
+    /*~~~~~~~~ Action Methods ~~~~~~~~~~*/
+
+    /**
+     * Reassigns Child Element Location Parameters to match their current location in the LinkedList.
+     */
+    public void reassignChildLocations() {
+        for (int i=0; i<childFlowElements.size(); i++) {
+            childFlowElements.get(i).setLocation(i);
+        }
+    }
+
     /**
      * Adds a completion token to the current flow
      */
@@ -130,7 +145,6 @@ public class Flow implements Parcelable{
         completionTokens++;
     }
 
-    /* Action Methods */
 
     /** Retrieves the FlowElement at the specified index position within
      *  the Flow's children ArrayList
@@ -138,7 +152,7 @@ public class Flow implements Parcelable{
      * @param flowIndex the index position which the FlowElement is at
      * @return FlowElement the element which has been found
      */
-    public FlowElement returnElement(int flowIndex) {
+    public FlowElement getChildAt(int flowIndex) {
       return childFlowElements.get(flowIndex);
     }
 
@@ -147,10 +161,19 @@ public class Flow implements Parcelable{
      *
      * @param newElement the Element being added to the Flow's ArrayList
      */
-    public void addElement(FlowElement newElement) {
+    public void add(FlowElement newElement) {
             childFlowElements.add(newElement);
             addToTotalTime(newElement);
         // Will receive argument from the elementDesigner for the new flowElement object
+    }
+
+
+    public void reorderChildAt(int originalLocation, int newLocation) {
+        FlowElement target = this.childFlowElements.remove(originalLocation);
+
+        this.childFlowElements.add(newLocation, target);
+
+        this.reassignChildLocations();
     }
     private void addToTotalTime(FlowElement e) {
         switch (e.getTimeUnits()){
@@ -168,11 +191,10 @@ public class Flow implements Parcelable{
         }
     }
 
-    public void removeSelected(LinkedList<FlowElement> deletedChildElements) {
+    public void removeSelectedCollection(LinkedList<FlowElement> deletedChildElements) {
         childFlowElements.removeAll(deletedChildElements);
         this.recalculateTotalTime();
     }
-
 
 
     public void recalculateTotalTime(){
@@ -280,11 +302,6 @@ public class Flow implements Parcelable{
                     return new Flow[size];
                 }
             };
-
-
-
-
-
 
     /* How to use:
         ~ SENDING ACTIVITY ~

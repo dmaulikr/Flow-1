@@ -30,7 +30,8 @@
                 android:value=".TheHubActivity" />
         </activity>
         <activity
-            android:name=".FlowSandBoxActivity"
+            android:name=".SandBoxActivity"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ElementDesignerActivity"

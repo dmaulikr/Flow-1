@@ -49,14 +49,14 @@ import java.util.Calendar;
  *  The class allows for the creation and saving of new Flows, destruction of current ones, editing and renaming of Flows
  *  and launching of the Flows into a new Activity
  */
-public class TheHubActivity extends AppCompatActivity implements RecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class TheHubActivity extends AppCompatActivity implements HubRecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener {
 
     private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
 
     /* Recycler View */
     private RecyclerView recyclerView;
-    private RecyclerViewAdapter adapter;
+    private HubRecyclerViewAdapter adapter;
     private ArrayList<Flow> rvContent;
 
     /* Card Interactions */
@@ -78,6 +78,8 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
+        //TODO on drawer open dismissPopups
+
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -244,7 +246,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
                    feed a blank RecycleView
                  */
 
-            adapter = new RecyclerViewAdapter(TheHubActivity.this, rvContent);
+            adapter = new HubRecyclerViewAdapter(TheHubActivity.this, rvContent);
             // Create new adapter with Recycle View Content
 //            adapter.setCardEditingCallback(this);
             recyclerView.setAdapter(adapter);
@@ -260,7 +262,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
 
         rvContent = manager.generateArrayList();
 
-        adapter = new RecyclerViewAdapter(TheHubActivity.this, rvContent);
+        adapter = new HubRecyclerViewAdapter(TheHubActivity.this, rvContent);
         // Recreate FlowArrayAdapter and set
 
 //        adapter.setCardEditingCallback(this);
@@ -394,7 +396,7 @@ public class TheHubActivity extends AppCompatActivity implements RecyclerViewAda
      */
     @Override
     public void onCardClick(Flow clickedFlow) {
-        Intent i = new Intent(TheHubActivity.this, FlowSandBoxActivity.class);
+        Intent i = new Intent(TheHubActivity.this, SandBoxActivity.class);
 
         i.putExtra(AppConstants.PASSING_UUID, clickedFlow.getUuid());
         startActivity(i);
