@@ -112,7 +112,7 @@ public class HubRecyclerViewAdapter extends RecyclerView.Adapter<HubRecyclerView
             Flow flow = flowList.get(position);
             holder.name.setText(String.valueOf(flow.getName()));
             // String.valueOf() otherwise Resources$NotFoundException thrown
-            holder.elements.setText(String.valueOf(flow.getElementCount()));
+            holder.elements.setText(String.valueOf(flow.getChildCount()));
 
             holder.timeEstimate.setText(String.valueOf(flow.getFormattedTime()));
             holder.prepare(flow, position);

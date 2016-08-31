@@ -14,7 +14,7 @@ public class AppConstants {
     public static final String COMPLEX_PREFS = "COMPLEX_PREFS";
     public static final String RESTORED_USER_FLOWS = "RESTORED_USER_FLOWS";
     public static final String RESTORED_DATA_MANAGER = "RESTORED_DATA_MANAGER";
-    public static final String PASSING_UUID = "PASSING_UUID";
+    public static final String EXTRA_PASSING_UUID = "EXTRA_PASSING_UUID";
     public static final String MENU_NATIVE = "MENU_NATIVE";
     public static final String MENU_HIDE = "MENU_HIDE";
     public static final String MENU_PARTIAL = "menu_partial";
@@ -33,5 +33,11 @@ public class AppConstants {
 
     public static int DESIGNER_REQUEST_CODE = 111;
     public static int FS_REQUEST_CODE = 222;
+    public static String EXTRA_FORMATTED_TIME = "extra_formatted_time";
+    public static String EXTRA_MILLIS_IN_FLOW = "extra_millis_in_flow";
+    public static String UNIT_MINUTES = "minutes";
+    public static String UNIT_HOURS = "hours";
+
+    public static String EXTRA_ELEMENT_PARCEL = "extra_element_parcel";
 }
 

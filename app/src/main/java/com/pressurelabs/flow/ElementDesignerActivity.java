@@ -27,12 +27,16 @@ public class ElementDesignerActivity extends AppCompatActivity {
 
     // The Element Designer is the resource provider, SandBoxActivity is the blacksmith!
     private Spinner selectTime;
+    private EditText nameInput;
+    private EditText timeInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_element_designer);
 
+        nameInput = (EditText)findViewById(R.id.designer_name_input);
+        timeInput = (EditText)findViewById(R.id.designer_time_input);
         selectTime = (Spinner)findViewById(R.id.select_time);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.select_time,android.R.layout.simple_spinner_item);
 
@@ -42,6 +46,8 @@ public class ElementDesignerActivity extends AppCompatActivity {
         selectTime.setAdapter(adapter);
 
         setClickListeners();
+
+
 
     }
 
@@ -65,27 +71,52 @@ public class ElementDesignerActivity extends AppCompatActivity {
      * @param view the checkmark clicked in view
      */
     public void doneElement(View view) {
-        EditText nameInput = (EditText)findViewById(R.id.nameInput);
-        EditText timeInput = (EditText)findViewById(R.id.timeInput);
         String elementName = nameInput.getText().toString();
         String elementTime = timeInput.getText().toString();
         String timeUnits = selectTime.getSelectedItem().toString();
 
-        if (timeUnits==null) {
-            timeUnits = FlowElement.DEFAULT_UNITS;
-        }
 
         if (!elementName.equals("") && !elementTime.equals("")) {
 
+            FlowElement newElement = buildNewElement(elementName,elementTime,timeUnits);
+
+
             Intent returnData = new Intent();
-            FlowElement newElement = new FlowElement(elementName, Integer.parseInt(elementTime), timeUnits);
-            returnData.putExtra("newElement", newElement);
+            returnData.putExtra(AppConstants.EXTRA_ELEMENT_PARCEL, newElement);
             setResult(RESULT_OK, returnData);
             finish();
 
         } else {
             Toast.makeText(ElementDesignerActivity.this, "Mind checking that name and time again?", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private FlowElement buildNewElement(String elementName, String elementTime, String timeUnits) {
+        if (timeUnits==null) {
+            timeUnits = AppConstants.UNIT_MINUTES;
+        }
+
+        int timeInMillis=0;
+
+        switch (timeUnits) {
+
+            case "minutes":
+                timeInMillis =
+                        AppUtils.minsToMillis(
+                                Integer.parseInt(elementTime)
+                        );
+                break;
+
+            case "hours":
+                timeInMillis =
+                        AppUtils.hrsToMillis(
+                                Integer.parseInt(elementTime)
+                        );
+            default:
+                timeInMillis=60000;
+        }
+
+        return new FlowElement(elementName, timeInMillis, timeUnits);
     }
 
     /**

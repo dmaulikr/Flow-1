@@ -398,7 +398,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     public void onCardClick(Flow clickedFlow) {
         Intent i = new Intent(TheHubActivity.this, SandBoxActivity.class);
 
-        i.putExtra(AppConstants.PASSING_UUID, clickedFlow.getUuid());
+        i.putExtra(AppConstants.EXTRA_PASSING_UUID, clickedFlow.getUuid());
         startActivity(i);
     }
 

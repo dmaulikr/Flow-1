@@ -116,7 +116,9 @@ public class FlowElementFragment extends Fragment {
 
         element = (FlowElement)getArguments().get(FLOW_ELEMENT);
         assert element != null;
-        progress = (int) element.parseTimeToSecs();
+
+        progress = AppUtils.millisToSecs(element.getTimeEstimate());
+
             /* onTick occurs every 1000ms (1s), therefore need progress to tick at that rate
                but because using progress--, need to convert the millis to seconds to subtract
              */
@@ -129,7 +131,7 @@ public class FlowElementFragment extends Fragment {
         progress = progressBar.getMax();
         progressBar.setProgress(progress);
 
-        elementTimer= new ElementTimer(element.parseTimeToMilliSecs(), 1000);
+        elementTimer= new ElementTimer(element.getTimeEstimate(), 1000);
         startTimerOnUi();
 
 
@@ -244,7 +246,7 @@ public class FlowElementFragment extends Fragment {
                         AppConstants.FLOW_STATE_NOTIFICATION_ID,
                         mNotify
                                 .setContentText(
-                                        "You've got " +  buildTimeOutput(millisUntilFinished) + " left in " + element.getElementName()
+                                        "You've got " +  AppUtils.buildTimerStyleTime(millisUntilFinished) + " left in " + element.getElementName()
                                 )
                                 .build()
                 );
@@ -254,7 +256,7 @@ public class FlowElementFragment extends Fragment {
 
             progressBar.setProgress(--progress);
 
-            timeDisplay.setText(buildTimeOutput(millisUntilFinished));
+            timeDisplay.setText(AppUtils.buildTimerStyleTime(millisUntilFinished));
 
 
         }

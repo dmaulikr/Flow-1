@@ -22,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Flow_V2
@@ -54,7 +53,7 @@ public class FlowStateActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_flow_state);
 
-        parentFlow = new AppDataManager(this).load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
+        parentFlow = new AppDataManager(this).load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
 
         millisInFlow = new Integer[parentFlow.getChildElements().size()];
         flowStateFlag =AppConstants.NOT_FINISHED;
@@ -199,8 +198,19 @@ public class FlowStateActivity extends AppCompatActivity
 
     private void goToFinishScreen() {
         Intent i = new Intent(this, FinishedFlowActivity.class);
-        i.putExtra(AppConstants.PASSING_UUID, parentFlow.getUuid());
-        i.putExtra("completionTime", this.calculateTimeInFlow());
+        i.putExtra(AppConstants.EXTRA_PASSING_UUID, parentFlow.getUuid());
+
+        int timeInFlow =calculateTimeInFlow();
+
+        i.putExtra(
+                AppConstants.EXTRA_FORMATTED_TIME,
+                AppUtils.buildTimerStyleTime(
+                        timeInFlow
+                    )
+                );
+
+        i.putExtra(AppConstants.EXTRA_MILLIS_IN_FLOW, timeInFlow);
+
         finish();
         startActivity(i);
     }
@@ -211,26 +221,14 @@ public class FlowStateActivity extends AppCompatActivity
      *
      * @return
      */
-    private String calculateTimeInFlow() {
+    private int calculateTimeInFlow() {
         int time = 0;
 
         for (int i = 0; i <=millisInFlow.length-1; i++) {
             time = time + millisInFlow[i];
         }
 
-
-        return String.format("%02d:%02d:%02d",
-                TimeUnit.MILLISECONDS.toHours(time),
-                TimeUnit.MILLISECONDS.toMinutes(time)
-                        - TimeUnit.HOURS.toMinutes(
-                        TimeUnit.MILLISECONDS.toHours(time)
-                ),
-                TimeUnit.MILLISECONDS.toSeconds(time)
-                        - TimeUnit.MINUTES.toSeconds(
-                        TimeUnit.MILLISECONDS.toMinutes(time)
-                )
-
-        );
+        return time;
     }
 
     @Override
@@ -328,7 +326,7 @@ public class FlowStateActivity extends AppCompatActivity
     private NotificationCompat.Builder buildNotification() {
         Intent notificationIntent = new Intent(getApplicationContext(), FlowStateActivity.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                .putExtra(AppConstants.PASSING_UUID,parentFlow.getUuid());
+                .putExtra(AppConstants.EXTRA_PASSING_UUID,parentFlow.getUuid());
         PendingIntent intent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         NotificationCompat.Builder builder =
