@@ -29,7 +29,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TheHubActivity" />
         </activity>
-        <activity>
+        <activity
             android:parentActivityName=".TheHubActivity"
             android:name=".SandBoxActivity"
             android:theme="@style/AppTheme"

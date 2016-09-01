@@ -103,13 +103,6 @@ public class Flow implements Parcelable{
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        Flow other = (Flow) o;
-        String otherUniqueId = other.getUuid();
-        return this.uuid.equals(otherUniqueId);
-    }
-
     /**
      * Returns number of completion tokens in this Flow
      * @return completionTokens, int
@@ -121,6 +114,13 @@ public class Flow implements Parcelable{
 
 
     /*~~~~~~~~ Action Methods ~~~~~~~~~~*/
+
+    @Override
+    public boolean equals(Object o) {
+        Flow other = (Flow) o;
+        String otherUniqueId = other.getUuid();
+        return this.uuid.equals(otherUniqueId);
+    }
 
     /**
      * Reassigns Child Element Location Parameters to match their current location in the LinkedList.
@@ -154,7 +154,7 @@ public class Flow implements Parcelable{
      *
      * @param newElement the Element being added to the Flow's ArrayList
      */
-    public void addElement(FlowElement newElement) {
+    public void add(FlowElement newElement) {
 
         childFlowElements.add(newElement);
 
@@ -296,8 +296,6 @@ public class Flow implements Parcelable{
                     return new Flow[size];
                 }
             };
-
-
 
     /* How to use:
         ~ SENDING ACTIVITY ~

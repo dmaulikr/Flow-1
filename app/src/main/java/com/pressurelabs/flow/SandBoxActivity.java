@@ -39,55 +39,47 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     //
     ///// and the user can specify if they've finished the task move to next activity || need more time (+why) || ask help (slack)
 
-    private final String TAG = "debug";
-
     private Flow currentFlow;
-        // Flow currently being worked on
+    // Flow currently being worked on
     private AppDataManager util;
-    private DynamicGridView elementGridView;
+    private MultiFunctionGridView elementGridView;
     private SandBoxGridAdapter gridAdapter;
     private Toast currentToast = null;
     private LinkedList<FlowElement> gridContent;
     private String menuState;
     private SmallBang mSmallBang;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-            // Not keeping Flow Object's in their own capsules
+        // Not keeping Flow Object's in their own capsules
         setContentView(R.layout.activity_sand_box);
         util = new AppDataManager(this);
 
-        currentFlow = util.load(getIntent().getStringExtra(AppConstants.PASSING_UUID));
+        currentFlow = util.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
 
-        Toolbar sbToolbar = (Toolbar) findViewById(R.id.toolbar_sb);
+        Toolbar sbToolbar = (Toolbar) findViewById(R.id.sb_activity_toolbar);
 
         setSupportActionBar(sbToolbar);
         getSupportActionBar().setTitle(currentFlow.getName());
 
         elementGridView = (MultiFunctionGridView) findViewById(R.id.drag_drop_gridview);
 
-
         gridContent = new LinkedList<>();
         gridContent.addAll(currentFlow.getChildElements());
 
         gridAdapter = new SandBoxGridAdapter(this, gridContent,3);
-
             // Passes the number of elements in the Flow's child elements to set the
             // Adapter's initial size
-
-        // Passes the number of elements in the Flow's child elements to set the
-        // Adapter's initial size
         elementGridView.setAdapter(gridAdapter);
-
 
         menuState = AppConstants.MENU_NATIVE;
 
         ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_MCL_CHECKABLE);
 
         mSmallBang = SmallBang.attach2Window(this);
-
     }
 
     /* Allows the menu items to appear in the toolbar */
@@ -110,14 +102,13 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         /* When the user selects one of the app bar items, the system
         calls your activity's onOptionsItemSelected() callback method,
         and passes a MenuItem object to indicate which item was clicked
-
         Requires menu items to use app:showAsAction="xyz"*/
 
         switch (item.getItemId()) {
 
             case R.id.action_reorder_elements:
-                    toggleSortingState();
-                    return true;
+                toggleSortingState();
+                return true;
 
 
             case R.id.action_flow_statistics:
@@ -181,7 +172,6 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
 
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -192,14 +182,15 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
      * Sets the onClick action when an element in the grid is clicked.
      */
     private void setClickListeners() {
+        //TODO Refactor this to match new millis pattern when Grid feature branch is merged
+
         elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
                 String eName = currentFlow.getChildAt(position).getElementName();
-                int eTime = currentFlow.getChildAt(position).getTimeEstimate();
-                String eUnits = currentFlow.getChildAt(position).getTimeUnits();
+                String eTime = AppUtils.buildStandardTimeOutput(currentFlow.getChildAt(position).getTimeEstimate());
 
-                showToast(eName + "\n" + eTime + " " + eUnits);
+                showToast("" + eName + "\n" + eTime);
             }
         });
     }
@@ -210,7 +201,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
      */
     public void createElement(View view) {
         Intent in = new Intent(SandBoxActivity.this, ElementDesignerActivity.class);
-        startActivityForResult(in, 1);
+        startActivityForResult(in, AppConstants.DESIGNER_REQUEST_CODE);
         //Starts new activity waiting for the return data
     }
 
@@ -225,12 +216,12 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
 
         FlowElement newElement;
 
-        if(requestCode==1 && resultCode==RESULT_OK) {
-            newElement = data.getParcelableExtra("newElement");
+        if(requestCode == AppConstants.DESIGNER_REQUEST_CODE && resultCode==RESULT_OK) {
+            newElement = data.getParcelableExtra(AppConstants.EXTRA_ELEMENT_PARCEL);
             addElementToFlow(newElement);
         }
 
-        if(requestCode==2 && resultCode==RESULT_OK){
+        if(requestCode == AppConstants.FS_REQUEST_CODE && resultCode==RESULT_OK){
           //TODO Updates UI to # of completed flows?
         }
 
@@ -243,7 +234,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
      * @param newElement the FlowElement being saved
      */
     private void addElementToFlow(FlowElement newElement) {
-        newElement.setLocation(currentFlow.getElementCount());
+        newElement.setLocation(currentFlow.getChildCount());
 
         gridContent.add(newElement);
         currentFlow.add(newElement);
@@ -275,12 +266,10 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
             );
         } else {
             Intent in = new Intent(this, FlowStateActivity.class);
-            in.putExtra(AppConstants.PASSING_UUID,currentFlow.getUuid());
+            in.putExtra(AppConstants.EXTRA_PASSING_UUID,currentFlow.getUuid());
             startActivity(in);
         }
     }
-
-
 
     /**
      * Deletes selected elements by getting the checked elements in the gridview,
@@ -319,21 +308,21 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         }
 
 
-            Snackbar bar = Snackbar.make(elementGridView, R.string.snackbar_sandbox_msg, Snackbar.LENGTH_SHORT)
-                    .setAction("UNDO", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            currentFlow.setChildElements(reference);
-                            currentFlow.recalculateTotalTime();
-                            gridContent.clear();
-                            gridContent.addAll(currentFlow.getChildElements());
-                            gridAdapter.notifyDataSetUpdated(gridContent);
-                            util.overwrite(currentFlow.getUuid(),currentFlow);
-                        }
-                    });
+        Snackbar bar = Snackbar.make(elementGridView, R.string.snackbar_sandbox_msg, Snackbar.LENGTH_SHORT)
+                .setAction("UNDO", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        currentFlow.setChildElements(reference);
+                        currentFlow.recalculateTotalTime();
+                        gridContent.clear();
+                        gridContent.addAll(currentFlow.getChildElements());
+                        gridAdapter.notifyDataSetUpdated(gridContent);
+                        util.overwrite(currentFlow.getUuid(),currentFlow);
+                    }
+                });
 
 
-            bar.show();
+        bar.show();
     }
 
     @Override
@@ -407,7 +396,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
 
     private void viewRotateFade(View v, String animationState) {
         ObjectAnimator rotate = ObjectAnimator.ofFloat(v, "rotation", 0f, 360f);
-                        rotate.setDuration(250);
+        rotate.setDuration(250);
         AnimatorSet animSetFS = new AnimatorSet();
         switch (animationState) {
             case AppConstants.ANIMATION_ENTRY:

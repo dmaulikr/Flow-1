@@ -23,12 +23,6 @@ public class FlowElement implements Parcelable{
 
     private String timeUnits;
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    private String uuid;
-
     private int location;
 
     public FlowElement(String name, int timeEst, String units) {
@@ -36,7 +30,6 @@ public class FlowElement implements Parcelable{
         this.elementName = name;
         this.timeEstimate = timeEst;
         this.timeUnits = units;
-        this.uuid = UUID.randomUUID().toString();
     } //End of constructor
 
     /*~~~~~ Getter and Setter Methods: ~~~~~*/

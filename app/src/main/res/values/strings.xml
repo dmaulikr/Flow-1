@@ -108,5 +108,10 @@
     <string name="feature_not_ready">Oops.. \nThat feature\'s not ready yet!</string>s
     <string name="drawer_about">About</string>
     <string name="snackbar_sandbox_msg">Yeah... just delete your work away!</string>
+    <string name="hint_zero">0</string>
+    <string name="action_reorder_elements">Reorder elements</string>
+    <string name="action_flow_statistics">Statistics</string>
+    <string name="sb_sort_title">Sorting</string>
+    <string name="snackbar_hub_msg">To the data grave yard...</string>
 
 </resources>

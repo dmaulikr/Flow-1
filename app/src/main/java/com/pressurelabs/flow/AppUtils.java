@@ -68,6 +68,20 @@ public class AppUtils {
         );
     }
 
+    public static String buildStandardTimeOutput(int millis) {
+        int hrs = calcHours(millis);
+        int mins = calcRemainderMins(millis);
+        if (hrs>0 && mins >=0) {
+            return hrs + " hrs\n" + mins + " mins";
+        } else if (hrs>0) {
+            return hrs + " hours.";
+        } else if (mins>=0) {
+            return mins + " minutes";
+        } else {
+            return "";
+        }
+    }
+
     public static int minsToMillis(int mins) {
         return (mins*60*1000);
     }
