@@ -93,6 +93,13 @@ public class Flow implements Parcelable{
         return totalTime;
     }
 
+    public int getHours() {
+        return AppUtils.calcHours(totalTime);
+    }
+
+    public int getMinutes() {
+        return AppUtils.calcRemainderMins(totalTime);
+    }
     /**
      * Returns H and M formatted time for the total Flow Time
      * @return String, time
@@ -229,7 +236,8 @@ public class Flow implements Parcelable{
 
         temp.add(this.getName());
         temp.add(String.valueOf(this.getChildCount()));
-        temp.add(String.valueOf(this.getFormattedTime()));
+        temp.add(String.valueOf(this.getHours()));
+        temp.add(String.valueOf(this.getMinutes()));
         temp.add(String.valueOf(this.getCompletionTokens()));
 
         return temp;

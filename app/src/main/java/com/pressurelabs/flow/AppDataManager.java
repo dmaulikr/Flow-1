@@ -9,13 +9,11 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import com.opencsv.CSVWriter;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -39,10 +37,7 @@ public class AppDataManager implements Parcelable{
 
 
     private static final String mapFileName = "appdata.json";
-    private static File appDataFile = new File(mapFileName);
-
-    private static final String statsFileName = "Flow-statsexport.csv";
-    private static File statsExportFile = new File(statsFileName);
+    private static File appDataFile;
 
     /* MUST BE STATIC & GLOBAL Creates file directory for the data files please don't delete again :))) */
     private static HashMap<String,Flow> dataMap;
@@ -53,7 +48,9 @@ public class AppDataManager implements Parcelable{
       */
     public AppDataManager(Context context){
         mContext = context;
+        appDataFile = new File(mContext.getFilesDir(), mapFileName);
         dataMap = buildMap(mContext);
+
     } // End of Constructor
 
     /**
@@ -106,9 +103,11 @@ public class AppDataManager implements Parcelable{
      * Removes all key:value pairs in the hashmap and then completely erases all data
      * present in the internal storage file
      */
-    public void deleteAll() {
+    public void deleteAllData() {
+
         dataMap.clear();
-        eraseFileData();
+        eraseData();
+
     }
 
     /**
@@ -162,7 +161,7 @@ public class AppDataManager implements Parcelable{
      *
      * @return a json string representation of the data in file.
      */
-    private String loadAppFile() {
+    private String loadAppData() {
         try {
 
             FileInputStream fis = mContext.openFileInput(mapFileName);
@@ -175,11 +174,11 @@ public class AppDataManager implements Parcelable{
                 sb.append(line);
             }
 
-            String json = sb.toString();
+            String loadedData = sb.toString();
             fis.close();
             isr.close();
             bufferedReader.close();
-            return json;
+            return loadedData;
         } catch (IOException e) {
             Log.e("ERROR", e.getMessage());
             return "";
@@ -194,7 +193,7 @@ public class AppDataManager implements Parcelable{
      * Overwrites all data present in file with a blank file.
      *
      */
-    private void eraseFileData() {
+    private void eraseData() {
         try {
             FileOutputStream os = mContext.openFileOutput(mapFileName, Context.MODE_PRIVATE);
             PrintWriter writer = new PrintWriter(os);
@@ -218,7 +217,7 @@ public class AppDataManager implements Parcelable{
         try {
             Gson gson = new Gson();
 
-            String json = loadAppFile();
+            String json = loadAppData();
 
             if (json.equals("")) {
                 // if return data is blank, no file was found (exists)
@@ -235,7 +234,7 @@ public class AppDataManager implements Parcelable{
             return  gson.fromJson(reader, type);
             // Returns flows to use for Map Format
         } catch (Exception e) {
-            // Flow loadAppFile not regenerated that sucks..
+            // Flow loadAppData not regenerated that sucks..
             return  new HashMap<>();
         }
 
@@ -243,36 +242,14 @@ public class AppDataManager implements Parcelable{
 
     @Override
     public String toString() {
-        return this.loadAppFile();
+
+        return "\n~~~ APP DATA MAP: ~~~ " + this.loadAppData();
     }
     // Parcel Implementation to pass data from the Stream to the Sandbox about
     // the current flow object.
     // Still need to make method to calculate the total time for the flow based on elements
     // The order of READING and WRITING is important (Read and write in same order)
 
-
-    private void saveStatsToCSV(Flow dataHolder) {
-
-//        FileWriter mFileWriter;
-//        CSVWriter writer;
-//        try {
-//            if(statsExportFile.exists() && !statsExportFile.isDirectory()){
-//                mFileWriter = new FileWriter(statsExportFile);
-//                writer = new CSVWriter(mFileWriter);
-//            }
-//            else {
-//                writer = new CSVWriter(new FileWriter(statsExportFile));
-//            }
-//
-//
-//            writer.writeNext(data);
-//
-//            writer.close();
-//        } catch (Exception e) {
-//            Log.e("ERROR", "Could not write data to file: " + e.getMessage());
-//        }
-
-    }
 
     /*~~~~~~ Implements Parcelable ~~~~~~*/
 

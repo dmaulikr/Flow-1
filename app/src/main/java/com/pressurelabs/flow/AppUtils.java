@@ -20,16 +20,24 @@ public class AppUtils {
      * @param millis
      * @return
      */
-    public static int calculateTotalMinutes(int millis) {
+    private static int convertToTotalMinutes(int millis) {
         return (millis/(1000*60));
     }
-    
+
+    private static int convertToTotalSeconds(int millis) {
+        return (millis/(1000));
+    }
+
+    public static int calcSeconds(int millis) {
+        return convertToTotalSeconds(millis)%1000;
+    }
+
     /**
      * Calculates remaining minutes (ie. <60mins) from millis input
      *
      */
     public static int calcRemainderMins(int millis) {
-        return calculateTotalMinutes(millis)%60;
+        return convertToTotalMinutes(millis)%60;
     }
 
     /**
@@ -39,7 +47,7 @@ public class AppUtils {
      * @return
      */
     public static int calcHours(int millis) {
-        return (int) calculateTotalMinutes(millis)/60;
+        return (int) convertToTotalMinutes(millis)/60;
     }
 
     /**

@@ -39,5 +39,11 @@ public class AppConstants {
     public static String UNIT_HOURS = "hours";
 
     public static String EXTRA_ELEMENT_PARCEL = "extra_element_parcel";
+    public static String APP_DATA_FILE_NAME = "appdata.json";
+    public static String APP_STATS_EXPORT_FILE_NAME = "stats_export.csv";
+    public static String[] EXPORT_DATA_CSV_HEADER = {
+            "flowName", "taskCount", "estimatedHours", "estimatedMinutes",
+            "timesComplete","actualHours","actualMinutes","actualSeconds"
+    };
 }
 

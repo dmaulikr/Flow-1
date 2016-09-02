@@ -385,7 +385,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
      */
     private void deleteAllFlowData() {
         rvContent.removeAll(rvContent);
-        manager.deleteAll();
+        manager.deleteAllData();
         adapter.notifyDataSetChanged();
     }
 

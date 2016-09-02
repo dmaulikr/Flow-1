@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,8 @@ import java.util.Random;
 
 
 public class FinishedFlowActivity extends AppCompatActivity {
+
+    private String[] deleteMe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,51 +32,66 @@ public class FinishedFlowActivity extends AppCompatActivity {
         String timeComplete = getIntent().getStringExtra(AppConstants.EXTRA_FORMATTED_TIME);
         int millisInFlow = getIntent().getIntExtra(AppConstants.EXTRA_MILLIS_IN_FLOW,0);
 
-        AppDataManager util = new AppDataManager(this);
-        Flow finishedFlow = util.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
-
         // Gets the Flow Manager Util saved in TheHubActivity from Complex Preferences
-
-        finishedFlow.addCompletionToken();
-
-        String[] exportData = prepareCSVExport(finishedFlow, millisInFlow);
 
         TextView msg = (TextView)findViewById(R.id.praise_msg);
         TextView complete = (TextView) findViewById(R.id.flow_name);
         TextView time = (TextView) findViewById(R.id.complete_time);
 
+        AppDataManager appData = new AppDataManager(this);
+        ExportDataManager statsData = new ExportDataManager(this);
+
+        Flow finishedFlow = appData.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
+        finishedFlow.addCompletionToken();
+
         String[] array = this.getResources().getStringArray(R.array.praise_msg);
         String randomStr = array[new Random().nextInt(array.length)];
 
-        try {
-            msg.setText(randomStr);
-            complete.setText(finishedFlow.getName() + " was finished in:");
-            time.setText(timeComplete);
-            util.overwrite(finishedFlow.getUuid(), finishedFlow);
-        } catch (NullPointerException e) {
-            Toast.makeText(this, "Woops, couldn't finish the Flow!", Toast.LENGTH_LONG).show();
-            this.onBackPressed();
-        }
+        msg.setText(randomStr);
+        complete.setText(finishedFlow.getName() + " was finished in:");
+        time.setText(timeComplete);
 
+        appData.overwrite(finishedFlow.getUuid(), finishedFlow);
 
+        String[] exportData = prepareCSVExport(finishedFlow, millisInFlow);
 
+        deleteMe = prepareCSVExport(finishedFlow, millisInFlow);
 
+        statsData.saveStatistics(exportData);
         // Overwrites current flow in the file
     }
 
-    private String[] prepareCSVExport(Flow finishedFlow, int millisInFlow) {
+    private String[] prepareCSVExport(Flow finishedFlow, int actualMillisInFlow) {
         /*
             ArrayList[0] = flowName;
             ArrayList[1] = childrenCount
-            ArrayList[2] = "xH yM" format estimated total time
-            ArrayList[3] = completion tokens
+            ArrayList[2] = Estimated Hours
+            ArrayList[3] = Estimated Minutes
+            ArrayList[4] = completion tokens
          */
         ArrayList<String> exportData = finishedFlow.buildStatsExportList();
 
-//        exportData.add(AppUtils.calculateHours());
-        String[] a = {"A","B"};
+        /* Adds actual hours taken to complete flow to export data */
+       exportData.add(
+               String.valueOf(
+                       AppUtils.calcHours(actualMillisInFlow)
+                            )
+                    );
+        /* Adds actual minutes taken to complete flow to export data */
+        exportData.add(String.valueOf(
+                AppUtils.calcRemainderMins(actualMillisInFlow)
+                )
+        );
 
-        return a;
+        /* Adds seconds taken to complete flow to export data */
+        exportData.add(String.valueOf(
+                AppUtils.calcSeconds(actualMillisInFlow)
+                )
+        );
+
+        Log.d("CSV Export:", exportData.toString());
+
+        return exportData.toArray(new String[exportData.size()]);
     }
 
     @Override
@@ -95,5 +113,26 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         startActivity(in);
     }
+
+    public void readCSVData(View v) {
+        ExportDataManager statsData = new ExportDataManager(this);
+        Log.d("READ", statsData.toString());
+    }
+
+    public void deleteCSV(View v) {
+        ExportDataManager statsData = new ExportDataManager(this);
+        statsData.deleteAllStats();
+    }
+
+    public void saveCSV(View v) {
+        ExportDataManager statsData = new ExportDataManager(this);
+        statsData.saveStatistics(deleteMe);
+    }
+
+    public void readFile(View v) {
+        ExportDataManager statsData = new ExportDataManager(this);
+        Log.d("FILE", statsData.readPureFile());
+    }
+
 
 }
