@@ -19,8 +19,8 @@ import org.askerov.dynamicgrid.DynamicGridView;
  */
 public class MultiFunctionGridView extends DynamicGridView {
     private String gridState;
-    private GridInteractionListener mMultiChoiceCallback;
-    private GridInteractionListener mReorderCallback;
+    private GridMultiSelectListener mMultiChoiceCallback;
+    private GridSortingListener mReorderCallback;
     private Context mContext;
     private int startLocation;
     private int insertionLocation;
@@ -28,23 +28,23 @@ public class MultiFunctionGridView extends DynamicGridView {
     public MultiFunctionGridView(Context context, String inState) {
         super(context);
         this.mContext = context;
-        this.mMultiChoiceCallback = (GridInteractionListener) context;
-        this.mReorderCallback = (GridInteractionListener) context;
+        this.mReorderCallback = (GridSortingListener) context;
+        this.mMultiChoiceCallback = (GridMultiSelectListener) context;
         this.gridState = inState;
     }
 
     public MultiFunctionGridView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.mContext = context;
-        this.mMultiChoiceCallback = (GridInteractionListener) context;
-        this.mReorderCallback = (GridInteractionListener) context;
+        this.mReorderCallback = (GridSortingListener) context;
+        this.mMultiChoiceCallback = (GridMultiSelectListener) context;
     }
 
     public MultiFunctionGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.mContext = context;
-        this.mMultiChoiceCallback = (GridInteractionListener) context;
-        this.mReorderCallback = (GridInteractionListener) context;
+        this.mMultiChoiceCallback = (GridMultiSelectListener) context;
+        this.mReorderCallback = (GridSortingListener) context;
     }
 
 
@@ -64,7 +64,7 @@ public class MultiFunctionGridView extends DynamicGridView {
                 @Override
                 public void onActionDrop()
                 {
-                    mReorderCallback.adjustLocation(startLocation, insertionLocation);
+                    mReorderCallback.reorderElements(startLocation, insertionLocation);
                     stopEditMode();
                 }
             });
@@ -121,7 +121,7 @@ public class MultiFunctionGridView extends DynamicGridView {
             switch (item.getItemId()) {
 
                 case R.id.action_delete_selected_items:
-                    return mMultiChoiceCallback.actionItemClicked(mode,item);
+                    return mMultiChoiceCallback.actionMenuItemClicked(mode,item);
 
                 default:
                     // If we got here, the user's action was not recognized.
@@ -139,11 +139,15 @@ public class MultiFunctionGridView extends DynamicGridView {
 
     }
 
-    //TODO Refactor this to distinguish between MultiChoice Selection INterface Methods and Dynamic Gridview methods
-    public interface GridInteractionListener {
-        void adjustLocation(int originalLocation, int insertionPosition);
+
+    public interface GridSortingListener {
+        void reorderElements(int originalLocation, int insertionPosition);
+
+    }
+
+    public interface GridMultiSelectListener {
         boolean createActionMenu(ActionMode mode, Menu menu);
-        boolean actionItemClicked(ActionMode mode, MenuItem item);
+        boolean actionMenuItemClicked(ActionMode mode, MenuItem item);
         void destroyActionMenu(ActionMode mode);
         void updateActionMenuCheckState(ActionMode mode);
     }

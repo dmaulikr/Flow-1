@@ -15,7 +15,6 @@ import android.widget.ImageView;
  */
 public class CheckableLayout extends FrameLayout implements Checkable {
     private boolean mChecked;
-    private ImageView image;
 
     public CheckableLayout(Context context) {
         super(context);
@@ -33,7 +32,7 @@ public class CheckableLayout extends FrameLayout implements Checkable {
     @SuppressWarnings("deprecation")
     public void setChecked(boolean checked) {
         mChecked = checked;
-        setBackgroundDrawable(checked ? getResources().getDrawable(android.R.color.holo_blue_bright) : null);
+        setBackgroundDrawable(checked ? getResources().getDrawable(android.R.color.holo_orange_light) : null);
     }
 
     public boolean isChecked() {
@@ -44,11 +43,6 @@ public class CheckableLayout extends FrameLayout implements Checkable {
         setChecked(!mChecked);
     }
 
-
-//    private void init() {
-//        inflate(getContext(), R.layout.checkable_layout, this);
-//        this.image = (ImageView)findViewById(R.id.sandbox_gview_item_img);
-//    }
 
 
 }

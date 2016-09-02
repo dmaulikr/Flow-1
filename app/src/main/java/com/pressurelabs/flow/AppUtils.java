@@ -1,5 +1,9 @@
 package com.pressurelabs.flow;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.view.View;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -94,4 +98,25 @@ public class AppUtils {
     public static int millisToSecs(int millis) {
         return (millis/1000);
     }
+
+    public static void animateViewRotateFade(View v, String animationState) {
+        ObjectAnimator rotate = ObjectAnimator.ofFloat(v, "rotation", 0f, 360f);
+        rotate.setDuration(250);
+        AnimatorSet animSetFS = new AnimatorSet();
+        switch (animationState) {
+            case AppConstants.ANIMATION_ENTRY:
+                ObjectAnimator alphaEntry = ObjectAnimator.ofFloat(v, "alpha",0f, 1f);
+                alphaEntry.setDuration(200);
+                animSetFS.play(alphaEntry).before(rotate);
+                animSetFS.start();
+                break;
+            case AppConstants.ANIMATION_EXIT:
+                ObjectAnimator alphaExit = ObjectAnimator.ofFloat(v, "alpha",1f, 0f);
+                alphaExit.setDuration(200);
+                animSetFS.play(rotate).before(alphaExit);
+                animSetFS.start();
+                break;
+        }
+    }
+
 }

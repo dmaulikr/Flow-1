@@ -218,6 +218,12 @@ public class Flow implements Parcelable{
                 '}';
     }
 
+    public String pingStats() {
+        return "Number of Elements: " + this.getChildCount() +
+                "\n Estimated Time: " + this.getFormattedTime() +
+                "\n Times completed: " + this.getCompletionTokens();
+    }
+
     public ArrayList<String> buildStatsExportList() {
         ArrayList<String> temp = new ArrayList<>();
 

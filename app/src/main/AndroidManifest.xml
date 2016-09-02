@@ -43,8 +43,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".FinishedFlowActivity"
-            android:parentActivityName=".SandBoxActivity"
+            android:parentActivityName=".TheHubActivity"
             android:noHistory="true"
+            android:theme="@style/AppTheme"
             android:screenOrientation="portrait" />
     </application>
 

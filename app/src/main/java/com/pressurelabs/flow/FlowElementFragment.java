@@ -277,7 +277,7 @@ public class FlowElementFragment extends Fragment {
                                 .build()
                 );
             }
-
+            progressBar.setProgress(0);
             Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
             timeDisplay.setText(getString(R.string.fs_task_finish_msg));
             timeDisplay.setAnimation(fadeInAnimation);
@@ -294,28 +294,6 @@ public class FlowElementFragment extends Fragment {
             super(millisInFuture, countDownInterval);
             this.timeStart=millisInFuture;
         }
-
-        /**
-         * Returns time output in the form 00:00:00 based on parameters
-         * @param millisUntilFinished , the amount of milliseconds until the time reaches 0
-         * @return formatted time output
-         */
-        private String buildTimeOutput(long millisUntilFinished) {
-            return String.format("%02d:%02d:%02d",
-                    TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
-                    TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                            - TimeUnit.HOURS.toMinutes(
-                            TimeUnit.MILLISECONDS.toHours(millisUntilFinished)
-                    ),
-                    TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)
-                            - TimeUnit.MINUTES.toSeconds(
-                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)
-                    )
-
-            );
-        }
-
-
     }
 
     /**

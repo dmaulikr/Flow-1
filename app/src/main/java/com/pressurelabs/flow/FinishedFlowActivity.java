@@ -1,7 +1,9 @@
 package com.pressurelabs.flow;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +20,11 @@ public class FinishedFlowActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_finished_flow);
 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.finished_flow_toolbar);
+        setSupportActionBar(toolbar);
+        
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
 
         String timeComplete = getIntent().getStringExtra(AppConstants.EXTRA_FORMATTED_TIME);
         int millisInFlow = getIntent().getIntExtra(AppConstants.EXTRA_MILLIS_IN_FLOW,0);
@@ -75,8 +82,18 @@ public class FinishedFlowActivity extends AppCompatActivity {
         finish();
     }
 
-    public void completeFlow(View v) {
+    public void completeRun(View v) {
         onBackPressed();
+    }
+
+    public void repeatRun(View v) {
+        AppDataManager util = new AppDataManager(this);
+        Flow flowToRepeat = util.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
+
+        Intent in = new Intent(this, FlowStateActivity.class);
+        in.putExtra(AppConstants.EXTRA_PASSING_UUID,flowToRepeat.getUuid());
+
+        startActivity(in);
     }
 
 }

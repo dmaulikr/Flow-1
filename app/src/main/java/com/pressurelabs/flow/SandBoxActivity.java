@@ -1,13 +1,12 @@
 package com.pressurelabs.flow;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -15,8 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
-
-import org.askerov.dynamicgrid.DynamicGridView;
 
 import java.util.LinkedList;
 
@@ -34,7 +31,9 @@ import xyz.hanks.library.SmallBangListener;
  * 4) Executing the elementDetails activity
  * 5) Beginning the FlowStateActivity, where the flow begins and the timer counts down
  */
-public class SandBoxActivity extends AppCompatActivity implements MultiFunctionGridView.GridInteractionListener {
+public class SandBoxActivity extends AppCompatActivity
+        implements MultiFunctionGridView.GridMultiSelectListener,
+                   MultiFunctionGridView.GridSortingListener {
     // The SandBox serves as a hub for the flows, with several functions:
     //
     ///// and the user can specify if they've finished the task move to next activity || need more time (+why) || ask help (slack)
@@ -58,22 +57,19 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         setContentView(R.layout.activity_sand_box);
         util = new AppDataManager(this);
 
-        currentFlow = util.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
+
 
         Toolbar sbToolbar = (Toolbar) findViewById(R.id.sb_activity_toolbar);
 
         setSupportActionBar(sbToolbar);
-        getSupportActionBar().setTitle(currentFlow.getName());
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         elementGridView = (MultiFunctionGridView) findViewById(R.id.drag_drop_gridview);
 
         gridContent = new LinkedList<>();
-        gridContent.addAll(currentFlow.getChildElements());
 
-        gridAdapter = new SandBoxGridAdapter(this, gridContent,3);
-            // Passes the number of elements in the Flow's child elements to set the
-            // Adapter's initial size
-        elementGridView.setAdapter(gridAdapter);
 
         menuState = AppConstants.MENU_NATIVE;
 
@@ -89,7 +85,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         getMenuInflater().inflate(R.menu.menu_sandbox, menu);
 
         MenuItem statistics = menu.findItem(R.id.action_flow_statistics);
-        if (menuState.equals(AppConstants.MENU_PARTIAL)) {
+        if (menuState.equals(AppConstants.MENU_PARTIAL_ITEMS)) {
             statistics.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -112,6 +108,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
 
 
             case R.id.action_flow_statistics:
+                Log.d("STATS", currentFlow.pingStats());
                 Toast.makeText(SandBoxActivity.this, "Statistics not available yet.",Toast.LENGTH_LONG).show();
                 return true;
 
@@ -126,9 +123,10 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     private void toggleSortingState() {
         /* If hit toggle and menu is set to native, want to change to partial action bar view */
         if (menuState.equals(AppConstants.MENU_NATIVE)) {
-            menuState=AppConstants.MENU_PARTIAL;
+            menuState=AppConstants.MENU_PARTIAL_ITEMS;
 
             getSupportActionBar().setTitle(R.string.sb_sort_title);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
             invalidateOptionsMenu();
 
@@ -147,10 +145,11 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
             });
 
             toggleFABVisibility(AppConstants.FAB_HIDE);
-        } else if (menuState.equals(AppConstants.MENU_PARTIAL)) {
+        } else if (menuState.equals(AppConstants.MENU_PARTIAL_ITEMS)) {
             menuState=AppConstants.MENU_NATIVE;
 
             getSupportActionBar().setTitle(currentFlow.getName());
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             invalidateOptionsMenu();
             ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_MCL_CHECKABLE);
 
@@ -175,7 +174,28 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     @Override
     protected void onResume() {
         super.onResume();
+
+        prepareContextualContent();
+
         setClickListeners();
+    }
+
+    /**
+     * Prepares content based on the context (specific Flow) the activity is using
+     *
+     */
+    private void prepareContextualContent() {
+        currentFlow = util.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
+        getSupportActionBar().setTitle(currentFlow.getName());
+
+        gridContent.clear();
+
+        gridContent.addAll(currentFlow.getChildElements());
+
+        gridAdapter = new SandBoxGridAdapter(this, gridContent,3);
+        // Passes the number of elements in the Flow's child elements to set the
+        // Adapter's initial size
+        elementGridView.setAdapter(gridAdapter);
     }
 
     /**
@@ -335,7 +355,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     }
 
     @Override
-    public void adjustLocation(int originalLocation, int desiredPosition) {
+    public void reorderElements(int originalLocation, int desiredPosition) {
 
         currentFlow.reorderChildAt(originalLocation, desiredPosition);
 
@@ -345,6 +365,29 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         gridAdapter.notifyDataSetUpdated(gridContent);
         util.overwrite(currentFlow.getUuid(),currentFlow);
     }
+
+    private void toggleFABVisibility(String fabState) {
+        FloatingActionButton flowState = (FloatingActionButton) findViewById(R.id.fab_flow_state);
+        FloatingActionButton newElement = (FloatingActionButton) findViewById(R.id.fab_new_flow_element);
+
+
+        switch (fabState) {
+            case AppConstants.FAB_HIDE:
+                AppUtils.animateViewRotateFade(flowState, AppConstants.ANIMATION_EXIT);
+                AppUtils.animateViewRotateFade(newElement, AppConstants.ANIMATION_EXIT);
+                break;
+            case AppConstants.FAB_NATIVE:
+                AppUtils.animateViewRotateFade(flowState, AppConstants.ANIMATION_ENTRY);
+                AppUtils.animateViewRotateFade(newElement, AppConstants.ANIMATION_ENTRY);
+                break;
+            default:
+                break;
+        }
+
+    }
+
+
+
 
     @Override
     public boolean createActionMenu(ActionMode mode, Menu menu) {
@@ -356,15 +399,22 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
     }
 
     @Override
-    public boolean actionItemClicked(ActionMode mode, MenuItem item) {
-        deleteSelection();
-        mode.finish();
-        return true;
+    public boolean actionMenuItemClicked(ActionMode mode, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_delete_selected_items:
+                deleteSelection();
+                mode.finish();
+                return true;
+            default:
+                return true;
+        }
+
     }
 
     @Override
     public void destroyActionMenu(ActionMode mode) {
         getSupportActionBar().show();
+
     }
 
     @Override
@@ -372,46 +422,7 @@ public class SandBoxActivity extends AppCompatActivity implements MultiFunctionG
         int selectCount = elementGridView.getCheckedItemCount();
 
         mode.setSubtitle("" + selectCount + " item(s) selected");
-    }
 
-    private void toggleFABVisibility(String fabState) {
-        FloatingActionButton flowState = (FloatingActionButton) findViewById(R.id.fab_flow_state);
-        FloatingActionButton newElement = (FloatingActionButton) findViewById(R.id.fab_new_flow_element);
-
-
-        switch (fabState) {
-            case AppConstants.FAB_HIDE:
-                viewRotateFade(flowState, AppConstants.ANIMATION_EXIT);
-                viewRotateFade(newElement, AppConstants.ANIMATION_EXIT);
-                break;
-            case AppConstants.FAB_NATIVE:
-                viewRotateFade(flowState, AppConstants.ANIMATION_ENTRY);
-                viewRotateFade(newElement, AppConstants.ANIMATION_ENTRY);
-                break;
-            default:
-                break;
-        }
-
-    }
-
-    private void viewRotateFade(View v, String animationState) {
-        ObjectAnimator rotate = ObjectAnimator.ofFloat(v, "rotation", 0f, 360f);
-        rotate.setDuration(250);
-        AnimatorSet animSetFS = new AnimatorSet();
-        switch (animationState) {
-            case AppConstants.ANIMATION_ENTRY:
-                ObjectAnimator alphaEntry = ObjectAnimator.ofFloat(v, "alpha",0f, 1f);
-                alphaEntry.setDuration(200);
-                animSetFS.play(alphaEntry).before(rotate);
-                animSetFS.start();
-                break;
-            case AppConstants.ANIMATION_EXIT:
-                ObjectAnimator alphaExit = ObjectAnimator.ofFloat(v, "alpha",1f, 0f);
-                alphaExit.setDuration(200);
-                animSetFS.play(rotate).before(alphaExit);
-                animSetFS.start();
-                break;
-        }
     }
 }
 

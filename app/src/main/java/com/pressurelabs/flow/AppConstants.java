@@ -17,7 +17,7 @@ public class AppConstants {
     public static final String EXTRA_PASSING_UUID = "EXTRA_PASSING_UUID";
     public static final String MENU_NATIVE = "MENU_NATIVE";
     public static final String MENU_HIDE = "MENU_HIDE";
-    public static final String MENU_PARTIAL = "menu_partial";
+    public static final String MENU_PARTIAL_ITEMS = "menu_partial";
     public static final int EARLY_EXIT = -1;
     public static final int FINISHED = 1;
     public static final int NOT_FINISHED = 0;

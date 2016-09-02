@@ -11,7 +11,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+            android:id="@+id/finished_flow_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -77,26 +77,30 @@
             android:paddingBottom="@dimen/tasteful_text_spacing"
             android:text=""/>
 
-        <!--<ImageButton
-                android:id="@+id/repeat_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/happy_face"
-                android:layout_toLeftOf="@+id/happy_face"
-                android:src="@drawable/repeat_black_48dp"
-                android:layout_marginTop="@dimen/appbar_size"
-                android:layout_marginLeft="@dimen/activity_vertical_margin"/> -->
-
-        <ImageButton
-            android:contentDescription="Image of check mark"
-            android:id="@+id/done_flow_button"
+        <android.support.design.widget.FloatingActionButton
+            android:background="@color/colorAccent"
+            android:id="@+id/ff_button_repeat_run"
+            android:onClick="repeatRun"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/happy_face"
-            android:src="@drawable/done_black_48dp"
-            android:layout_marginTop="?android:attr/actionBarSize"
-            android:layout_centerHorizontal="true"
-            android:onClick="completeFlow"/>
+            android:src="@drawable/repeat_white_48dp"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:background="@color/colorAccent"
+            android:contentDescription="Image of check mark"
+            android:id="@+id/ff_button_complete_run"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/done_white_48dp"
+            android:onClick="completeRun"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true" />
 
     </RelativeLayout>
 
