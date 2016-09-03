@@ -17,8 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.support.v4.app.Fragment;
 
-import java.util.concurrent.TimeUnit;
-
 
 /**
  * Flow_V2
@@ -29,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class FlowElementFragment extends Fragment {
     private static final String FLOW_ELEMENT = "FLOW_ELEMENT";
     private ElementTimer elementTimer;
-    private ProgressBar progressBar;
+    private static ProgressBar progressBar;
     private FlowElement element;
     private int progress;
     private TextView timeDisplay;
@@ -132,6 +130,8 @@ public class FlowElementFragment extends Fragment {
         progressBar.setProgress(progress);
 
         elementTimer= new ElementTimer(element.getTimeEstimate(), 1000);
+        activityStateFlag=AppConstants.FS_UI_ACTIVE;
+
         startTimerOnUi();
 
 
@@ -253,8 +253,10 @@ public class FlowElementFragment extends Fragment {
             }
 
             timeRemaining=millisUntilFinished;
+            Log.d("PROGRESS", String.valueOf(timeRemaining));
 
             progressBar.setProgress(--progress);
+            Log.d("PROGRESS", String.valueOf(progress));
 
             timeDisplay.setText(AppUtils.buildTimerStyleTime(millisUntilFinished));
 
@@ -311,14 +313,14 @@ public class FlowElementFragment extends Fragment {
      *
      * @param unbuiltNotify
      */
-    public void notificationsActive(NotificationCompat.Builder unbuiltNotify) {
+    public void notificationsActive(NotificationCompat.Builder unbuiltNotify, String inState) {
         mNotify = unbuiltNotify;
-        this.activityStateFlag=AppConstants.FS_NOTIFICATION_ACTIVE;
+        this.activityStateFlag=inState;
     }
 
-    public void uiActive() {
+    public void uiActive(String inState) {
         NotificationManager mNotifyMgr = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-        this.activityStateFlag=AppConstants.FS_UI_ACTIVE;
+        this.activityStateFlag=inState;
         mNotifyMgr.cancel(AppConstants.FLOW_STATE_NOTIFICATION_ID);
             /* When UI is active, a notification should not be present */
     }
@@ -326,10 +328,12 @@ public class FlowElementFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        progressBar.invalidate();
+
         progressBar.setProgress(0);
         progressBar.setProgress(progress);
 
-        this.uiActive();
+        this.uiActive(activityStateFlag);
         /* Displays updated progress bar with time remaining */
 
     }

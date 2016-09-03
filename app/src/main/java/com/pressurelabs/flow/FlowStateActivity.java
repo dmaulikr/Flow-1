@@ -310,11 +310,8 @@ public class FlowStateActivity extends AppCompatActivity
     private void onPauseNotifier() {
         mBuilder = buildNotification();
         activityStateFlag = AppConstants.FS_NOTIFICATION_ACTIVE;
-        fragment.notificationsActive(mBuilder);
-        // Builds the notification and issues it.
-        int mNotificationId = AppConstants.FLOW_STATE_NOTIFICATION_ID;
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
-
+        fragment.notificationsActive(mBuilder, activityStateFlag);
+            // Pass built notification to fragment
     }
 
     /**
@@ -336,6 +333,7 @@ public class FlowStateActivity extends AppCompatActivity
                         .setContentIntent(intent)
                         .setContentTitle(getString(R.string.fs_notification_title))
                         .setContentText("In Flow State")
+                        .setAutoCancel(false)
                         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
 
         // Gets an instance of the NotificationManager service
@@ -346,7 +344,7 @@ public class FlowStateActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         activityStateFlag=AppConstants.FS_UI_ACTIVE;
-        fragment.uiActive();
+        fragment.uiActive(activityStateFlag);
 
         super.onResume();
 
