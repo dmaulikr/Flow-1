@@ -42,7 +42,7 @@
             android:layout_height="match_parent"
             android:layout_marginBottom="@dimen/appbar_padding_top"
             android:id="@+id/flowstate_fragment_container"
-            android:layout_above="@+id/task_element"
+            android:layout_above="@+id/designer_task_element"
             android:layout_centerHorizontal="true" />
 
     </LinearLayout>

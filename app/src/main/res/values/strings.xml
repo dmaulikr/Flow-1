@@ -113,5 +113,6 @@
     <string name="action_flow_statistics">Statistics</string>
     <string name="sb_sort_title">Sorting</string>
     <string name="snackbar_hub_msg">To the data grave yard...</string>
+    <string name="fs_more_time_confirm">Time updated.</string>
 
 </resources>

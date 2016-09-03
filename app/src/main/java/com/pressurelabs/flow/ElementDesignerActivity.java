@@ -37,7 +37,7 @@ public class ElementDesignerActivity extends AppCompatActivity {
 
         nameInput = (EditText)findViewById(R.id.designer_name_input);
         timeInput = (EditText)findViewById(R.id.designer_time_input);
-        selectTime = (Spinner)findViewById(R.id.select_time);
+        selectTime = (Spinner)findViewById(R.id.designer_select_time);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.select_time,android.R.layout.simple_spinner_item);
 
         //Specifying each layout for the dropdown items

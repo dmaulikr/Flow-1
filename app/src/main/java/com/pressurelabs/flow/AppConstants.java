@@ -19,7 +19,7 @@ public class AppConstants {
     public static final String MENU_HIDE = "MENU_HIDE";
     public static final String MENU_PARTIAL_ITEMS = "menu_partial";
     public static final int EARLY_EXIT = -1;
-    public static final int FINISHED = 1;
+    public static final int FS_FINISHED = 1;
     public static final int NOT_FINISHED = 0;
     public static final String FS_NOTIFICATION_ACTIVE = "FS_NOTIFICATION_ACTIVE";
     public static final String FS_UI_ACTIVE = "FS_UI_ACTIVE";
@@ -45,5 +45,8 @@ public class AppConstants {
             "flowName", "taskCount", "estimatedHours", "estimatedMinutes",
             "timesComplete","actualHours","actualMinutes","actualSeconds"
     };
+    public static String FRAGMENT_FLOW_ELEMENT = "fragment_flow_element";
+    public static boolean FS_OVERTIME_FALSE = false;
+    public static boolean FS_OVERTIME_TRUE = true;
 }
 

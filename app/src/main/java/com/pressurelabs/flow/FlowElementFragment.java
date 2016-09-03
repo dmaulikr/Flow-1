@@ -25,7 +25,6 @@ import android.support.v4.app.Fragment;
  *         Copyright (c) 2016, Robert Simoes All rights reserved.
  */
 public class FlowElementFragment extends Fragment {
-    private static final String FLOW_ELEMENT = "FLOW_ELEMENT";
     private ElementTimer elementTimer;
     private static ProgressBar progressBar;
     private FlowElement element;
@@ -36,6 +35,7 @@ public class FlowElementFragment extends Fragment {
     private Context mContext;
     private String activityStateFlag;
     private NotificationCompat.Builder mNotify;
+    private int overTime; //millis
 
     /**
      * Interface to allow onClick between FlowStateActivity and Fragments
@@ -68,6 +68,31 @@ public class FlowElementFragment extends Fragment {
 
 
     /**
+     * Adds completed time to an overflow variable overTime.
+     *
+     * Resets progress bar, begins a new timer with the
+     * @param minsToExtend
+     */
+    public void extendTime(int minsToExtend) {
+        overTime = overTime + elementTimer.getTimeFinishedInMilliSecs();
+        int millisToExtend = AppUtils.minsToMillis(minsToExtend);
+
+
+        progress = AppUtils.millisToSecs(millisToExtend);
+
+        progressBar.setMax(progress);
+        progress = progressBar.getMax();
+        progressBar.setProgress(progress);
+
+        elementTimer= new ElementTimer(millisToExtend, 1000);
+        startTimerOnUi();
+
+        Animation fadeout = AnimationUtils.loadAnimation(getActivity(),android.R.anim.fade_out);
+        TextView notFinished = (TextView) getView().findViewById(R.id.fragment_fe_not_finished);
+        notFinished.startAnimation(fadeout);
+        notFinished.setVisibility(View.INVISIBLE);
+    }
+    /**
      * Cancels the running UI Timer, creates a bundle key:value pair
      * with:
      *
@@ -76,19 +101,38 @@ public class FlowElementFragment extends Fragment {
      *
      * then passes the data via helper passData
      */
-    public void cancelTimerAndPassData() {
-        if (element.getLocation()<0) {
-            // Do not pass Data
-            elementTimer.cancel();
+    public void cancelTimerAndPassData(boolean overTimeFlag) {
+        if (overTimeFlag == AppConstants.FS_OVERTIME_FALSE) {
+            if (element.getLocation()<0) {
+                // Do not pass Data
+                elementTimer.cancel();
+            } else {
+                Bundle b = new Bundle();
+                b.putInt(
+                        String.valueOf(element.getLocation()),
+                        elementTimer.getTimeFinishedInMilliSecs()
+                );
+                passData(b, element.getLocation());
+                elementTimer.cancel();
+            }
+
         } else {
-            Bundle b = new Bundle();
-            b.putInt(
-                    String.valueOf(element.getLocation()),
-                    elementTimer.getTimeFinishedInMilliSecs()
-            );
-            passData(b, element.getLocation());
-            elementTimer.cancel();
+             /* Overtime is true therefore return overtime */
+            if (element.getLocation()<0) {
+
+                elementTimer.cancel();
+            } else {
+                overTime = overTime + elementTimer.getTimeFinishedInMilliSecs();
+                Bundle b = new Bundle();
+                b.putInt(
+                        String.valueOf(element.getLocation()),
+                        overTime
+                );
+                passData(b, element.getLocation());
+                elementTimer.cancel();
+            }
         }
+
 
     }
 
@@ -107,12 +151,12 @@ public class FlowElementFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_running_element, container, false);
 
-        TextView name = (TextView) view.findViewById(R.id.task_name);
-        timeDisplay = (TextView) view.findViewById(R.id.time_display);
+        TextView name = (TextView) view.findViewById(R.id.fragment_fe_task_name);
+        timeDisplay = (TextView) view.findViewById(R.id.fragment_fe_time_display);
         progressBar = (ProgressBar) view.findViewById(R.id.progress_bar);
-        final TextView next = (TextView) view.findViewById(R.id.next);
+        final TextView next = (TextView) view.findViewById(R.id.fragment_fe_next);
 
-        element = (FlowElement)getArguments().get(FLOW_ELEMENT);
+        element = (FlowElement)getArguments().get(AppConstants.FRAGMENT_FLOW_ELEMENT);
         assert element != null;
 
         progress = AppUtils.millisToSecs(element.getTimeEstimate());
@@ -173,7 +217,7 @@ public class FlowElementFragment extends Fragment {
      */
     public static FlowElementFragment newInstance(FlowElement e) {
         Bundle args = new Bundle();
-        args.putParcelable(FLOW_ELEMENT, e);
+        args.putParcelable(AppConstants.FRAGMENT_FLOW_ELEMENT, e);
         FlowElementFragment fragment = new FlowElementFragment();
         fragment.setArguments(args);
         return fragment;
@@ -283,13 +327,10 @@ public class FlowElementFragment extends Fragment {
             Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), android.R.anim.fade_in);
             timeDisplay.setText(getString(R.string.fs_task_finish_msg));
             timeDisplay.setAnimation(fadeInAnimation);
-            /*
-            // Future Version For Now We will have the user self advance to new tasks
-            TextView notFinished = (TextView) getView().findViewById(R.id.not_finished);
-            Animation fadeInAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.fade_animation);
+
+            TextView notFinished = (TextView) getView().findViewById(R.id.fragment_fe_not_finished);
             notFinished.setVisibility(View.VISIBLE);
             notFinished.startAnimation(fadeInAnimation);
-             */
         }
 
         public ElementTimer (long millisInFuture, long countDownInterval) {
@@ -328,7 +369,12 @@ public class FlowElementFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        Log.d("RESUME", "progress is: " + progress);
+
         progressBar.invalidate();
+
+        Log.d("RESUME", "getMax is: " + String.valueOf(progressBar.getMax()));
 
         progressBar.setProgress(0);
         progressBar.setProgress(progress);

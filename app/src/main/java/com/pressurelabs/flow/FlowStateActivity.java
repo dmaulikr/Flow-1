@@ -1,6 +1,5 @@
 package com.pressurelabs.flow;
 
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -47,7 +46,8 @@ public class FlowStateActivity extends AppCompatActivity
     private int flowStateFlag;
     private String activityStateFlag;
     private NotificationCompat.Builder mBuilder;
-    private NotificationManager mNotifyMgr;
+    private boolean overTimeFlag;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,8 +84,7 @@ public class FlowStateActivity extends AppCompatActivity
 
         }
 
-        mNotifyMgr =
-                (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
+        overTimeFlag = AppConstants.FS_OVERTIME_FALSE;
     }
 
     @Override
@@ -146,7 +145,7 @@ public class FlowStateActivity extends AppCompatActivity
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         try {
-            fragment.cancelTimerAndPassData();
+            fragment.cancelTimerAndPassData(overTimeFlag);
 
             fragment = FlowElementFragment.newInstance(
                     parentFlow
@@ -154,6 +153,8 @@ public class FlowStateActivity extends AppCompatActivity
                             ++currentElement
                     )
             );
+
+            overTimeFlag = AppConstants.FS_OVERTIME_FALSE; // Resets for next elements
 
             transaction.setCustomAnimations(
                     android.R.anim.slide_in_left, android.R.anim.slide_out_right)
@@ -164,14 +165,14 @@ public class FlowStateActivity extends AppCompatActivity
                 /* Index Out of Bounds Exception Thrown When Flow Ends */
 
                 if (fragment!=null) {
-                    flowStateFlag =AppConstants.FINISHED;
+                    flowStateFlag =AppConstants.FS_FINISHED;
                     transaction.remove(fragment);
                     transaction.commit();
                     transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                 }
 
             }
-        if (flowStateFlag ==AppConstants.FINISHED){
+        if (flowStateFlag ==AppConstants.FS_FINISHED){
             goToFinishScreen();
         }
     }
@@ -231,8 +232,16 @@ public class FlowStateActivity extends AppCompatActivity
         return time;
     }
 
+    /**
+     * Creates dialog for user to input additional time
+     *
+     * Adds flag to notify the fragment to pass the overTime value when cancelTimerPassData() method is called
+     *
+     * @param v
+     */
     @Override
     public void onMoreTimeSelected(View v) {
+        overTimeFlag = AppConstants.FS_OVERTIME_TRUE;
         final EditText inMinutes = new EditText(this);
         final AlertDialog.Builder customDialog = customDialog(inMinutes);
 
@@ -245,7 +254,9 @@ public class FlowStateActivity extends AppCompatActivity
                             Toast.makeText(FlowStateActivity.this, "Zero minutes... you're messing with me!", Toast.LENGTH_LONG).show();
 
                         } else {
-                            Toast.makeText(FlowStateActivity.this, "Time to update", Toast.LENGTH_LONG).show();
+                            fragment.extendTime((int) Double.parseDouble(inMinutes.getText().toString()));
+
+                            Toast.makeText(FlowStateActivity.this, R.string.fs_more_time_confirm, Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -294,7 +305,7 @@ public class FlowStateActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
-        if (flowStateFlag !=AppConstants.FINISHED && flowStateFlag != AppConstants.EARLY_EXIT) {
+        if (flowStateFlag !=AppConstants.FS_FINISHED && flowStateFlag != AppConstants.EARLY_EXIT) {
             onPauseNotifier();
         }
 
