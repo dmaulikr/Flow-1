@@ -40,8 +40,15 @@ public class ExportDataManager {
         statsExportFile = new File(mContext.getFilesDir(), statsFileName);
     }
 
-    public void saveStatistics(String[] runDataToWrite) {
-        //TODO Clean up this File header stuff
+
+    /**
+     * Saves the String[] as a line in the CSV file.
+     *
+     * DOES NOT INCLUDE THE HEADER
+     *
+     * @param runDataToWrite
+     */
+    public void saveToCSV(String[] runDataToWrite) {
         FileWriter mFileWriter;
         CsvListWriter listWriter = null;
         try {
@@ -54,42 +61,43 @@ public class ExportDataManager {
             else {
                 listWriter = new CsvListWriter(new FileWriter(statsExportFile, true), CsvPreference.STANDARD_PREFERENCE);
             }
-            // write the header
-            listWriter.writeHeader(header);
 
             // write the customer lists
             listWriter.write(Arrays.asList(runDataToWrite));
 
         } catch (Exception e) {
-            Log.e("ERROR", "Could not write data to file: " + e.getMessage());
+            Log.e("EXPORT MANAGER", "Could not write data to file: " + e.getMessage());
         } finally {
             try {
                 if( listWriter != null ) {
                     listWriter.close();
                 }
             } catch (Exception e) {
-                Log.e("ER:", "Couldn't close writer");
+                Log.e("EXPORT MANAGER", "Couldn't close writer");
             }
 
         }
     }
 
+    /**
+     * Reads the .csv file and adds each String[] entry as an element in a List
+     *
+     * @param statsExportFile
+     * @return
+     */
     private List<List<String>> readCSV(File statsExportFile) {
         CsvListReader listReader = null;
         List<List<String>> data = new LinkedList<>();
         try {
             listReader = new CsvListReader(new FileReader(statsExportFile), CsvPreference.STANDARD_PREFERENCE);
 
-            listReader.getHeader(true); // skip the header (can't be used with CsvListReader)
-
             List<String> line;
             while( (line = listReader.read()) != null ) {
-                Log.d("READING", line.toString());
                 data.add(line);
             }
 
         } catch (Exception e) {
-            Log.e("ER", e.getMessage());
+            Log.e("EXPORT MANAGER", e.getMessage());
         }
         finally {
                 try {
@@ -97,14 +105,18 @@ public class ExportDataManager {
                         listReader.close();
                     }
                 } catch (Exception e) {
-                    Log.e("ER", "COULDNT CLOSE READER" + e.getMessage());
+                    Log.e("EXPORT MANAGER", "COULDNT CLOSE READER" + e.getMessage());
                 }
 
         }
         return data;
     }
 
-    public String readPureFile() {
+    /**
+     * Uses standard Java IO to read the CSV file and print to logs
+     * @return
+     */
+    public String readFromFile() {
         try {
 
             FileInputStream fis = mContext.openFileInput(statsFileName);
@@ -123,7 +135,7 @@ public class ExportDataManager {
             bufferedReader.close();
             return loadedData;
         } catch (IOException e) {
-            Log.e("ERROR", e.getMessage());
+            Log.e("EXPORT MANAGER", e.getMessage());
             return "";
             // Returns blank if no flow file exists
         }
@@ -151,7 +163,7 @@ public class ExportDataManager {
 
     @Override
     public String toString() {
-        return "\n~~~ CSV STATS EXPORT ~~~" + this.readCSV(statsExportFile);
+        return "SAVED STATS \n" + this.readCSV(statsExportFile);
     }
 }
 

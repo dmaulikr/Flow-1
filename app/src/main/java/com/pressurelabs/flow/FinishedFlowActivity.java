@@ -7,7 +7,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import java.util.ArrayList;
@@ -55,10 +54,9 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         String[] exportData = prepareCSVExport(finishedFlow, millisInFlow);
 
-        deleteMe = prepareCSVExport(finishedFlow, millisInFlow);
+        statsData.saveToCSV(exportData);
 
-        statsData.saveStatistics(exportData);
-        // Overwrites current flow in the file
+        Log.d("~~~ SAVED STATS TO FILE", statsData.toString());
     }
 
     private String[] prepareCSVExport(Flow finishedFlow, int actualMillisInFlow) {
@@ -89,7 +87,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
                 )
         );
 
-        Log.d("CSV Export:", exportData.toString());
+        Log.d("~~~ CSV PREPARED EXPORT", exportData.toString());
 
         return exportData.toArray(new String[exportData.size()]);
     }
@@ -126,12 +124,12 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
     public void saveCSV(View v) {
         ExportDataManager statsData = new ExportDataManager(this);
-        statsData.saveStatistics(deleteMe);
+        statsData.saveToCSV(deleteMe);
     }
 
     public void readFile(View v) {
         ExportDataManager statsData = new ExportDataManager(this);
-        Log.d("FILE", statsData.readPureFile());
+        Log.d("FILE", "Reading File: \n" + statsData.readFromFile());
     }
 
 
