@@ -149,11 +149,11 @@ public class Flow implements Parcelable{
     /** Retrieves the FlowElement at the specified index position within
      *  the Flow's children ArrayList
      *
-     * @param flowIndex the index position which the FlowElement is at
+     * @param childLocation the index position which the FlowElement is at
      * @return FlowElement the element which has been found
      */
-    public FlowElement getChildAt(int flowIndex) {
-      return childFlowElements.get(flowIndex);
+    public FlowElement getChildAt(int childLocation) {
+      return childFlowElements.get(childLocation);
     }
 
     /** Adds the FlowElement received via Parameters to the Flow's

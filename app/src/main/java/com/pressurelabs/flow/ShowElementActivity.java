@@ -44,6 +44,9 @@ public class ShowElementActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.show_elements_view);
 
+        int clickedPosition = getIntent().getIntExtra(AppConstants.EXTRA_POSITION_SELECTED,0);
+            // 0 Being default for first element in flow
+
         flow =
                 new AppDataManager(this).load(
                         getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID)
@@ -57,6 +60,7 @@ public class ShowElementActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.viewpager_show_element_act);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setCurrentItem(clickedPosition);
 
 
     }
