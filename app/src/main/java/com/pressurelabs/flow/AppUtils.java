@@ -2,7 +2,10 @@ package com.pressurelabs.flow;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -125,6 +128,11 @@ public class AppUtils {
                 animSetFS.start();
                 break;
         }
+    }
+
+    public static void animateViewPulse(View v, Context context) {
+        Animation pulse = AnimationUtils.loadAnimation(context, R.anim.pulse);
+        v.startAnimation(pulse);
     }
 
 }

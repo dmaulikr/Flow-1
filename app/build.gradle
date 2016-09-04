@@ -53,4 +53,5 @@ dependencies {
     compile 'com.github.askerov:DynamicGrid:f81c028535'
     compile 'hanks.xyz:smallbang-library:0.1.2'
     compile 'net.sf.supercsv:super-csv:2.3.0'
+    compile 'com.github.baoyachi:StepView:1.8.1'
 }

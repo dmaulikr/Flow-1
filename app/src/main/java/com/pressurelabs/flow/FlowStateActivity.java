@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +22,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baoyachi.stepview.HorizontalStepView;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -39,14 +45,17 @@ public class FlowStateActivity extends AppCompatActivity
         implements FlowElementFragment.OnFragmentSelectedListener, FlowElementFragment.OnDataPass {
 
     private Flow parentFlow;
-    private int currentElement;
+    private int currentElementPosition;
     private Integer[] millisInFlow;
-        // Holds each currentElement's completetion time matching to it's Flow Location
+        // Holds each currentElementPosition's completetion time matching to it's Flow Location
     private FlowElementFragment fragment;
     private int flowStateFlag;
     private String activityStateFlag;
     private NotificationCompat.Builder mBuilder;
     private boolean overTimeFlag;
+    private HorizontalStepView stepProgress;
+    private List<String> stepViewContent;
+    private int attentionIconPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +65,8 @@ public class FlowStateActivity extends AppCompatActivity
         parentFlow = new AppDataManager(this).load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
 
         millisInFlow = new Integer[parentFlow.getChildElements().size()];
+
+        overTimeFlag = AppConstants.FS_OVERTIME_FALSE;
         flowStateFlag =AppConstants.NOT_FINISHED;
         activityStateFlag = AppConstants.FS_UI_ACTIVE;
         // Check that the activity is using the layout version with
@@ -70,10 +81,10 @@ public class FlowStateActivity extends AppCompatActivity
                 return;
             }
 
-            currentElement=0; //Location of current element
+            currentElementPosition =0; //Location of starting element
 
             fragment = FlowElementFragment.newInstance(
-                    parentFlow.getChildElements().get(currentElement)
+                    parentFlow.getChildAt(currentElementPosition)
             );
 
 
@@ -83,8 +94,86 @@ public class FlowStateActivity extends AppCompatActivity
                     .commit();
 
         }
+        stepViewContent = new ArrayList<>();
+        generateNewStepViewContent();
+        nextStepViewBatch();
 
-        overTimeFlag = AppConstants.FS_OVERTIME_FALSE;
+    }
+
+    private void nextStepViewBatch() {
+        stepProgress = (HorizontalStepView) findViewById(R.id.flowstate_step_view);
+        attentionIconPosition=0;
+        stepProgress
+                .setStepsViewIndicatorComplectingPosition(attentionIconPosition)
+                .setStepViewTexts(stepViewContent)
+                .setTextSize(16)
+                .setStepsViewIndicatorCompletedLineColor(ContextCompat.getColor(this, android.R.color.black))
+                .setStepsViewIndicatorUnCompletedLineColor(ContextCompat.getColor(this, R.color.black))
+                .setStepViewComplectedTextColor(ContextCompat.getColor(this, android.R.color.black))
+                .setStepViewUnComplectedTextColor(ContextCompat.getColor(this, R.color.black))
+                .setStepsViewIndicatorCompleteIcon(ContextCompat.getDrawable(this, R.drawable.flag_black_48dp))
+                .setStepsViewIndicatorDefaultIcon(ContextCompat.getDrawable(this, R.drawable.default_icon))
+                // Consider changing to blank drawable?
+                .setStepsViewIndicatorAttentionIcon(ContextCompat.getDrawable(this, R.drawable.attention));
+
+        stepProgress.ondrawIndicator();
+    }
+
+    /**
+     * Bleh.. Indexes
+     *
+     * Generates the StepView's TextView content (ie. the elements' rank) in batches of 4.
+     * If not enough elements are avail for a 4-sized batch, adjusts batch size
+     *
+     * 1-indexed location    |_1__2__3__4_|  |_5__6__x__x_| << 4 Sized Batches, x = non existent element [size() and real life]
+     *      0-indexed         [0][1][2][3]    [4][5][6][7]  <<
+     *
+     */
+    private void generateNewStepViewContent() {
+        stepViewContent = new ArrayList<>();
+        int batchSize = 4;
+
+        int elementLocation = currentElementPosition +1;
+            // Gives non 0-index location value
+            // currentElementPosition is based on a 0 index.
+
+        if (currentElementPosition+batchSize>parentFlow.getChildCount()) {
+            batchSize = (parentFlow.getChildCount()%batchSize);
+                // determines remainder of elements that don't fit into standard 4 memeber batch
+            for (int i = 0; i<batchSize; i++){
+                stepViewContent.add(String.valueOf(elementLocation++));
+            }
+
+            for (int i=0; i<4-batchSize;i++) {
+                stepViewContent.add("");
+            }
+
+
+            // This is hacky I know, but bleh.. the libs not perfect
+
+        } else {
+           /* Adds content to List */
+            for (int i = 0; i<batchSize; i++){
+                stepViewContent.add(String.valueOf(elementLocation++));
+            }
+        }
+
+
+
+    }
+
+    private void incrementStepView() {
+
+        attentionIconPosition++;
+        stepProgress.setStepsViewIndicatorComplectingPosition(attentionIconPosition)
+                .setStepViewTexts(stepViewContent);
+        stepProgress.ondrawIndicator();
+
+        if (attentionIconPosition % 4 == 0 & attentionIconPosition != 0) {
+            generateNewStepViewContent();
+            nextStepViewBatch();
+            AppUtils.animateViewPulse(stepProgress, this);
+        }
     }
 
     @Override
@@ -150,16 +239,20 @@ public class FlowStateActivity extends AppCompatActivity
             fragment = FlowElementFragment.newInstance(
                     parentFlow
                             .getChildElements().get(
-                            ++currentElement
+                            ++currentElementPosition
                     )
             );
 
             overTimeFlag = AppConstants.FS_OVERTIME_FALSE; // Resets for next elements
 
+            incrementStepView();
+
             transaction.setCustomAnimations(
                     android.R.anim.slide_in_left, android.R.anim.slide_out_right)
                     .replace(R.id.flowstate_fragment_container, fragment)
                     .commit();
+
+
 
             } catch (IndexOutOfBoundsException e) {
                 /* Index Out of Bounds Exception Thrown When Flow Ends */
@@ -178,6 +271,8 @@ public class FlowStateActivity extends AppCompatActivity
     }
 
 
+
+
     /**
      * Parses recieved data and adds to the Integer[] tracking the amount of time taken for each
      * task to complete
@@ -188,12 +283,12 @@ public class FlowStateActivity extends AppCompatActivity
     @Override
     public void onDataPass(Bundle recievedData, int elementNumber) {
         /* onDataPass is called after onNextSelected is called,
-           therefore currentElement is updated to the next element location
+           therefore currentElementPosition is updated to the next element location
            while passData is sending bundle related to previous element
-           therefore currentElement-1 (basically a count)
+           therefore currentElementPosition-1 (basically a count)
          */
 
-        millisInFlow[currentElement] = recievedData.getInt(
+        millisInFlow[currentElementPosition] = recievedData.getInt(
                 String.valueOf(elementNumber));
     }
 
@@ -356,7 +451,6 @@ public class FlowStateActivity extends AppCompatActivity
     protected void onResume() {
         activityStateFlag=AppConstants.FS_UI_ACTIVE;
         fragment.uiActive(activityStateFlag);
-
         super.onResume();
 
     }
