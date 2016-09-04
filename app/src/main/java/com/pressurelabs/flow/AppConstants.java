@@ -45,8 +45,9 @@ public class AppConstants {
             "flowName", "taskCount", "estimatedHours", "estimatedMinutes",
             "timesComplete","actualHours","actualMinutes","actualSeconds"
     };
-    public static String FRAGMENT_FLOW_ELEMENT = "fragment_flow_element";
+    public static String FRAGMENT_FLOW_STATE = "fragment_flow_state";
     public static boolean FS_OVERTIME_FALSE = false;
     public static boolean FS_OVERTIME_TRUE = true;
+    public static String EXTRA_POSITION_SELECTED = "extra_position_selected";
 }
 

@@ -21,11 +21,14 @@
         <item name="android:statusBarColor">@color/abc_secondary_text_material_light</item>
         <item name="colorPrimary">@color/primary_dark_material_light</item>
         <item name="colorAccent">@color/colorPrimaryDark</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowContentTransitions">true</item>
     </style>
+
 
 </resources>

@@ -8,7 +8,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".TheHubActivity"
             android:label="@string/app_name"
@@ -30,10 +29,10 @@
                 android:value=".TheHubActivity" />
         </activity>
         <activity
-            android:parentActivityName=".TheHubActivity"
             android:name=".SandBoxActivity"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait" />
+            android:parentActivityName=".TheHubActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".ElementDesignerActivity"
             android:screenOrientation="portrait" />
@@ -43,10 +42,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".FinishedFlowActivity"
-            android:parentActivityName=".TheHubActivity"
             android:noHistory="true"
-            android:theme="@style/AppTheme"
-            android:screenOrientation="portrait" />
+            android:parentActivityName=".TheHubActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ShowElementActivity"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

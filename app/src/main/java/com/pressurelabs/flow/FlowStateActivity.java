@@ -12,7 +12,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.InputFilter;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,13 +41,13 @@ import java.util.Random;
  */
 
 public class FlowStateActivity extends AppCompatActivity
-        implements FlowElementFragment.OnFragmentSelectedListener, FlowElementFragment.OnDataPass {
+        implements FlowStateFragment.OnFragmentSelectedListener, FlowStateFragment.OnDataPass {
 
     private Flow parentFlow;
     private int currentElementPosition;
     private Integer[] millisInFlow;
         // Holds each currentElementPosition's completetion time matching to it's Flow Location
-    private FlowElementFragment fragment;
+    private FlowStateFragment fragment;
     private int flowStateFlag;
     private String activityStateFlag;
     private NotificationCompat.Builder mBuilder;
@@ -83,7 +82,7 @@ public class FlowStateActivity extends AppCompatActivity
 
             currentElementPosition =0; //Location of starting element
 
-            fragment = FlowElementFragment.newInstance(
+            fragment = FlowStateFragment.newInstance(
                     parentFlow.getChildAt(currentElementPosition)
             );
 
@@ -236,7 +235,7 @@ public class FlowStateActivity extends AppCompatActivity
         try {
             fragment.cancelTimerAndPassData(overTimeFlag);
 
-            fragment = FlowElementFragment.newInstance(
+            fragment = FlowStateFragment.newInstance(
                     parentFlow
                             .getChildElements().get(
                             ++currentElementPosition
@@ -390,7 +389,7 @@ public class FlowStateActivity extends AppCompatActivity
             //Adds the ET and params to the layout of the dialog box
             layout.addView(in, params);
 
-            newFlowDialog.setTitle("How many more minutes?");
+            newFlowDialog.setTitle(R.string.fs_dialog_more_time_title);
 
             newFlowDialog.setView(layout);
 

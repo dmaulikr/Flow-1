@@ -47,8 +47,8 @@ public class HubRecyclerViewAdapter extends RecyclerView.Adapter<HubRecyclerView
             name = (TextView) view.findViewById(R.id.item_flow_name);
             elements = (TextView) view.findViewById(R.id.item_element_count);
             timeEstimate = (TextView) view.findViewById(R.id.item_total_time);
-            rename = (EditText) view.findViewById(R.id.item_flow_rename);
-            switcher = (ViewSwitcher) view.findViewById(R.id.rename_switcher);
+            rename = (EditText) view.findViewById(R.id.hub_item_flow_rename);
+            switcher = (ViewSwitcher) view.findViewById(R.id.hub_rename_switcher);
             /* Set up views for set operations */
         }
 
@@ -102,7 +102,7 @@ public class HubRecyclerViewAdapter extends RecyclerView.Adapter<HubRecyclerView
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.flow_card, parent, false);
+                .inflate(R.layout.cardview_flow_hub, parent, false);
 
         return new ViewHolder(itemView);
     }

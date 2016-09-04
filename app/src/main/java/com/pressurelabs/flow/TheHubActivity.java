@@ -506,8 +506,8 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     private void renameFlow(final int cardPosition, final View cardViewClicked) {
         menuState = AppConstants.MENU_HIDE;
         invalidateOptionsMenu();
-        final ViewSwitcher switcher = (ViewSwitcher) cardViewClicked.findViewById(R.id.rename_switcher);
-        final EditText rename = (EditText) switcher.findViewById(R.id.item_flow_rename);
+        final ViewSwitcher switcher = (ViewSwitcher) cardViewClicked.findViewById(R.id.hub_rename_switcher);
+        final EditText rename = (EditText) switcher.findViewById(R.id.hub_item_flow_rename);
 
         rename.setInputType(InputType.TYPE_CLASS_TEXT);
         //Only allows A-Z, a-z, 0-9, and special characters (%$!@)

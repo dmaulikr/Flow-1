@@ -54,4 +54,5 @@ dependencies {
     compile 'hanks.xyz:smallbang-library:0.1.2'
     compile 'net.sf.supercsv:super-csv:2.3.0'
     compile 'com.github.baoyachi:StepView:1.8.1'
+    compile 'com.github.qiugang:EditTag:v1.2.3'
 }

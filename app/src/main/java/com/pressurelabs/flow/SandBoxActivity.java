@@ -6,6 +6,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -202,18 +205,30 @@ public class SandBoxActivity extends AppCompatActivity
      * Sets the onClick action when an element in the grid is clicked.
      */
     private void setClickListeners() {
-        //TODO Refactor this to match new millis pattern when Grid feature branch is merged
 
         elementGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
-                String eName = currentFlow.getChildAt(position).getElementName();
-                String eTime = AppUtils.buildStandardTimeOutput(currentFlow.getChildAt(position).getTimeEstimate());
 
-                showToast("" + eName + "\n" + eTime);
+                goShowElementActivity(position);
+
             }
         });
     }
+
+    private void goShowElementActivity(int position) {
+        Explode explode = new Explode();
+        explode.setDuration(300);
+        getWindow().setExitTransition(explode);
+
+        Intent in = new Intent(SandBoxActivity.this, ShowElementActivity.class);
+        in.putExtra(AppConstants.EXTRA_PASSING_UUID, currentFlow.getUuid());
+        in.putExtra(AppConstants.EXTRA_POSITION_SELECTED, position);
+
+        startActivity(in);
+
+    }
+
     /** Launches a new Element Designer Activity waiting to receive a new
      *  FlowElement Object back as a Parcel
      *
@@ -267,6 +282,11 @@ public class SandBoxActivity extends AppCompatActivity
 
     }
 
+    /**
+     * Prevents Toast Spam by canceling hanging Toasts before showing others
+     *
+     * @param text
+     */
     private void showToast(String text)
     {
         if(currentToast != null)

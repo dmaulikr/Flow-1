@@ -114,5 +114,7 @@
     <string name="sb_sort_title">Sorting</string>
     <string name="snackbar_hub_msg">To the data grave yard...</string>
     <string name="fs_more_time_confirm">Time updated.</string>
+    <string name="fs_dialog_more_time_title">How many more minutes?</string>
+    <string name="show_elements_view">Viewing</string>
 
 </resources>
