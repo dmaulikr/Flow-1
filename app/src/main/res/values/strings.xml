@@ -133,4 +133,7 @@
         "Cheers mate!"
     </string>
 
+
+    <string name="transition_explode">transition_explode</string>
+
 </resources>
