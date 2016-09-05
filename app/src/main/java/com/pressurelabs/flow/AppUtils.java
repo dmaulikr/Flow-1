@@ -2,11 +2,20 @@ package com.pressurelabs.flow;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.text.InputFilter;
+import android.text.InputType;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.EditText;
+import android.widget.Toast;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -50,7 +59,7 @@ public class AppUtils {
      * @return
      */
     public static int calcHours(int millis) {
-        return (int) convertToTotalMinutes(millis)/60;
+        return convertToTotalMinutes(millis)/60;
     }
 
     /**
@@ -135,4 +144,33 @@ public class AppUtils {
         v.startAnimation(pulse);
     }
 
+    public static EditText setNameInputFilters(EditText viewToFilter) {
+        viewToFilter.setInputType(InputType.TYPE_CLASS_TEXT);
+        viewToFilter.setFilters(new InputFilter[] {
+                new InputFilter.LengthFilter(20)
+        });
+        return viewToFilter;
+    }
+
+    public static void setTimeInputFilters(EditText timeInputFilters) {
+    }
+
+    public static void sendFeedback(Context callingActivity) {
+        Intent gmailIntent = new Intent(Intent.ACTION_SENDTO);
+        // Hard coding classes is bad..
+        gmailIntent.setClassName("com.google.android.gm", "com.google.android.gm.ComposeActivityGmail");
+        gmailIntent.putExtra(Intent.EXTRA_EMAIL,
+                new String[] {
+                        callingActivity.getResources().getString(R.string.email_pressurelabs)
+                });
+        gmailIntent.putExtra(Intent.EXTRA_SUBJECT, callingActivity.getResources().getString(R.string.feedback_subject_msg));
+        gmailIntent.putExtra(Intent.EXTRA_TEXT,  callingActivity.getResources().getString(R.string.feedback_body_msg));
+
+        try {
+            callingActivity.startActivity(gmailIntent);
+        } catch(ActivityNotFoundException ex) {
+            Toast.makeText(callingActivity, R.string.feedback_failed_msg, Toast.LENGTH_LONG).show();
+        }
+
+    }
 }

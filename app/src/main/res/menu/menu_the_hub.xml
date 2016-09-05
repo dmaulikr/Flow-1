@@ -14,5 +14,9 @@
         android:title="@string/action_delete_flow"
         compat:showAsAction="always"/>
 
+    <item
+        android:title="@string/menu_send_feedback"
+        compat:showAsAction="ifRoom"
+        android:id="@+id/action_send_feedback" />
 
  </menu>

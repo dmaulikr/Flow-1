@@ -115,6 +115,22 @@
     <string name="snackbar_hub_msg">To the data grave yard...</string>
     <string name="fs_more_time_confirm">Time updated.</string>
     <string name="fs_dialog_more_time_title">How many more minutes?</string>
-    <string name="show_elements_view">Viewing</string>
+    <string name="frgmt_show_element_notes">Notes</string>
+    <string name="finished_allcaps">FINISHED</string>
+    <string name="show_elements_editing">Editing</string>
+    <string name="minutes">minutes</string>
+    <string name="hours">hours</string>
+    <string name="designer_text_validation_msg">Mind checking that name and time again?</string>
+    <string name="menu_send_feedback">Send Feedback</string>
+    <string name="feedback_failed_msg">Sorry, can\'t send feedback at this time!</string>
+    <string name="feedback_subject_msg">Flow: Some ideas for you!</string>
+    <string name="email_pressurelabs">rob@pressurelabs.com</string>
+    <string name="feedback_body_msg">
+        "Hey Rob,"
+k
+        "\n\nHere are some ideas/feedback I have for Flow:"
+        "\n\n\n\n\n\n\n\n\n\n"
+        "Cheers mate!"
+    </string>
 
 </resources>

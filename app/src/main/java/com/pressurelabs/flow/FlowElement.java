@@ -18,6 +18,10 @@ public class FlowElement implements Parcelable{
 
     private String elementName;
 
+
+
+    private String elementNotes;
+
     private int timeEstimate;
         // Time is stored in Millis
 
@@ -30,9 +34,26 @@ public class FlowElement implements Parcelable{
         this.elementName = name;
         this.timeEstimate = timeEst;
         this.timeUnits = units;
+        this.elementNotes = "";
     } //End of constructor
 
     /*~~~~~ Getter and Setter Methods: ~~~~~*/
+
+    public void setElementName(String elementName) {
+        this.elementName = elementName;
+    }
+
+    public void setTimeEstimate(int timeEstimate) {
+        this.timeEstimate = timeEstimate;
+    }
+
+    public void setTimeUnits(String timeUnits) {
+        this.timeUnits = timeUnits;
+    }
+
+    public String getElementNotes() {
+        return elementNotes;
+    }
 
     /** Gets the name for flowElement
      * @return elementName
@@ -120,4 +141,8 @@ public class FlowElement implements Parcelable{
                     return new FlowElement[size];
                 }
             };
+
+    public void setElementNotes(String elementNotes) {
+        this.elementNotes = elementNotes;
+    }
 }

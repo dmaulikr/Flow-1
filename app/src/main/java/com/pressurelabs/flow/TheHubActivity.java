@@ -102,7 +102,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
             manager = new AppDataManager(this);
         }
 
-        menuState = AppConstants.MENU_NATIVE;
+        menuState = AppConstants.MENU_ITEMS_NATIVE;
 
     }
 
@@ -173,7 +173,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
 
         MenuItem newF = menu.findItem(R.id.action_new_flow);
         MenuItem deleteAllF = menu.findItem(R.id.action_delete_flows);
-        if (menuState.equals(AppConstants.MENU_HIDE)) {
+        if (menuState.equals(AppConstants.MENU_ITEMS_HIDE)) {
             newF.setVisible(false);
             deleteAllF.setVisible(false);
         }
@@ -197,6 +197,9 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
                 createNewFlow();
                 return true;
 
+            case R.id.action_send_feedback:
+                AppUtils.sendFeedback(this);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -216,7 +219,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     @Override
     protected void onResume() {
         super.onResume();
-        menuState=AppConstants.MENU_NATIVE;
+        menuState=AppConstants.MENU_ITEMS_NATIVE;
         invalidateOptionsMenu();
         populateRecycleView();
     }
@@ -504,7 +507,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
      * @param cardViewClicked the cardview view object clicked
      */
     private void renameFlow(final int cardPosition, final View cardViewClicked) {
-        menuState = AppConstants.MENU_HIDE;
+        menuState = AppConstants.MENU_ITEMS_HIDE;
         invalidateOptionsMenu();
         final ViewSwitcher switcher = (ViewSwitcher) cardViewClicked.findViewById(R.id.hub_rename_switcher);
         final EditText rename = (EditText) switcher.findViewById(R.id.hub_item_flow_rename);
@@ -582,7 +585,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
                     manager.overwrite(toChange.getUuid(), toChange);
                     adapter.notifyDataSetChanged();
                     switcher.showNext();
-                    menuState=AppConstants.MENU_NATIVE;
+                    menuState=AppConstants.MENU_ITEMS_NATIVE;
                     invalidateOptionsMenu();
                     popupEditing.dismiss();
                     newName.clearFocus();
@@ -597,7 +600,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
             @Override
             public void onClick(View v) {
                 switcher.showNext();
-                menuState=AppConstants.MENU_NATIVE;
+                menuState=AppConstants.MENU_ITEMS_NATIVE;
                 invalidateOptionsMenu();
                 popupEditing.dismiss();
             }

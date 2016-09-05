@@ -15,9 +15,9 @@ public class AppConstants {
     public static final String RESTORED_USER_FLOWS = "RESTORED_USER_FLOWS";
     public static final String RESTORED_DATA_MANAGER = "RESTORED_DATA_MANAGER";
     public static final String EXTRA_PASSING_UUID = "EXTRA_PASSING_UUID";
-    public static final String MENU_NATIVE = "MENU_NATIVE";
-    public static final String MENU_HIDE = "MENU_HIDE";
-    public static final String MENU_PARTIAL_ITEMS = "menu_partial";
+    public static final String MENU_ITEMS_NATIVE = "MENU_ITEMS_NATIVE";
+    public static final String MENU_ITEMS_HIDE = "MENU_ITEMS_HIDE";
+    public static final String MENU_ITEMS_PARTIAL = "menu_items_partial";
     public static final int EARLY_EXIT = -1;
     public static final int FS_FINISHED = 1;
     public static final int NOT_FINISHED = 0;
@@ -49,5 +49,17 @@ public class AppConstants {
     public static boolean FS_OVERTIME_FALSE = false;
     public static boolean FS_OVERTIME_TRUE = true;
     public static String EXTRA_POSITION_SELECTED = "extra_position_selected";
+
+
+    public static String STATUS_CANCELLED = "status_cancelled";
+    public static String STATUS_CONFIRM_CANCEL = "status_confirm_cancel";
+    public static String STATUS_COMMIT_EDITS = "status_commit_edits";
+    public static String STATUS_CONFIRM_EDITS = "status_confirm_edits";
+
+
+    public static String KEY_NEW_NAME = "key_new_name";
+    public static String KEY_NEW_TIME = "key_new_time";
+    public static String KEY_NEW_UNITS = "key_new_units";
+    public static String KEY_NEW_NOTES = "key_new_notes";
 }
 

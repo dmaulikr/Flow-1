@@ -7,8 +7,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
-import android.transition.Transition;
-import android.transition.TransitionInflater;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -74,7 +72,7 @@ public class SandBoxActivity extends AppCompatActivity
         gridContent = new LinkedList<>();
 
 
-        menuState = AppConstants.MENU_NATIVE;
+        menuState = AppConstants.MENU_ITEMS_NATIVE;
 
         ((MultiFunctionGridView) elementGridView).setGridFunctionState(AppConstants.GS_MCL_CHECKABLE);
 
@@ -88,7 +86,7 @@ public class SandBoxActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_sandbox, menu);
 
         MenuItem statistics = menu.findItem(R.id.action_flow_statistics);
-        if (menuState.equals(AppConstants.MENU_PARTIAL_ITEMS)) {
+        if (menuState.equals(AppConstants.MENU_ITEMS_PARTIAL)) {
             statistics.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
@@ -115,6 +113,10 @@ public class SandBoxActivity extends AppCompatActivity
                 Toast.makeText(SandBoxActivity.this, "Statistics not available yet.",Toast.LENGTH_LONG).show();
                 return true;
 
+            case R.id.action_send_feedback:
+                AppUtils.sendFeedback(this);
+                return true;
+
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -125,8 +127,8 @@ public class SandBoxActivity extends AppCompatActivity
 
     private void toggleSortingState() {
         /* If hit toggle and menu is set to native, want to change to partial action bar view */
-        if (menuState.equals(AppConstants.MENU_NATIVE)) {
-            menuState=AppConstants.MENU_PARTIAL_ITEMS;
+        if (menuState.equals(AppConstants.MENU_ITEMS_NATIVE)) {
+            menuState=AppConstants.MENU_ITEMS_PARTIAL;
 
             getSupportActionBar().setTitle(R.string.sb_sort_title);
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -148,8 +150,8 @@ public class SandBoxActivity extends AppCompatActivity
             });
 
             toggleFABVisibility(AppConstants.FAB_HIDE);
-        } else if (menuState.equals(AppConstants.MENU_PARTIAL_ITEMS)) {
-            menuState=AppConstants.MENU_NATIVE;
+        } else if (menuState.equals(AppConstants.MENU_ITEMS_PARTIAL)) {
+            menuState=AppConstants.MENU_ITEMS_NATIVE;
 
             getSupportActionBar().setTitle(currentFlow.getName());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);

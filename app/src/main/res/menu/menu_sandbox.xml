@@ -17,5 +17,11 @@
         android:title="@string/action_flow_statistics"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:title="@string/menu_send_feedback"
+        app:showAsAction="ifRoom"
+        android:id="@+id/action_send_feedback" />
+
+
 
 </menu>

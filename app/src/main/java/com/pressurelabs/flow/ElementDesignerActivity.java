@@ -87,7 +87,7 @@ public class ElementDesignerActivity extends AppCompatActivity {
             finish();
 
         } else {
-            Toast.makeText(ElementDesignerActivity.this, "Mind checking that name and time again?", Toast.LENGTH_LONG).show();
+            Toast.makeText(ElementDesignerActivity.this, R.string.designer_text_validation_msg, Toast.LENGTH_LONG).show();
         }
     }
 

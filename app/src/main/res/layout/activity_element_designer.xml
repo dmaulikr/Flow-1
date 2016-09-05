@@ -112,7 +112,7 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/designer_done_element"
         android:layout_alignParentStart="true"
-        android:src="@drawable/close_black_48dp"
+        android:src="@drawable/cancel_black_48dp"
         android:layout_alignBottom="@+id/designer_done_element"
         android:id="@+id/designer_forget_element"
         android:onClick="forgetElement" />

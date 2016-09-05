@@ -33,6 +33,7 @@
 
 
         <com.baoyachi.stepview.HorizontalStepView
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:id="@+id/flowstate_step_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
