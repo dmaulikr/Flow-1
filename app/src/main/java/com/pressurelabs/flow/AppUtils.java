@@ -169,7 +169,7 @@ public class AppUtils {
         try {
             callingActivity.startActivity(gmailIntent);
         } catch(ActivityNotFoundException ex) {
-            Toast.makeText(callingActivity, R.string.feedback_failed_msg, Toast.LENGTH_LONG).show();
+            Toast.makeText(callingActivity, R.string.feedback_failed_msg, Toast.LENGTH_SHORT).show();
         }
 
     }

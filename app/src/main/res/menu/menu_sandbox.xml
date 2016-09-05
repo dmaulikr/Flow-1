@@ -19,7 +19,7 @@
 
     <item
         android:title="@string/menu_send_feedback"
-        app:showAsAction="ifRoom"
+        app:showAsAction="collapseActionView"
         android:id="@+id/action_send_feedback" />
 
 

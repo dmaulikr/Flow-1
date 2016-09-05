@@ -99,10 +99,11 @@ public class ShowElementActivity extends AppCompatActivity implements ShowElemen
             case R.id.action_cancel_edits:
                 fragment.finishEdits(AppConstants.STATUS_CANCELLED);
                 toggleMenuItemsTo(AppConstants.MENU_ITEMS_NATIVE);
+                break;
 
             case R.id.action_send_feedback:
-                AppUtils.sendFeedback(this);
-                return true;
+                AppUtils.sendFeedback(ShowElementActivity.this);
+                break;
 
             default:
                 break;

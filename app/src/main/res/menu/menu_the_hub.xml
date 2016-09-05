@@ -16,7 +16,7 @@
 
     <item
         android:title="@string/menu_send_feedback"
-        compat:showAsAction="ifRoom"
+        compat:showAsAction="collapseActionView"
         android:id="@+id/action_send_feedback" />
 
  </menu>
