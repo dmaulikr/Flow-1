@@ -35,6 +35,8 @@ public class Flow implements Parcelable{
     private int totalTime=0;
         // Time is stored in Millis
 
+    private int lifeTimeInFlow=0;
+
     private String uuid;
 
     /** Overloaded Flow Object constructor.
@@ -52,6 +54,13 @@ public class Flow implements Parcelable{
 
     /*~~~~~~~~~ Getters & Setters ~~~~~~~~~*/
 
+    public int getLifeTimeInFlow() {
+        return lifeTimeInFlow;
+    }
+
+    public void setLifeTimeInFlow(int lifeTimeInFlow) {
+        this.lifeTimeInFlow = lifeTimeInFlow;
+    }
 
     public String getUuid() {
         return uuid;
@@ -239,10 +248,20 @@ public class Flow implements Parcelable{
         temp.add(String.valueOf(this.getHours()));
         temp.add(String.valueOf(this.getMinutes()));
         temp.add(String.valueOf(this.getCompletionTokens()));
-
+        temp.add(
+                String.valueOf(
+                        AppUtils.calcHours(
+                                this.getLifeTimeInFlow()
+                                        )
+                            )
+                );
         return temp;
     }
 
+    public void addToLifeTimeStats(int statToAdd) {
+        lifeTimeInFlow = lifeTimeInFlow + statToAdd;
+    }
+    /* ~~~~~~~~~~~~ PARCEL IMPLEMENTATION ~~~~~~~~~~*/
     // Parcel Implementation to pass data from the Stream to the Sandbox about
     // the current flow object.
     // Still need to make method to calculate the total time for the flow based on elements

@@ -42,6 +42,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         Flow finishedFlow = appData.load(getIntent().getStringExtra(AppConstants.EXTRA_PASSING_UUID));
         finishedFlow.addCompletionToken();
+        finishedFlow.addToLifeTimeStats(millisInFlow);
 
         String[] array = this.getResources().getStringArray(R.array.praise_msg);
         String randomStr = array[new Random().nextInt(array.length)];
@@ -56,7 +57,6 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         statsData.saveToCSV(exportData);
 
-        Log.d("~~~ SAVED STATS TO FILE", statsData.toString());
     }
 
     private String[] prepareCSVExport(Flow finishedFlow, int actualMillisInFlow) {
@@ -66,6 +66,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
             ArrayList[2] = Estimated Hours
             ArrayList[3] = Estimated Minutes
             ArrayList[4] = completion tokens
+            ArrayList[5] = life time in flow (hrs)
          */
         ArrayList<String> exportData = finishedFlow.buildStatsExportList();
 

@@ -1,22 +1,33 @@
 package com.pressurelabs.flow;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.LinkedList;
 
@@ -111,8 +122,8 @@ public class SandBoxActivity extends AppCompatActivity
 
 
             case R.id.action_flow_statistics:
-                Log.d("STATS", currentFlow.pingStats());
-                Toast.makeText(SandBoxActivity.this, "Statistics not available yet.",Toast.LENGTH_LONG).show();
+                View v = findViewById(R.id.action_flow_statistics);
+                displayStatsPopup(v);
                 return true;
 
             case R.id.action_send_feedback:
@@ -451,6 +462,45 @@ public class SandBoxActivity extends AppCompatActivity
         int selectCount = elementGridView.getCheckedItemCount();
 
         mode.setSubtitle("" + selectCount + " item(s) selected");
+
+    }
+
+    private void displayStatsPopup(View anchor) {
+        LayoutInflater layoutInflater = (LayoutInflater) this
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View layout = layoutInflater.inflate(R.layout.popup_window_flow_stats, null);
+
+        RelativeLayout viewGroup = (RelativeLayout)  layout.findViewById(R.id.popup_stats);
+
+        // Creating the PopupWindow
+        final PopupWindow popup = new PopupWindow(layout, RelativeLayout.LayoutParams.WRAP_CONTENT,
+                RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        TextView elementCount = (TextView) viewGroup.findViewById(R.id.stats_total_elements);
+        TextView timeEstimate = (TextView) viewGroup.findViewById(R.id.stats_total_time);
+        TextView completeCount = (TextView) viewGroup.findViewById(R.id.stats_times_complete);
+        TextView lifeTimeInFlow = (TextView) viewGroup.findViewById(R.id.stats_life_time_spent_in_flow);
+
+        elementCount.setText(
+                String.valueOf(currentFlow.getChildCount())
+        );
+
+        timeEstimate.setText(
+                String.valueOf(currentFlow.getFormattedTime())
+        );
+
+        completeCount.setText(
+                String.valueOf(currentFlow.getCompletionTokens())
+        );
+
+        lifeTimeInFlow.setText(
+                String.valueOf(
+                        AppUtils.buildTimerStyleTime(currentFlow.getLifeTimeInFlow()))
+        );
+
+        popup.setBackgroundDrawable(new BitmapDrawable(null,""));
+        popup.setFocusable(true);
+        popup.showAsDropDown(anchor);
 
     }
 }

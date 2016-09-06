@@ -136,5 +136,9 @@
 
     <string name="transition_explode">transition_explode</string>
     <string name="notes_title">Notes:</string>
+    <string name="stats_total_elements">Total tasks:</string>
+    <string name="stats_estimated_time_title">Estimated time:</string>
+    <string name="stats_times_complete_title">Completions:</string>
+    <string name="stats_life_time_in_flow">Lifetime in Flow:</string>
 
 </resources>

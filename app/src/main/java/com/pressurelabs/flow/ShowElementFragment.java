@@ -161,9 +161,6 @@ public class ShowElementFragment extends Fragment {
 
 
     public void beginEdits() {
-        ViewSwitcher switcherName = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_name);
-        ViewSwitcher switcherTime = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_time);
-        ViewSwitcher switcherNotes = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_notes);
 
         changeName = AppUtils.setNameInputFilters(changeName);
 
@@ -175,24 +172,18 @@ public class ShowElementFragment extends Fragment {
 
         setTimeTextOf(AppConstants.CHANGE_TIME);
 
-        switcherName.showNext();
-        switcherTime.showNext();
-        switcherNotes.showNext();
+        switchersShowNext();
 
         finishedBut.setVisibility(View.VISIBLE);
     }
 
     public void finishEdits(String status) {
-        ViewSwitcher switcherName = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_name);
-        ViewSwitcher switcherTime = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_time);
-        ViewSwitcher switcherNotes = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_notes);
+
 
         Bundle b = new Bundle();
         if (status.equals(AppConstants.STATUS_CANCELLED)) {
 
-            switcherName.showNext();
-            switcherTime.showNext();
-            switcherNotes.showNext();
+            switchersShowNext();
 
             finishedBut.setVisibility(View.INVISIBLE);
 
@@ -209,22 +200,6 @@ public class ShowElementFragment extends Fragment {
                 Toast.makeText(mContext, R.string.designer_text_validation_msg, Toast.LENGTH_LONG).show();
 
             } else {
-
-//                originalName.setText(
-//                        changeName.getText().toString()
-//                );
-//
-//                originalTime.setText(
-//                        changeTime.getText().toString()
-//                );
-//
-//                originalNotes.setText(
-//                        changeNotes.getText().toString()
-//                );
-//
-//                switcherName.showNext();
-//                switcherTime.showNext();
-//                switcherNotes.showNext();
 
             /* Pass data to parent activity */
 
@@ -258,19 +233,20 @@ public class ShowElementFragment extends Fragment {
 
                 passEdits(b, AppConstants.STATUS_CONFIRM_EDITS);
 
-//
-//                finishedBut.setVisibility(View.INVISIBLE);
-//
-//
-//                OGGlassesAnimation(1);
-//                units.setClickable(false);
-//                setToggleButtonDisplay();
-//                    // Sets toggle display
             }
 
 
         }
 
+    }
+
+    private void switchersShowNext() {
+        ViewSwitcher switcherName = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_name);
+        ViewSwitcher switcherTime = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_time);
+        ViewSwitcher switcherNotes = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_notes);
+        switcherName.showNext();
+        switcherTime.showNext();
+        switcherNotes.showNext();
     }
 
 
