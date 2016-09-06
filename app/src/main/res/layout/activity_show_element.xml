@@ -5,13 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:transitionName="@string/transition_explode">
+    >
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar_show_element"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/appbar_padding_top"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -19,7 +18,6 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
         </android.support.v7.widget.Toolbar>
@@ -27,7 +25,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <FrameLayout
-
+        android:transitionName="@string/transition_explode"
         android:paddingTop="?android:attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
