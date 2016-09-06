@@ -297,10 +297,8 @@ public class FlowStateFragment extends Fragment {
             }
 
             timeRemaining=millisUntilFinished;
-            Log.d("PROGRESS", String.valueOf(timeRemaining));
 
             progressBar.setProgress(--progress);
-            Log.d("PROGRESS", String.valueOf(progress));
 
             timeDisplay.setText(AppUtils.buildTimerStyleTime(millisUntilFinished));
 

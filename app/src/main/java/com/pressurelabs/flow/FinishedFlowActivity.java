@@ -88,7 +88,7 @@ public class FinishedFlowActivity extends AppCompatActivity {
                 )
         );
 
-        Log.d("~~~ CSV PREPARED EXPORT", exportData.toString());
+//        Log.d("~~~ CSV PREPARED EXPORT", exportData.toString());
 
         return exportData.toArray(new String[exportData.size()]);
     }
@@ -113,25 +113,25 @@ public class FinishedFlowActivity extends AppCompatActivity {
         startActivity(in);
     }
 
-    public void readCSVData(View v) {
-        ExportDataManager statsData = new ExportDataManager(this);
-        Log.d("READ", statsData.toString());
-    }
-
-    public void deleteCSV(View v) {
-        ExportDataManager statsData = new ExportDataManager(this);
-        statsData.deleteAllStats();
-    }
-
-    public void saveCSV(View v) {
-        ExportDataManager statsData = new ExportDataManager(this);
-        statsData.saveToCSV(deleteMe);
-    }
-
-    public void readFile(View v) {
-        ExportDataManager statsData = new ExportDataManager(this);
-        Log.d("FILE", "Reading File: \n" + statsData.readFromFile());
-    }
+//    public void readCSVData(View v) {
+//        ExportDataManager statsData = new ExportDataManager(this);
+//        Log.d("READ", statsData.toString());
+//    }
+//
+//    public void deleteCSV(View v) {
+//        ExportDataManager statsData = new ExportDataManager(this);
+//        statsData.deleteAllStats();
+//    }
+//
+//    public void saveCSV(View v) {
+//        ExportDataManager statsData = new ExportDataManager(this);
+//        statsData.saveToCSV(deleteMe);
+//    }
+//
+//    public void readFile(View v) {
+//        ExportDataManager statsData = new ExportDataManager(this);
+//        Log.d("FILE", "Reading File: \n" + statsData.readFromFile());
+//    }
 
 
 }
