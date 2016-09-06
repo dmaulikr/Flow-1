@@ -61,5 +61,7 @@ public class AppConstants {
     public static String KEY_NEW_TIME = "key_new_time";
     public static String KEY_NEW_UNITS = "key_new_units";
     public static String KEY_NEW_NOTES = "key_new_notes";
+    public static String ORIGINAL_TIME = "original_time";
+    public static String CHANGE_TIME = "change_time";
 }
 

@@ -28,10 +28,14 @@ public class ShowElementFragment extends Fragment {
 
     private onEditPasser mEditCallback;
     private Context mContext;
-    private EditText rename;
-    private EditText retime;
-    private TextView name;
-    private TextView time;
+    private EditText changeName;
+    private EditText changeTime;
+    private TextView originalNotes;
+    private EditText changeNotes;
+    private TextView originalName;
+    private TextView originalTime;
+    private ToggleButton units;
+    private Button finishedBut;
 
     public FlowElement getCurrentElement() {
         return currentElement;
@@ -62,72 +66,126 @@ public class ShowElementFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_show_element, container, false);
 
-        ToggleButton units = (ToggleButton) rootView.findViewById(R.id.fragment_se_units_toggle);
+        units = (ToggleButton) rootView.findViewById(R.id.fragment_se_units_toggle);
+        originalName = (TextView) rootView.findViewById(R.id.switcher_se_name_TV);
+        originalTime = (TextView) rootView.findViewById(R.id.switcher_se_time_TV);
+        originalNotes = (TextView) rootView.findViewById(R.id.switcher_se_notes_TV);
+        changeName = (EditText) rootView.findViewById(R.id.switcher_se_name_ET);
+        changeTime = (EditText) rootView.findViewById(R.id.switcher_se_time_ET);
+        changeNotes = (EditText) rootView.findViewById(R.id.switcher_se_notes_ET);
 
-        name = (TextView) rootView.findViewById(R.id.switcher_se_name_TV);
-
-        time = (TextView) rootView.findViewById(R.id.switcher_se_time_TV);
-
-        TextView notes = (TextView) rootView.findViewById(R.id.switcher_se_notes_TV);
+        finishedBut = (Button) rootView.findViewById(R.id.fragment_se_finished_but);
 
         currentElement = getArguments()
                 .getParcelable(AppConstants.EXTRA_ELEMENT_PARCEL);
 
 
-        toggleButtonState(units, false);
+        units.setClickable(false);
 
-        name.setText(currentElement.getElementName());
+        originalName.setText(currentElement.getElementName());
 
-        notes.setText("Notes: " + currentElement.getElementNotes());
+        originalNotes.setText(String.valueOf(currentElement.getElementNotes()));
 
-        switch (currentElement.getTimeUnits()) {
-            case "minutes":
-                time.setText(
-                        String.valueOf(
-                                AppUtils.calcRemainderMins(
-                                        currentElement.getTimeEstimate()
-                                )
-                        )
-                );
-                break;
-            case "hours":
-                time.setText(
-                        String.valueOf(
-                                AppUtils.calcHours(
-                                        currentElement.getTimeEstimate()
-                                )
-                        )
-                );
-                break;
-            default:
-                break;
-        }
+        setTimeTextOf(AppConstants.ORIGINAL_TIME);
 
         return rootView;
     }
 
-    private void toggleButtonState(ToggleButton units, boolean disabled) {
-        units.setClickable(disabled);
 
-        if (currentElement.getTimeUnits().equals(AppConstants.UNIT_MINUTES)) {
-            units.setChecked(false);
-        } else {
-            units.setChecked(true);
+    private void setTimeTextOf(String viewToSetText) {
+        if (viewToSetText.equals(AppConstants.ORIGINAL_TIME)) {
+            switch (currentElement.getTimeUnits()) {
+                case "minutes":
+                    originalTime.setText(
+                            String.valueOf(
+                                    AppUtils.calcRemainderMins(
+                                            currentElement.getTimeEstimate()
+                                    )
+                            )
+                    );
+                    units.setChecked(false);
+                    break;
+                case "hours":
+                    originalTime.setText(
+                            String.valueOf(
+                                    AppUtils.calcHours(
+                                            currentElement.getTimeEstimate()
+                                    )
+                            )
+                    );
+                    units.setChecked(true);
+                    break;
+
+                default:
+                    break;
+            }
+        } else if (viewToSetText.equals(AppConstants.CHANGE_TIME)) {
+            switch (currentElement.getTimeUnits()) {
+                case "minutes":
+                    changeTime.setText(
+                            String.valueOf(
+                                    AppUtils.calcRemainderMins(
+                                            currentElement.getTimeEstimate()
+                                    )
+                            )
+                    );
+                    units.setChecked(false);
+                    break;
+
+                case "hours":
+                    changeTime.setText(
+                            String.valueOf(
+                                    AppUtils.calcHours(
+                                            currentElement.getTimeEstimate()
+                                    )
+                            )
+                    );
+                    units.setChecked(true);
+                    break;
+                default:
+                    break;
+            }
         }
 
     }
 
-    private void passEdits(Bundle b, String status){
-        mEditCallback.onEditsPassed(b, status);
+
+    private String returnUnitValue(ToggleButton units) {
+        if (units.isChecked()) {
+            return AppConstants.UNIT_HOURS;
+
+        } else {
+            return AppConstants.UNIT_MINUTES;
+        }
     }
 
-    public void finishEdits(String status) {
-        //TODO refactor to viewflipper
+
+    public void beginEdits() {
         ViewSwitcher switcherName = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_name);
         ViewSwitcher switcherTime = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_time);
         ViewSwitcher switcherNotes = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_notes);
-        ToggleButton units = (ToggleButton) getView().findViewById(R.id.fragment_se_units_toggle);
-        toggleButtonState(units, false);
+
+        changeName = AppUtils.setNameInputFilters(changeName);
+
+        units.setClickable(true);
+
+        changeNotes.setText(currentElement.getElementNotes());
+
+        changeName.setText(currentElement.getElementName());
+
+        setTimeTextOf(AppConstants.CHANGE_TIME);
+
+        switcherName.showNext();
+        switcherTime.showNext();
+        switcherNotes.showNext();
+
+        finishedBut.setVisibility(View.VISIBLE);
+    }
+
+    public void finishEdits(String status) {
+        ViewSwitcher switcherName = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_name);
+        ViewSwitcher switcherTime = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_time);
+        ViewSwitcher switcherNotes = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_notes);
 
         Bundle b = new Bundle();
         if (status.equals(AppConstants.STATUS_CANCELLED)) {
@@ -136,61 +194,92 @@ public class ShowElementFragment extends Fragment {
             switcherTime.showNext();
             switcherNotes.showNext();
 
-
-
-            Button btn = (Button) getView().findViewById(R.id.fragment_se_finished_but);
-            btn.setVisibility(View.INVISIBLE);
+            finishedBut.setVisibility(View.INVISIBLE);
 
             passEdits(b, AppConstants.STATUS_CONFIRM_CANCEL);
+            units.setClickable(false);
+
             OGGlassesAnimation(0);
 
         } else if (status.equals(AppConstants.STATUS_COMMIT_EDITS)) {
 
-            if (rename.getText().toString().equals("") ||
-                    retime.getText().toString().equals("") ||
-                    retime.getText().toString().equals("0")) {
+            if (changeName.getText().toString().equals("") ||
+                    changeTime.getText().toString().equals("") ||
+                    changeTime.getText().toString().equals("0")) {
                 Toast.makeText(mContext, R.string.designer_text_validation_msg, Toast.LENGTH_LONG).show();
 
             } else {
-                TextView notes = (TextView) getView().findViewById(R.id.switcher_se_notes_TV);
-                EditText renotes = (EditText) getView().findViewById(R.id.switcher_se_notes_ET);
 
-
-                name.setText(
-                        rename.getText().toString()
-                );
-
-                retime.setText(
-                        retime.getText().toString()
-                );
-
-                notes.setText(
-                        renotes.getText().toString()
-                );
-
-                switcherName.showNext();
-                switcherTime.showNext();
-                switcherNotes.showNext();
+//                originalName.setText(
+//                        changeName.getText().toString()
+//                );
+//
+//                originalTime.setText(
+//                        changeTime.getText().toString()
+//                );
+//
+//                originalNotes.setText(
+//                        changeNotes.getText().toString()
+//                );
+//
+//                switcherName.showNext();
+//                switcherTime.showNext();
+//                switcherNotes.showNext();
 
             /* Pass data to parent activity */
+
                 String timeUnits = returnUnitValue(units);
-                b.putString(AppConstants.KEY_NEW_NAME, rename.getText().toString());
-                b.putString(AppConstants.KEY_NEW_TIME, retime.getText().toString());
+                int newMillisTime=1000*60;
+
+                switch(timeUnits) {
+                    case "minutes":
+                        // Will be in the tens form since minutes split, c
+                        newMillisTime = AppUtils.minsToMillis(
+                                                Integer.parseInt(
+                                                        changeTime.getText().toString()
+                                                               )
+                                                            );
+                        break;
+                    case "hours":
+                        newMillisTime = AppUtils.hrsToMillis(
+                                Integer.parseInt(
+                                        changeTime.getText().toString()
+                                )
+                        );
+                        break;
+                    default:
+                        break;
+
+                }
+                b.putString(AppConstants.KEY_NEW_NAME, changeName.getText().toString());
+                b.putInt(AppConstants.KEY_NEW_TIME, newMillisTime);
                 b.putString(AppConstants.KEY_NEW_UNITS, timeUnits);
-                b.putString(AppConstants.KEY_NEW_NOTES, renotes.getText().toString());
+                b.putString(AppConstants.KEY_NEW_NOTES, changeNotes.getText().toString());
 
                 passEdits(b, AppConstants.STATUS_CONFIRM_EDITS);
 
-                Button finished = (Button) getView().findViewById(R.id.fragment_se_finished_but);
-                finished.setVisibility(View.GONE);
-
-
-                OGGlassesAnimation(1);
+//
+//                finishedBut.setVisibility(View.INVISIBLE);
+//
+//
+//                OGGlassesAnimation(1);
+//                units.setClickable(false);
+//                setToggleButtonDisplay();
+//                    // Sets toggle display
             }
 
 
         }
 
+    }
+
+
+    private void passEdits(Bundle b, String status){
+        mEditCallback.onEditsPassed(b, status);
+    }
+
+    public interface onEditPasser {
+        void onEditsPassed(Bundle b,String status);
     }
 
     private void OGGlassesAnimation(int onOffStatus) {
@@ -204,76 +293,9 @@ public class ShowElementFragment extends Fragment {
                 break;
             case 0:
                 ogMLG.startAnimation(fadeout);
-                ogMLG.setVisibility(View.VISIBLE);
+                ogMLG.setVisibility(View.INVISIBLE);
                 break;
         }
-    }
-
-    private String returnUnitValue(ToggleButton units) {
-        if (units.isChecked()) {
-            return AppConstants.UNIT_HOURS;
-
-        } else {
-            return AppConstants.UNIT_MINUTES;
-        }
-    }
-
-    public interface onEditPasser {
-        void onEditsPassed(Bundle b,String status);
-    }
-
-
-    public void beginEdits() {
-        ViewSwitcher switcherName = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_name);
-        ViewSwitcher switcherTime = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_time);
-        ViewSwitcher switcherNotes = (ViewSwitcher) getView().findViewById(R.id.fragment_se_switcher_notes);
-
-        rename = (EditText) switcherName.findViewById(R.id.switcher_se_name_ET);
-        retime = (EditText) switcherTime.findViewById(R.id.switcher_se_time_ET);
-        EditText renotes = (EditText) switcherNotes.findViewById(R.id.switcher_se_notes_ET);
-
-        rename = AppUtils.setNameInputFilters(rename);
-
-        ToggleButton units = (ToggleButton) getView().findViewById(R.id.fragment_se_units_toggle);
-
-        toggleButtonState(units, true);
-
-        renotes.setText(currentElement.getElementNotes());
-
-        rename.setText(currentElement.getElementName());
-
-        switch (currentElement.getTimeUnits()) {
-            case "minutes":
-                retime.setText(
-                        String.valueOf(
-                                AppUtils.calcRemainderMins(
-                                        currentElement.getTimeEstimate()
-                                )
-                        )
-                );
-                break;
-            //TODO CALC HOURS NOT WORKING HERE
-            case "hours":
-                retime.setText(
-                        String.valueOf(
-                                AppUtils.calcHours(
-                                        currentElement.getTimeEstimate()
-                                )
-                        )
-                );
-                break;
-            default:
-                break;
-        }
-
-        switcherName.showNext();
-        switcherTime.showNext();
-        switcherNotes.showNext();
-
-        Button finished = (Button) getView().findViewById(R.id.fragment_se_finished_but);
-        finished.setVisibility(View.VISIBLE);
-
-
     }
 
     /**

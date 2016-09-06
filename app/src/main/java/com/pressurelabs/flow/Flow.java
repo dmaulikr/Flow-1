@@ -311,6 +311,12 @@ public class Flow implements Parcelable{
                 }
             };
 
+    public FlowElement find(FlowElement elementToFind) {
+        return this.childFlowElements.get(
+                this.childFlowElements.indexOf(elementToFind)
+        );
+    }
+
     /* How to use:
         ~ SENDING ACTIVITY ~
         Flow obj = new Flow("bah");

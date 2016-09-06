@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class ShowElementActivity extends AppCompatActivity implements ShowElementFragment.onEditPasser{
 
@@ -72,9 +73,6 @@ public class ShowElementActivity extends AppCompatActivity implements ShowElemen
             editElements.setVisible(false);
             cancelEdits.setVisible(true);
         }
-
-
-
         return true;
     }
 
@@ -98,7 +96,6 @@ public class ShowElementActivity extends AppCompatActivity implements ShowElemen
 
             case R.id.action_cancel_edits:
                 fragment.finishEdits(AppConstants.STATUS_CANCELLED);
-                toggleMenuItemsTo(AppConstants.MENU_ITEMS_NATIVE);
                 break;
 
             case R.id.action_send_feedback:
@@ -129,28 +126,41 @@ public class ShowElementActivity extends AppCompatActivity implements ShowElemen
         if (status.equals(AppConstants.STATUS_CONFIRM_CANCEL)) {
             toggleMenuItemsTo(AppConstants.MENU_ITEMS_NATIVE);
         } else if (status.equals(AppConstants.STATUS_CONFIRM_EDITS)){
-            modifyElementData(b);
-            new AppDataManager(this).overwrite(flow.getUuid(),flow);
 
+            FlowElement elementToModify = flow.find(fragment.getCurrentElement());
+
+            modifyElementData(b, elementToModify);
+            new AppDataManager(this).overwrite(flow.getUuid(),flow);
+            toggleMenuItemsTo(AppConstants.MENU_ITEMS_NATIVE);
+            updateFragment(elementToModify);
         }
     }
 
-    private void modifyElementData(Bundle b) {
-        fragment.getCurrentElement().setElementName(b.getString(AppConstants.KEY_NEW_NAME));
-        fragment.getCurrentElement().setTimeEstimate(Integer.parseInt(b.getString(AppConstants.KEY_NEW_TIME)));
-        fragment.getCurrentElement().setTimeUnits(b.getString(AppConstants.KEY_NEW_UNITS));
-        fragment.getCurrentElement().setElementNotes(b.getString(AppConstants.KEY_NEW_NOTES));
+    private void modifyElementData(Bundle b, FlowElement elementToModify) {
+
+        elementToModify.setElementName(b.getString(AppConstants.KEY_NEW_NAME));
+        elementToModify.setTimeEstimate(b.getInt(AppConstants.KEY_NEW_TIME));
+        elementToModify.setTimeUnits(b.getString(AppConstants.KEY_NEW_UNITS));
+        elementToModify.setElementNotes(b.getString(AppConstants.KEY_NEW_NOTES));
+        flow.recalculateTotalTime();
     }
 
     public void onFinishedEdits(View v) {
         fragment.finishEdits(AppConstants.STATUS_COMMIT_EDITS);
-        menuState=AppConstants.MENU_ITEMS_NATIVE;
-        invalidateOptionsMenu();
     }
 
+    private void updateFragment(FlowElement elementToUpdateWith) {
 
-    //TODO Add Editing Popup Function - Change Title to Editing
-    //TODO Swap toggle button for something else
-    //TODO Adds dates to tasks?
-    //TODO Add Animations and transitions
+            fragment = ShowElementFragment.newInstance(
+                    elementToUpdateWith
+            );
+
+
+            android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction
+                    .replace(R.id.showelement_fragment_container, fragment)
+                    .commit();
+
+        Toast.makeText(this, "Updated Element", Toast.LENGTH_LONG).show();
+    }
 }

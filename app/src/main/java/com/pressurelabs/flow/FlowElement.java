@@ -34,7 +34,7 @@ public class FlowElement implements Parcelable{
         this.elementName = name;
         this.timeEstimate = timeEst;
         this.timeUnits = units;
-        this.elementNotes = "";
+        this.elementNotes = "No notes.";
     } //End of constructor
 
     /*~~~~~ Getter and Setter Methods: ~~~~~*/
@@ -52,7 +52,7 @@ public class FlowElement implements Parcelable{
     }
 
     public String getElementNotes() {
-        return elementNotes;
+        return this.elementNotes;
     }
 
     /** Gets the name for flowElement
@@ -102,13 +102,14 @@ public class FlowElement implements Parcelable{
 
     /* Parcel Implementation for Object Passing Between Activities! */
     private FlowElement(Parcel in) {
-        String[] data = new String[3];
+        String[] data = new String[4];
         // To include: Id, Estimated Time, Task Name, E
 
         in.readStringArray(data);
         this.elementName = data[0];
         this.timeEstimate = Integer.parseInt(data[1]);
         this.timeUnits = data[2];
+        this.elementNotes = data[3];
     }
 
     @Override
@@ -122,7 +123,8 @@ public class FlowElement implements Parcelable{
                 new String[] {
                         this.elementName,
                         String.valueOf(this.timeEstimate),
-                        String.valueOf(this.timeUnits)
+                        String.valueOf(this.timeUnits),
+                        this.elementNotes
                 }
         );
     }

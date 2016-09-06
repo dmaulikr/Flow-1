@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
@@ -212,22 +214,31 @@ public class SandBoxActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> parent, View v,
                                     int position, long id) {
 
-                goShowElementActivity(position);
+                goShowElementActivity(position, v);
 
             }
         });
     }
 
-    private void goShowElementActivity(int position) {
-        Explode explode = new Explode();
-        explode.setDuration(300);
-        getWindow().setExitTransition(explode);
+    private void goShowElementActivity(int position, View clickedView) {
+
 
         Intent in = new Intent(SandBoxActivity.this, ShowElementActivity.class);
         in.putExtra(AppConstants.EXTRA_PASSING_UUID, currentFlow.getUuid());
         in.putExtra(AppConstants.EXTRA_POSITION_SELECTED, position);
 
-        startActivity(in);
+        String transitionName = getString(R.string.transition_explode);
+
+        // Define the view that the animation will start from
+
+        ActivityOptionsCompat options =
+
+                ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                        clickedView,   // Starting view
+                        transitionName    // The String
+                );
+
+        ActivityCompat.startActivity(this, in, options.toBundle());
 
     }
 
@@ -256,10 +267,6 @@ public class SandBoxActivity extends AppCompatActivity
         if(requestCode == AppConstants.DESIGNER_REQUEST_CODE && resultCode==RESULT_OK) {
             newElement = data.getParcelableExtra(AppConstants.EXTRA_ELEMENT_PARCEL);
             addElementToFlow(newElement);
-        }
-
-        if(requestCode == AppConstants.FS_REQUEST_CODE && resultCode==RESULT_OK){
-          //TODO Updates UI to # of completed flows?
         }
 
         super.onActivityResult(requestCode, resultCode, data);

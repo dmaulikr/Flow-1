@@ -115,7 +115,7 @@
     <string name="snackbar_hub_msg">To the data grave yard...</string>
     <string name="fs_more_time_confirm">Time updated.</string>
     <string name="fs_dialog_more_time_title">How many more minutes?</string>
-    <string name="frgmt_show_element_notes">Notes</string>
+    <string name="frgmt_show_element_notes_hint">This is where you type magical text!</string>
     <string name="finished_allcaps">FINISHED</string>
     <string name="show_elements_editing">Editing</string>
     <string name="minutes">minutes</string>
@@ -135,5 +135,6 @@
 
 
     <string name="transition_explode">transition_explode</string>
+    <string name="notes_title">Notes:</string>
 
 </resources>
