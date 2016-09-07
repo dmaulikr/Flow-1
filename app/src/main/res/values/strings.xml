@@ -140,5 +140,7 @@
     <string name="stats_estimated_time_title">Estimated time:</string>
     <string name="stats_times_complete_title">Completions:</string>
     <string name="stats_life_time_in_flow">Lifetime in Flow:</string>
-
+    <string name="drawer_secret_land">Secret Land</string>
+    <string name="export_to_drive">Export data</string>
+    <string name="export_failed_msg">Sorry, can\'t export data at this time!</string>
 </resources>

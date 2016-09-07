@@ -3,9 +3,12 @@ package com.pressurelabs.flow;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,6 +36,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.MetadataChangeSet;
 import com.kobakei.ratethisapp.RateThisApp;
 
 
@@ -49,8 +58,9 @@ import java.util.Calendar;
  *  The class allows for the creation and saving of new Flows, destruction of current ones, editing and renaming of Flows
  *  and launching of the Flows into a new Activity
  */
-public class TheHubActivity extends AppCompatActivity implements HubRecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class TheHubActivity extends AppCompatActivity implements HubRecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private GoogleApiClient  mGoogleApiClient;
     private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
 
@@ -103,6 +113,12 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
 
         menuState = AppConstants.MENU_ITEMS_NATIVE;
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Drive.API)
+                .addScope(Drive.SCOPE_FILE)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
     private void generateDrawerGreeting(NavigationView view) {
@@ -673,6 +689,55 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
 
     }
 
+    private void exportDataToDrive() {
 
+        createNewDriveFile();
+        //TODO Install GPlay on Emulator?
+        //TODO Write to file vs save file from
+    }
+
+    private void createNewDriveFile() {
+        ResultCallback<DriveApi.DriveContentsResult> contentsCallback = new
+                ResultCallback<DriveApi.DriveContentsResult>() {
+                    @Override
+                    public void onResult(DriveApi.DriveContentsResult result) {
+                        if (!result.getStatus().isSuccess()) {
+                            Toast.makeText(TheHubActivity.this, R.string.export_failed_msg, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                .setTitle("Flow-export: " +
+                                        Calendar.getInstance().get(Calendar.DATE))
+                                .setMimeType("text/html").build();
+                        IntentSender intentSender = Drive.DriveApi
+                                .newCreateFileActivityBuilder()
+                                .setInitialMetadata(metadataChangeSet)
+                                .setInitialDriveContents(result.getDriveContents())
+                                .build(mGoogleApiClient);
+                        try {
+                            startIntentSenderForResult(intentSender, 1, null, 0, 0, 0);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Handle the exception
+                        }
+                    }
+                };
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        // Automange will do its best but  If an error occurs that cannot be resolved, you will receive a call to this
+        Toast.makeText(this, R.string.feedback_failed_msg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
 
 }
