@@ -173,6 +173,11 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
             case R.id.action_support_devs:
                 Toast.makeText(this,R.string.feature_not_ready,Toast.LENGTH_LONG).show();
                 return false;
+
+            case R.id.action_export_data:
+                exportDataToDrive();
+                return true;
+
             default:
                 return false;
         }
