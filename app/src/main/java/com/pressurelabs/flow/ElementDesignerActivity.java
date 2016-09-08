@@ -96,7 +96,7 @@ public class ElementDesignerActivity extends AppCompatActivity {
             timeUnits = AppConstants.UNIT_MINUTES;
         }
 
-        int timeInMillis=0;
+        int timeInMillis=60000;
 
         switch (timeUnits) {
 
@@ -112,8 +112,9 @@ public class ElementDesignerActivity extends AppCompatActivity {
                         AppUtils.hrsToMillis(
                                 Integer.parseInt(elementTime)
                         );
+                break;
             default:
-                timeInMillis=60000;
+                break;
         }
 
         return new FlowElement(elementName, timeInMillis, timeUnits);

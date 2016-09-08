@@ -98,7 +98,7 @@ public class ShowElementFragment extends Fragment {
                 case "minutes":
                     originalTime.setText(
                             String.valueOf(
-                                    AppUtils.calcRemainderMins(
+                                    AppUtils.convertToTotalMinutes(
                                             currentElement.getTimeEstimate()
                                     )
                             )
@@ -124,7 +124,7 @@ public class ShowElementFragment extends Fragment {
                 case "minutes":
                     changeTime.setText(
                             String.valueOf(
-                                    AppUtils.calcRemainderMins(
+                                    AppUtils.convertToTotalMinutes(
                                             currentElement.getTimeEstimate()
                                     )
                             )

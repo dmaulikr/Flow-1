@@ -32,7 +32,7 @@ public class AppUtils {
      * @param millis
      * @return
      */
-    private static int convertToTotalMinutes(int millis) {
+    public static int convertToTotalMinutes(int millis) {
         return (millis/(1000*60));
     }
 

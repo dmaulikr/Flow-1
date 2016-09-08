@@ -4,8 +4,8 @@
     <string name="action_settings">Settings</string>
     <string name="new_task_name">Task name</string>
     <string-array name="select_time">
-        <item> minutes </item>
-        <item> hours </item>
+        <item>minutes</item>
+        <item>hours</item>
     </string-array>
     <string name="action_new_flow"> Create Flow </string>
     <string name="dialog_flow_name">Create Flow</string>
