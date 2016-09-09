@@ -42,8 +42,8 @@ public class AppConstants {
     public static final String APP_DATA_FILE_NAME = "appdata.json";
     public static final String APP_STATS_EXPORT_FILE_NAME = "stats_export.csv";
     public static final String[] EXPORT_DATA_CSV_HEADER = {
-            "flowName", "taskCount", "estimatedHours", "estimatedMinutes",
-            "timesComplete","actualHours","actualMinutes","actualSeconds"
+            "Flow name", "Task count", "Estimate hours", "Estimated minutes",
+            "Times completed","Actual hours taken","Actual minutes","Actual seconds"
     };
     public static final String FRAGMENT_FLOW_STATE = "fragment_flow_state";
     public static final boolean FS_OVERTIME_FALSE = false;

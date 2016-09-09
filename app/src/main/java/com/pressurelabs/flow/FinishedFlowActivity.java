@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -84,11 +83,10 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         /* Adds seconds taken to complete flow to export data */
         exportData.add(String.valueOf(
-                AppUtils.calcSeconds(actualMillisInFlow)
+                AppUtils.calcRemainderSecs(actualMillisInFlow)
                 )
         );
 
-//        Log.d("~~~ CSV PREPARED EXPORT", exportData.toString());
 
         return exportData.toArray(new String[exportData.size()]);
     }
@@ -112,26 +110,5 @@ public class FinishedFlowActivity extends AppCompatActivity {
 
         startActivity(in);
     }
-
-//    public void readCSVData(View v) {
-//        ExportDataManager statsData = new ExportDataManager(this);
-//        Log.d("READ", statsData.toString());
-//    }
-//
-//    public void deleteCSV(View v) {
-//        ExportDataManager statsData = new ExportDataManager(this);
-//        statsData.deleteAllStats();
-//    }
-//
-//    public void saveCSV(View v) {
-//        ExportDataManager statsData = new ExportDataManager(this);
-//        statsData.saveToCSV(deleteMe);
-//    }
-//
-//    public void readFile(View v) {
-//        ExportDataManager statsData = new ExportDataManager(this);
-//        Log.d("FILE", "Reading File: \n" + statsData.readFromFile());
-//    }
-
 
 }

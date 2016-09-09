@@ -1,6 +1,7 @@
 package com.pressurelabs.flow;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -91,9 +92,9 @@ public class ExportDataManager {
         try {
             listReader = new CsvListReader(new FileReader(statsExportFile), CsvPreference.STANDARD_PREFERENCE);
 
-            List<String> line;
-            while( (line = listReader.read()) != null ) {
-                data.add(line);
+            List<String> entry;
+            while( (entry = listReader.read()) != null ) {
+                data.add(entry);
             }
 
         } catch (Exception e) {
@@ -113,10 +114,11 @@ public class ExportDataManager {
     }
 
     /**
-     * Uses standard Java IO to read the CSV file and print to logs
+     * Uses standard InputStream to read the CSV file line by line
+     * and return a string representation of it.
      * @return
      */
-    public String readFromFile() {
+    public String readFileByInputStream() {
         try {
 
             FileInputStream fis = mContext.openFileInput(statsFileName);
@@ -125,8 +127,13 @@ public class ExportDataManager {
             StringBuilder sb = new StringBuilder();
             String line;
 
+            /* writes headers */
+            String header = TextUtils.join(",",AppConstants.EXPORT_DATA_CSV_HEADER);
+            sb.append(header + "\n");
+
+            /* writes actual data to file */
             while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
+                sb.append(line + "\n");
             }
 
             String loadedData = sb.toString();

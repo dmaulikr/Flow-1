@@ -40,8 +40,8 @@ public class AppUtils {
         return (millis/(1000));
     }
 
-    public static int calcSeconds(int millis) {
-        return convertToTotalSeconds(millis)%1000;
+    public static int calcRemainderSecs(int millis) {
+        return convertToTotalSeconds(millis)%60;
     }
 
     /**

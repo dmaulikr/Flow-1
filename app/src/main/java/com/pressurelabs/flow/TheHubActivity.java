@@ -63,6 +63,7 @@ import java.util.Calendar;
  */
 public class TheHubActivity extends AppCompatActivity implements HubRecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    /* Data Management and Export */
     private GoogleApiClient  mGoogleApiClient;
     private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
@@ -245,6 +246,15 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
         menuState=AppConstants.MENU_ITEMS_NATIVE;
         invalidateOptionsMenu();
         populateRecycleView();
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        mGoogleApiClient.connect();
     }
 
 
@@ -542,6 +552,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
                 new InputFilter.LengthFilter(20)
         });
 
+        //TODO Set input filters on rename
 
         rename.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -706,35 +717,40 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     }
 
     private void exportDataToDrive() {
+        createNewDriveFile();
+    }
+
+    private void createNewDriveFile() {
+
+        final ResultCallback<DriveApi.DriveContentsResult> contentsCallback = new
+                ResultCallback<DriveApi.DriveContentsResult>() {
+                    @Override
+                    public void onResult(DriveApi.DriveContentsResult result) {
+                        if (!result.getStatus().isSuccess()) {
+                            Toast.makeText(TheHubActivity.this, R.string.export_failed_msg, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                .setMimeType("text/html").build();
+                        IntentSender intentSender = Drive.DriveApi
+                                .newCreateFileActivityBuilder()
+                                .setInitialMetadata(metadataChangeSet)
+                                .setInitialDriveContents(result.getDriveContents())
+                                .build(mGoogleApiClient);
+                        try {
+                            startIntentSenderForResult(intentSender,
+                                    AppConstants.EXPORT_CREATOR_REQUEST_CODE, null, 0, 0, 0);
+                        } catch (IntentSender.SendIntentException e) {
+                            AppUtils.showMessage(TheHubActivity.this, "Data could not be exported");
+                        }
+                    }
+                };
+
         Drive.DriveApi.newDriveContents(mGoogleApiClient)
                 .setResultCallback(contentsCallback);
     }
 
-    final ResultCallback<DriveApi.DriveContentsResult> contentsCallback = new
-            ResultCallback<DriveApi.DriveContentsResult>() {
-                @Override
-                public void onResult(DriveApi.DriveContentsResult result) {
-                    if (!result.getStatus().isSuccess()) {
-                        Toast.makeText(TheHubActivity.this, R.string.export_failed_msg, Toast.LENGTH_LONG).show();
-                        return;
-                    }
-
-                    MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-                            .setMimeType("text/html").build();
-                    IntentSender intentSender = Drive.DriveApi
-                            .newCreateFileActivityBuilder()
-                            .setInitialMetadata(metadataChangeSet)
-                            .setInitialDriveContents(result.getDriveContents())
-                            .build(mGoogleApiClient);
-                    try {
-                        startIntentSenderForResult(intentSender,
-                                AppConstants.EXPORT_CREATOR_REQUEST_CODE, null, 0, 0, 0);
-                        AppUtils.showMessage(TheHubActivity.this, "Created file");
-                    } catch (IntentSender.SendIntentException e) {
-                        AppUtils.showMessage(TheHubActivity.this, "Cannot export");
-                    }
-                }
-            };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -747,9 +763,9 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
                 break;
             case AppConstants.EXPORT_CREATOR_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    DriveId driveId = (DriveId) data.getParcelableExtra(
+                    DriveId driveFileId = (DriveId) data.getParcelableExtra(
                             OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
-                    Toast.makeText(this, "Created file: " + driveId, Toast.LENGTH_SHORT).show();
+                    writeDataExportToFile(driveFileId);
                 }
                 break;
             default:
@@ -757,6 +773,17 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
                 break;
         }
     }
+
+    private void writeDataExportToFile(DriveId driveFileId) {
+        EditContentParams params = new EditContentParams(
+                new ExportDataManager(TheHubActivity.this).readFileByInputStream(),
+                driveFileId.asDriveFile()
+        );
+
+        new EditContentsAsyncTask(this).execute(params);
+
+    }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
