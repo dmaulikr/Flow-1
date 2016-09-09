@@ -14,4 +14,14 @@
         </menu>
     </item>
 
+    <item android:title="@string/drawer_secret_land">
+        <menu>
+            <item
+                android:id="@+id/action_export_data"
+                android:title="@string/export_to_drive"
+                android:icon="@android:drawable/ic_menu_upload"/>
+
+        </menu>
+    </item>
+
 </menu>

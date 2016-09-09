@@ -95,7 +95,7 @@ public class ShowElementFragment extends Fragment {
     private void setTimeTextOf(String viewToSetText) {
         if (viewToSetText.equals(AppConstants.ORIGINAL_TIME)) {
             switch (currentElement.getTimeUnits()) {
-                case "minutes":
+                case AppConstants.UNIT_MINUTES:
                     originalTime.setText(
                             String.valueOf(
                                     AppUtils.convertToTotalMinutes(
@@ -105,7 +105,7 @@ public class ShowElementFragment extends Fragment {
                     );
                     units.setChecked(false);
                     break;
-                case "hours":
+                case AppConstants.UNIT_HOURS:
                     originalTime.setText(
                             String.valueOf(
                                     AppUtils.calcHours(
@@ -121,7 +121,7 @@ public class ShowElementFragment extends Fragment {
             }
         } else if (viewToSetText.equals(AppConstants.CHANGE_TIME)) {
             switch (currentElement.getTimeUnits()) {
-                case "minutes":
+                case AppConstants.UNIT_MINUTES:
                     changeTime.setText(
                             String.valueOf(
                                     AppUtils.convertToTotalMinutes(
@@ -132,7 +132,7 @@ public class ShowElementFragment extends Fragment {
                     units.setChecked(false);
                     break;
 
-                case "hours":
+                case AppConstants.UNIT_HOURS:
                     changeTime.setText(
                             String.valueOf(
                                     AppUtils.calcHours(

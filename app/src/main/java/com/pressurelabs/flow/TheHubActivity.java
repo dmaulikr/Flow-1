@@ -3,9 +3,12 @@ package com.pressurelabs.flow;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,6 +36,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.drive.Drive;
+import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveId;
+import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.kobakei.ratethisapp.RateThisApp;
 
 
@@ -49,8 +61,10 @@ import java.util.Calendar;
  *  The class allows for the creation and saving of new Flows, destruction of current ones, editing and renaming of Flows
  *  and launching of the Flows into a new Activity
  */
-public class TheHubActivity extends AppCompatActivity implements HubRecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener {
+public class TheHubActivity extends AppCompatActivity implements HubRecyclerViewAdapter.onCardClickListener, NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    /* Data Management and Export */
+    private GoogleApiClient  mGoogleApiClient;
     private AppDataManager manager;
     // Manages the saving of data and Flow objects to internal storage
 
@@ -103,6 +117,12 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
 
         menuState = AppConstants.MENU_ITEMS_NATIVE;
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Drive.API)
+                .addScope(Drive.SCOPE_FILE)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
     private void generateDrawerGreeting(NavigationView view) {
@@ -157,6 +177,11 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
             case R.id.action_support_devs:
                 Toast.makeText(this,R.string.feature_not_ready,Toast.LENGTH_LONG).show();
                 return false;
+
+            case R.id.action_export_data:
+                exportDataToDrive();
+                return true;
+
             default:
                 return false;
         }
@@ -221,6 +246,15 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
         menuState=AppConstants.MENU_ITEMS_NATIVE;
         invalidateOptionsMenu();
         populateRecycleView();
+        if (mGoogleApiClient == null) {
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(Drive.API)
+                    .addScope(Drive.SCOPE_FILE)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
+        }
+        mGoogleApiClient.connect();
     }
 
 
@@ -518,6 +552,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
                 new InputFilter.LengthFilter(20)
         });
 
+        //TODO Set input filters on rename
 
         rename.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -611,12 +646,18 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     }
 
 
+    /**
+     * Popups must be removed before activity becomes invisible
+     * Api Client must disconnect.
+     */
     @Override
     protected void onPause() {
-        super.onPause();
         dismissPopups();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onPause();
     }
-
 
     @Override
     public void onBackPressed() {
@@ -635,6 +676,8 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     protected void onStart() {
         super.onStart();
         // Monitor launch times and interval from installation
+        mGoogleApiClient.connect();
+
         RateThisApp.onStart(this);
         RateThisApp.Config config = new RateThisApp.Config(10, 10);
         // Custom title ,message and buttons names
@@ -673,6 +716,107 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
 
     }
 
+    private void exportDataToDrive() {
+        createNewDriveFile();
+    }
 
+    private void createNewDriveFile() {
+
+        final ResultCallback<DriveApi.DriveContentsResult> contentsCallback = new
+                ResultCallback<DriveApi.DriveContentsResult>() {
+                    @Override
+                    public void onResult(DriveApi.DriveContentsResult result) {
+                        if (!result.getStatus().isSuccess()) {
+                            Toast.makeText(TheHubActivity.this, R.string.export_failed_msg, Toast.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                                .setMimeType("text/html").build();
+                        IntentSender intentSender = Drive.DriveApi
+                                .newCreateFileActivityBuilder()
+                                .setInitialMetadata(metadataChangeSet)
+                                .setInitialDriveContents(result.getDriveContents())
+                                .build(mGoogleApiClient);
+                        try {
+                            startIntentSenderForResult(intentSender,
+                                    AppConstants.EXPORT_CREATOR_REQUEST_CODE, null, 0, 0, 0);
+                        } catch (IntentSender.SendIntentException e) {
+                            AppUtils.showMessage(TheHubActivity.this, "Data could not be exported");
+                        }
+                    }
+                };
+
+        Drive.DriveApi.newDriveContents(mGoogleApiClient)
+                .setResultCallback(contentsCallback);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case AppConstants.EXPORT_RESOLVE_CONNECTION_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    mGoogleApiClient.connect();
+                }
+                break;
+            case AppConstants.EXPORT_CREATOR_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    DriveId driveFileId = (DriveId) data.getParcelableExtra(
+                            OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    writeDataExportToFile(driveFileId);
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
+    }
+
+    private void writeDataExportToFile(DriveId driveFileId) {
+        EditContentParams params = new EditContentParams(
+                new ExportDataManager(TheHubActivity.this).readFileByInputStream(),
+                driveFileId.asDriveFile()
+        );
+
+        new EditContentsAsyncTask(this).execute(params);
+
+    }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        /* Callback can be invoked if user has not previously authorized the app. */
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this, AppConstants.EXPORT_RESOLVE_CONNECTION_REQUEST_CODE);
+            } catch (IntentSender.SendIntentException e) {
+                // Unable to resolve, message user appropriately
+            }
+        } else {
+            Toast.makeText(this, R.string.feedback_failed_msg, Toast.LENGTH_LONG).show();
+            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
+        }
+
+    }
+
+    /**
+     * Getter for the {@code GoogleApiClient}.
+     */
+    public GoogleApiClient getGoogleApiClient() {
+        return mGoogleApiClient;
+    }
 
 }

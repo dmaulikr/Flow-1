@@ -40,8 +40,8 @@ public class AppUtils {
         return (millis/(1000));
     }
 
-    public static int calcSeconds(int millis) {
-        return convertToTotalSeconds(millis)%1000;
+    public static int calcRemainderSecs(int millis) {
+        return convertToTotalSeconds(millis)%60;
     }
 
     /**
@@ -176,5 +176,9 @@ public class AppUtils {
             }
         }
 
+    }
+
+    public static void showMessage(Context ctx,String message) {
+        Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
     }
 }
