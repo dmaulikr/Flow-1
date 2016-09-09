@@ -100,14 +100,14 @@ public class ElementDesignerActivity extends AppCompatActivity {
 
         switch (timeUnits) {
 
-            case "minutes":
+            case AppConstants.UNIT_MINUTES:
                 timeInMillis =
                         AppUtils.minsToMillis(
                                 Integer.parseInt(elementTime)
                         );
                 break;
 
-            case "hours":
+            case AppConstants.UNIT_HOURS:
                 timeInMillis =
                         AppUtils.hrsToMillis(
                                 Integer.parseInt(elementTime)

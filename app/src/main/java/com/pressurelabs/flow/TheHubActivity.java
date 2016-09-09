@@ -37,11 +37,14 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.drive.Drive;
 import com.google.android.gms.drive.DriveApi;
+import com.google.android.gms.drive.DriveId;
 import com.google.android.gms.drive.MetadataChangeSet;
+import com.google.android.gms.drive.OpenFileActivityBuilder;
 import com.kobakei.ratethisapp.RateThisApp;
 
 
@@ -632,12 +635,18 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     }
 
 
+    /**
+     * Popups must be removed before activity becomes invisible
+     * Api Client must disconnect.
+     */
     @Override
     protected void onPause() {
-        super.onPause();
         dismissPopups();
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
+        }
+        super.onPause();
     }
-
 
     @Override
     public void onBackPressed() {
@@ -656,6 +665,8 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     protected void onStart() {
         super.onStart();
         // Monitor launch times and interval from installation
+        mGoogleApiClient.connect();
+
         RateThisApp.onStart(this);
         RateThisApp.Config config = new RateThisApp.Config(10, 10);
         // Custom title ,message and buttons names
@@ -695,44 +706,56 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     }
 
     private void exportDataToDrive() {
-
-        createNewDriveFile();
-        //TODO Install GPlay on Emulator?
-        //TODO Write to file vs save file from
+        Drive.DriveApi.newDriveContents(mGoogleApiClient)
+                .setResultCallback(contentsCallback);
     }
 
-    private void createNewDriveFile() {
-        ResultCallback<DriveApi.DriveContentsResult> contentsCallback = new
-                ResultCallback<DriveApi.DriveContentsResult>() {
-                    @Override
-                    public void onResult(DriveApi.DriveContentsResult result) {
-                        if (!result.getStatus().isSuccess()) {
-                            Toast.makeText(TheHubActivity.this, R.string.export_failed_msg, Toast.LENGTH_LONG).show();
-                            return;
-                        }
-
-                        MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
-                                .setTitle("Flow-export: " +
-                                        Calendar.getInstance().get(Calendar.DATE))
-                                .setMimeType("text/html").build();
-                        IntentSender intentSender = Drive.DriveApi
-                                .newCreateFileActivityBuilder()
-                                .setInitialMetadata(metadataChangeSet)
-                                .setInitialDriveContents(result.getDriveContents())
-                                .build(mGoogleApiClient);
-                        try {
-                            startIntentSenderForResult(intentSender, 1, null, 0, 0, 0);
-                        } catch (IntentSender.SendIntentException e) {
-                            // Handle the exception
-                        }
+    final ResultCallback<DriveApi.DriveContentsResult> contentsCallback = new
+            ResultCallback<DriveApi.DriveContentsResult>() {
+                @Override
+                public void onResult(DriveApi.DriveContentsResult result) {
+                    if (!result.getStatus().isSuccess()) {
+                        Toast.makeText(TheHubActivity.this, R.string.export_failed_msg, Toast.LENGTH_LONG).show();
+                        return;
                     }
-                };
-    }
+
+                    MetadataChangeSet metadataChangeSet = new MetadataChangeSet.Builder()
+                            .setMimeType("text/html").build();
+                    IntentSender intentSender = Drive.DriveApi
+                            .newCreateFileActivityBuilder()
+                            .setInitialMetadata(metadataChangeSet)
+                            .setInitialDriveContents(result.getDriveContents())
+                            .build(mGoogleApiClient);
+                    try {
+                        startIntentSenderForResult(intentSender,
+                                AppConstants.EXPORT_CREATOR_REQUEST_CODE, null, 0, 0, 0);
+                        AppUtils.showMessage(TheHubActivity.this, "Created file");
+                    } catch (IntentSender.SendIntentException e) {
+                        AppUtils.showMessage(TheHubActivity.this, "Cannot export");
+                    }
+                }
+            };
 
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        // Automange will do its best but  If an error occurs that cannot be resolved, you will receive a call to this
-        Toast.makeText(this, R.string.feedback_failed_msg, Toast.LENGTH_LONG).show();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case AppConstants.EXPORT_RESOLVE_CONNECTION_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    mGoogleApiClient.connect();
+                }
+                break;
+            case AppConstants.EXPORT_CREATOR_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    DriveId driveId = (DriveId) data.getParcelableExtra(
+                            OpenFileActivityBuilder.EXTRA_RESPONSE_DRIVE_ID);
+                    Toast.makeText(this, "Created file: " + driveId, Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
     }
 
     @Override
@@ -743,6 +766,30 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
     @Override
     public void onConnectionSuspended(int i) {
 
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        /* Callback can be invoked if user has not previously authorized the app. */
+        if (connectionResult.hasResolution()) {
+            try {
+                connectionResult.startResolutionForResult(this, AppConstants.EXPORT_RESOLVE_CONNECTION_REQUEST_CODE);
+            } catch (IntentSender.SendIntentException e) {
+                // Unable to resolve, message user appropriately
+            }
+        } else {
+            Toast.makeText(this, R.string.feedback_failed_msg, Toast.LENGTH_LONG).show();
+            GooglePlayServicesUtil.getErrorDialog(connectionResult.getErrorCode(), this, 0).show();
+        }
+
+    }
+
+    /**
+     * Getter for the {@code GoogleApiClient}.
+     */
+    public GoogleApiClient getGoogleApiClient() {
+        return mGoogleApiClient;
     }
 
 }

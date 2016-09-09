@@ -177,4 +177,8 @@ public class AppUtils {
         }
 
     }
+
+    public static void showMessage(Context ctx,String message) {
+        Toast.makeText(ctx, message, Toast.LENGTH_LONG).show();
+    }
 }
