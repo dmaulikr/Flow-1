@@ -144,6 +144,12 @@ public class AppUtils {
         v.startAnimation(pulse);
     }
 
+    /**
+     * Adds input filters to supplied edit text to allow only:
+     *  A-Z, a-z, 0-9, and special characters (%$!@)
+     * @param viewToFilter
+     * @return
+     */
     public static EditText setNameInputFilters(EditText viewToFilter) {
         viewToFilter.setInputType(InputType.TYPE_CLASS_TEXT);
         viewToFilter.setFilters(new InputFilter[] {

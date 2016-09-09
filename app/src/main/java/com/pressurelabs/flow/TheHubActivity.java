@@ -373,13 +373,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
         params.setMarginEnd(50);
 
 
-        //Sets up length and 1 line filters
-        nameInputET.setInputType(InputType.TYPE_CLASS_TEXT);
-        //Only allows A-Z, a-z, 0-9, and special characters (%$!@)
-
-        nameInputET.setFilters(new InputFilter[] {
-                new InputFilter.LengthFilter(20)
-        });
+        AppUtils.setNameInputFilters(nameInputET);
 
         //Adds the ET and params to the layout of the dialog box
         layout.addView(nameInputET, params);
@@ -545,14 +539,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
         final ViewSwitcher switcher = (ViewSwitcher) cardViewClicked.findViewById(R.id.hub_rename_switcher);
         final EditText rename = (EditText) switcher.findViewById(R.id.hub_item_flow_rename);
 
-        rename.setInputType(InputType.TYPE_CLASS_TEXT);
-        //Only allows A-Z, a-z, 0-9, and special characters (%$!@)
-
-        rename.setFilters(new InputFilter[] {
-                new InputFilter.LengthFilter(20)
-        });
-
-        //TODO Set input filters on rename
+        AppUtils.setNameInputFilters(rename);
 
         rename.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override

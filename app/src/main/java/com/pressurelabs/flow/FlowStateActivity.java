@@ -257,14 +257,14 @@ public class FlowStateActivity extends AppCompatActivity
                 /* Index Out of Bounds Exception Thrown When Flow Ends */
 
                 if (fragment!=null) {
-                    flowStateFlag =AppConstants.FS_FINISHED;
+                    flowStateFlag =AppConstants.FINISHED;
                     transaction.remove(fragment);
                     transaction.commit();
                     transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                 }
 
             }
-        if (flowStateFlag ==AppConstants.FS_FINISHED){
+        if (flowStateFlag ==AppConstants.FINISHED){
             goToFinishScreen();
         }
     }
@@ -399,7 +399,7 @@ public class FlowStateActivity extends AppCompatActivity
     @Override
     public void onPause() {
         super.onPause();
-        if (flowStateFlag !=AppConstants.FS_FINISHED && flowStateFlag != AppConstants.EARLY_EXIT) {
+        if (flowStateFlag !=AppConstants.FINISHED && flowStateFlag != AppConstants.EARLY_EXIT) {
             onPauseNotifier();
         }
 

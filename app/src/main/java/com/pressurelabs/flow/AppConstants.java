@@ -19,7 +19,7 @@ public class AppConstants {
     public static final String MENU_ITEMS_HIDE = "MENU_ITEMS_HIDE";
     public static final String MENU_ITEMS_PARTIAL = "menu_items_partial";
     public static final int EARLY_EXIT = -1;
-    public static final int FS_FINISHED = 1;
+    public static final int FINISHED = 1;
     public static final int NOT_FINISHED = 0;
     public static final String FS_NOTIFICATION_ACTIVE = "FS_NOTIFICATION_ACTIVE";
     public static final String FS_UI_ACTIVE = "FS_UI_ACTIVE";
