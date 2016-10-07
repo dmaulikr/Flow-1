@@ -6,7 +6,7 @@
 
 Flow was a project started at a hackathon, that I've continued to build as I've learned more and developed further in the Android environment.
 
-The basic idea is that the brain (espcially mine), isn't the greatest multitasker.
+The basic idea is that the brain (especially mine), isn't the greatest multitasker.
 
 When you begin your day/studies/work you're mind can race between the multiple different things you need to do, preventing you from completing a single task to your best effort. Rather than brain dumping everything into a to-do list (which usually never get's done), Flow let's you create a defined workflow of tasks which you set the time for, allowing you to focus on only a single task at a time without having to worry what come's next.
 
