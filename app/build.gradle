@@ -4,11 +4,11 @@ android {
     compileSdkVersion 23
     buildToolsVersion '23.0.1'
     defaultConfig {
-        applicationId 'com.pressurelabs.flow'
+        applicationId 'com.pressurelabs.flowopensource'
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 6
-        versionName "v0.7 Alpha"
+        versionCode 1
+        versionName "v1.0"
     }
     buildTypes {
         release {
