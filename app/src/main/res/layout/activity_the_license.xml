@@ -12,7 +12,7 @@
         android:fitsSystemWindows="true">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/eula_toolbar"
+            android:id="@+id/license_activity_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.AppBarOverlay">

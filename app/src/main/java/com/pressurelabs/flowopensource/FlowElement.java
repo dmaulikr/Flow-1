@@ -1,9 +1,7 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import java.util.UUID;
 
 /**
  * Flow_V2

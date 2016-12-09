@@ -1,4 +1,4 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -21,8 +21,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.InputFilter;
-import android.text.InputType;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -172,7 +170,7 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
 
             case R.id.action_tou:
                 drawer.closeDrawer(GravityCompat.START);
-                goToEULA();
+                goToLicense();
                 return false;
             case R.id.action_support_devs:
                 Toast.makeText(this,R.string.feature_not_ready,Toast.LENGTH_LONG).show();
@@ -232,9 +230,9 @@ public class TheHubActivity extends AppCompatActivity implements HubRecyclerView
         }
     }
 
-    private void goToEULA() {
+    private void goToLicense() {
         startActivity(
-                new Intent(TheHubActivity.this, EULAActivity.class)
+                new Intent(TheHubActivity.this, LicenseActivity.class)
         );
 
     }

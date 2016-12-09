@@ -1,11 +1,10 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.Checkable;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 /**
  * Flow_app

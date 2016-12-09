@@ -1,4 +1,4 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,25 +9,18 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 import java.util.LinkedList;
 

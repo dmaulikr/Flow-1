@@ -1,12 +1,10 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.UUID;
 
 /**

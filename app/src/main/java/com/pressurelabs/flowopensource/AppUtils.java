@@ -1,12 +1,10 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.view.View;
@@ -15,7 +13,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**

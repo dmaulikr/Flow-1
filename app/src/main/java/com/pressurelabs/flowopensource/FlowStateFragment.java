@@ -1,4 +1,4 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.app.Notification;
 import android.app.NotificationManager;

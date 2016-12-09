@@ -1,18 +1,17 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
-public class EULAActivity extends AppCompatActivity {
+public class LicenseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_the_eula);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.eula_toolbar);
+        setContentView(R.layout.activity_the_license);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.license_activity_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

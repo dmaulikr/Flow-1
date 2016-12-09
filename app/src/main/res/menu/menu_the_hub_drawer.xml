@@ -4,7 +4,7 @@
         <menu>
             <item
                 android:id="@+id/action_tou"
-                android:title="@string/terms_of_use" />
+                android:title="@string/license_text" />
 
             <item
                 android:id="@+id/action_support_devs"

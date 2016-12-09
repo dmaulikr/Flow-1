@@ -1,4 +1,4 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.app.PendingIntent;
 import android.content.Context;

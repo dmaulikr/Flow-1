@@ -1,4 +1,4 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;

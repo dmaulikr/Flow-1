@@ -1,4 +1,4 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

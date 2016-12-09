@@ -1,4 +1,4 @@
-package com.pressurelabs.flow;
+package com.pressurelabs.flowopensource;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
