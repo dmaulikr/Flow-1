@@ -1,8 +1,18 @@
-# Flow 
+# Flow Open Source
+
+This repository contains code for a previous version of my app Flow on the Play Store (v0.7).
+
+#### Why didn't you open source the most recent version? 
+The most recent version contains code and actions that are security sensitive 
+
+I've decided to Open Source this project to help new developers see what a functional app looks like, please feel free to fork it and play around :) 
 
 <a href='https://play.google.com/store/apps/details?id=com.pressurelabs.flow'> <img src="http://i.imgur.com/DuWFp6m.png" height="92" width="92"/> 
     <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="92" width="240"/>
     </a>
+
+
+# About 
 
 Flow was a project started at a hackathon, that I've continued to build as I've learned more and developed further in the Android environment.
 
@@ -19,14 +29,10 @@ Sometimes you repeat the same thing every morning.
 
 Flow saves workflows and lets you repeat them as many times as you like. 
 
-I hoping that by putting my code up here, other new android devs might be able to learn from it!
-
-#### Note: for security reasons, v0.8+ code is not avaliable publicly. If you'd like to check out latest developments please send me a message :)
-
 ### Screenshots
 <img src="http://i.imgur.com/UxmH8zP.png" width="275" height="475"/> <img src="http://i.imgur.com/gEs28oF.png" width="275" height="475"/> <img src="http://i.imgur.com/Zn52pXC.png" width="275" height="475"/>
 
-Copyright 2016 Pressure Labs
+Copyright (c) 2016 Pressure Labs 
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
