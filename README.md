@@ -1,11 +1,12 @@
 # Flow Open Source
 
-Being the first app I ever made, this is by far some of the least attractive code I've written, but maybe it can help you new developer to see what a functional app looks like (:
+Being the first app I ever made, this is by far some of the least attractive code I've written, but maybe it can help you new developer to see what a functional app looks like 🚀🔥😻
 
 This repository contains code for a previous version of my app Flow on the Play Store (v0.7).
 
-## Projects Inspired By Flow
 If you do use some code/design from Flow it would be awesome if you could credit/let me know so I can add here :)
+
+## Projects Inspired By Flow
 
 <a href="https://github.com/today-app/android">
   <img src="http://imgur.com/78qzXhP.png" width="100" height="100"/>
