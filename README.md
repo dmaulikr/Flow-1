@@ -4,7 +4,13 @@ Being the first app I ever made, this is by far some of the least attractive cod
 
 This repository contains code for a previous version of my app Flow on the Play Store (v0.7).
 
-#### Note: if you do use the code here, it would be awesome if you could credit me! 
+## Flow Clones
+
+<a href="https://github.com/today-app/android">
+    <img src="http://imgur.com/78qzXhP" width="100" height="100"/>
+</a>
+
+If you do use some code/design from Flow it would be awesome if you could credit/let me know so I can add here :)
 
 #### Why didn't you open source the most recent version? 
 The most recent version contains code and actions that are security sensitive 
@@ -33,10 +39,6 @@ Flow saves workflows and lets you repeat them as many times as you like.
 
 ### Screenshots
 <img src="http://i.imgur.com/UxmH8zP.png" width="275" height="475"/> <img src="http://i.imgur.com/gEs28oF.png" width="275" height="475"/> <img src="http://i.imgur.com/Zn52pXC.png" width="275" height="475"/>
-
-### Check out some sweet clones of Flow!
-
-* https://github.com/today-app/android
 
 ```
 Copyright (c) 2016 Pressure Labs 
