@@ -5,12 +5,14 @@ Being the first app I ever made, this is by far some of the least attractive cod
 This repository contains code for a previous version of my app Flow on the Play Store (v0.7).
 
 ## Projects Inspired By Flow
+If you do use some code/design from Flow it would be awesome if you could credit/let me know so I can add here :)
 
 <a href="https://github.com/today-app/android">
+    Today App
     <img src="http://imgur.com/78qzXhP.png" width="100" height="100"/>
 </a>
 
-If you do use some code/design from Flow it would be awesome if you could credit/let me know so I can add here :)
+
 
 #### Why didn't you open source the most recent version? 
 The most recent version contains code and actions that are security sensitive 
